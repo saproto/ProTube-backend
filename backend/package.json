@@ -1,0 +1,13 @@
+{
+    "name": "Herbert-dummy-server",
+    "version": "0.0.1",
+    "description": "Dummy server of herbert for petra",
+    "main": "app.js",
+    "dependencies": {
+        "express": "^4.17.1",
+        "socket.io": "^4.1.3"
+    },
+    "devDependencies": {
+        "electron": "^13.1.7"
+    }
+}

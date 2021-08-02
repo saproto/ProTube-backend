@@ -1,0 +1,14 @@
+{
+    "name": "Petra-renewed",
+    "version": "0.0.1",
+    "description": "Renewed version of petra, used by protube and herbert",
+    "main": "app.js",
+    "dependencies": {
+        "express": "^4.17.1",
+        "socket.io": "^4.1.3",
+        "socket.io-client": "^4.1.3"
+    },
+    "devDependencies": {
+        "electron": "^13.1.7"
+    }
+}
