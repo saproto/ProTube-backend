@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const socket = require('socket.io');
 const io = require('socket.io-client');
@@ -7,15 +8,12 @@ const serverPort = 4444;
 const serverHost = 'http://localhost';
 const serverUrl = `${serverHost}:${serverPort}/petra`;
 
-console.log(`[SOCKET] Connecting to ${serverUrl}`);
+console.log(`[SOCKET] Connecting to ${serverUrl}...`);
 
 //initiate server connection with header+handshake authorization
 const server = io(serverUrl, {
-  extraHeaders: {
-    Authorization: '123',  //headertoken
-  },
   auth: {
-    token: '12' //socket handshake token
+    token: process.env.CLIENT_IDENTIFIER //socket handshake token
   }
 });
 

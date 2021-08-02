@@ -1,3 +1,4 @@
+require('dotenv').config();
 const { Server } = require('socket.io');
 const io = new Server();
 
@@ -12,11 +13,11 @@ io.attach(clientSocketPort, {
 
 clientSocketGateway.use((socket, next) => {
   console.log(`[CLIENT] Client from ${socket.handshake.address} with id ${socket.id} attempted to connect, validating...`);
-  if(validateClient(socket.request.headers.authorization, socket.handshake.auth.token)) {
+  if(validateClient(socket.handshake.auth.token)) {
     next();
   } else {
     next(new Error("Not authorized"));
-    console.log(`[CLIENT] Socket from ${socket.handshake.address} with id ${socket.id} failed to authorize`);
+    console.log(`[CLIENT] ${socket.id} failed to authorize`);
   }
 }).on('connection', socket => {
   console.log(`[CLIENT] Succesfully authorized client ${socket.id}`);
@@ -27,8 +28,8 @@ clientSocketGateway.use((socket, next) => {
 });
 
 //function to authenticate incoming socket connections
-function validateClient(headerToken, socketToken){
-  return headerToken == "123" && socketToken == "12";
+function validateClient(socketHandshakeToken){
+  return socketHandshakeToken === process.env.CLIENT_IDENTIFIER;
 }
 
 
