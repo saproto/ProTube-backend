@@ -1,40 +1,40 @@
 const express = require('express');
-const socket = require("socket.io");
-var io = require("socket.io-client");
+const socket = require('socket.io');
+const io = require('socket.io-client');
 
 
-var serverPort = 3000;
-var serverUri = "http://localhost"
+const serverPort = 4444;
+const serverHost = 'http://localhost';
+const serverUrl = `${serverHost}:${serverPort}/petra`;
 
-console.log("Connecting to: "+serverUri+':'+serverPort+"/petra");
+console.log(`[SOCKET] Connecting to ${serverUrl}`);
 
 //initiate server connection with header+handshake authorization
-const server = io(serverUri+':'+serverPort+"/petra", {
+const server = io(serverUrl, {
   extraHeaders: {
-    Authorization: "123",  //headertoken
+    Authorization: '123',  //headertoken
   },
   auth: {
-    token: "123" //socket handshake token
+    token: '12' //socket handshake token
   }
 });
 
 //on connection with server
-server.on("connect", function() {
-  console.log("Server connection established");
-  server.emit("lol");
+server.on('connect', function() {
+  console.log('[SOCKET] Server connection established');
 });
 
 //error on connection (most likely invalid token)
-server.on("connect_error", (err) => {
-  console.log("Connection failed! : "+err.message); // error message
+server.on('connect_error', err => {
+  console.log(`[SOCKET] Connection failed! | ${err.message}`); // error message
+  process.exit(1);
 });
 
 server.on('test', function(){
   console.log("test received");
   server.emit('test2');
-  server.send();
 })
 
 server.on('disconnect', function(){
-  console.log("connection lost!");
+  console.log('[SOCKET] Connection lost!');
 })
