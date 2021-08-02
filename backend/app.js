@@ -20,7 +20,7 @@ clientSocketGateway.use((socket, next) => {
   }
 }).on('connection', socket => {
   console.log(`[CLIENT] Succesfully authorized client ${socket.id}`);
-  socket.on('test2', function() {
+  socket.on('test2', () => {
     console.log('lol');
   });
   socket.emit('test');

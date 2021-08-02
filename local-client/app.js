@@ -20,7 +20,7 @@ const server = io(serverUrl, {
 });
 
 //on connection with server
-server.on('connect', function() {
+server.on('connect', () => {
   console.log('[SOCKET] Server connection established');
 });
 
@@ -30,11 +30,11 @@ server.on('connect_error', err => {
   process.exit(1);
 });
 
-server.on('test', function(){
+server.on('test', () => {
   console.log("test received");
   server.emit('test2');
 })
 
-server.on('disconnect', function(){
+server.on('disconnect', () => {
   console.log('[SOCKET] Connection lost!');
 })
