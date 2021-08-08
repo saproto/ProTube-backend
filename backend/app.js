@@ -25,7 +25,12 @@ clientSocketGateway.use((socket, next) => {
   socket.on('disconnect', () => {
     console.log(`[CLIENT] Lost connection with authorized client ${socket.id}`);
   });
-  socket.emit('test');
+  //testing! for sending a sound
+  setTimeout(function() {
+    let sound = "test2.mp3"
+    console.log(`[CLIENT] Playing sound ${sound}`);
+    socket.emit('playsound', sound);
+  }, 3000);
 });
 
 //function to authenticate incoming socket connections

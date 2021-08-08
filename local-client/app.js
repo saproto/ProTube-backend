@@ -2,14 +2,16 @@ require('dotenv').config();
 const express = require('express');
 const socket = require('socket.io');
 const io = require('socket.io-client');
-
-var videoPlayer = require("./videoPlayer");
+const musicPlayer = require("sound-play");
+const electron = require('electron');
+const app = electron.app; 
+const { BrowserWindow } = require('electron')
+let win, sbWin;
 
 const serverPort = 4444;
 const serverHost = 'http://localhost';
 const serverUrl = `${serverHost}:${serverPort}/petra`;
-const reconnectDelay = 5000;
-const reconnectAttempts = 5;
+
 //initiate server connection with header+handshake authorization
 const server = io(serverUrl, {
   auth: {
@@ -17,85 +19,61 @@ const server = io(serverUrl, {
   },
   reconnection: true,
   autoConnect: true,
-  reconnectionAttempts: reconnectAttempts,
-  reconnectionDelay: reconnectDelay,
-  timeout: 5000,
 });
 
 //on connection with server
 server.on('connect', () => {
   console.log('[SOCKET] Server connection established');
-  connectionSuccessfull();
+  //on successfull socket connection display the protube screen
+  win.loadURL('https://youtu.be/LDU_Txk06tM?t=110');
 });
 
 //error on connection (most likely invalid token)
 server.on('connect_error', err => {
   console.log(`[SOCKET] Connection failed! | ${err.message}`); // error message
-  serverConnectionFailed();
-  //process.exit(1);
 });
 
+//on socket disconnect, display the fancy loading screen again
 server.on('disconnect', () => {
   console.log('[SOCKET] Connection lost!');
+  win.loadURL(`file://${__dirname}/webpages/loading_screen/index.html`);
 })
 
-//should be in a second file
-const electron = require('electron');
-const app = electron.app; 
-const { BrowserWindow } = require('electron')
-let win;// = new BrowserWindow({ width: 800, height: 600 })
-
-let reconnectCounter = 0;
+//on received of playsound, mutes the protube, pops up a small overlay+site and videoname and plays.
+//resumes to protube when the soundboard is done
+server.on('playsound', (sound) => {
+  console.log(`[SOUNDBOARD] Soundboard requested`);
+  win.webContents.setAudioMuted(true);  //mute protube screen
+  sbWin.setSize(win.getSize()[0], win.getSize()[1], false); //set overlay to protube screens format
+  sbWin.loadURL(`file://${__dirname}/webpages/audio_playing/index.html?sound=${sound}`);  //set text to the soundboard screen
+  //sbWin.webContents.openDevTools();
+  sbWin.show();
+  //play the soundboard sound
+  console.log(`[SOUNDBOARD] Playing sound ${sound}...`);
+  musicPlayer.play(`${process.env.SOUND_LIBRARY_ABSOLUTE_PATH}${sound}`).catch((err) => {
+    //catch errors and resume as if nothing happened
+    console.log(`[SOUNDBOARD] Error during playing of ${process.env.SOUND_LIBRARY_ABSOLUTE_PATH}${sound}`);
+    console.log(`[SOUNDBOARD] ${err}`);
+    sbWin.hide();
+    win.webContents.setAudioMuted(false);
+  }).then((response) => {
+    //audio finished, resume protube
+    console.log(`[SOUNDBOARD] Playing sound ${sound} finished, resumed protube screen`);
+    sbWin.hide();
+    win.webContents.setAudioMuted(false);
+  });
+})
 
 app.on('ready', () => {
+    //setting up main window
     win = new BrowserWindow({ width: 800, height: 600 })
+    //fancy loading screen before it has connected to protube
+    win.loadURL(`file://${__dirname}/loading_screen/index.html`);
+    win.isClosable(true);
+    win.isFullScreenable(true);
+    //win.setFullScreen(true);
+    //setup small screen popup for soundboard
+    sbWin = new BrowserWindow({ width: 800, height: 600, parent: win ,modal: true, show: false})
+    sbWin.setBackgroundColor("#242f3f");
     console.log(`[SOCKET] Connecting to ${serverUrl}...`);
-    serverConnectionAttempt();
-    socket
-    //win.loadURL('https://www.youtube.com/embed/LDU_Txk06tM')
 })
-
-function serverConnectionFailed() {
-  //win.loadURL('https://www.youtube.com/embed/LDU_Txk06tM');
-  //win.setProgressBar(0.2);
-  reconnectCounter++;
-  if (reconnectCounter < reconnectAttempts) {
-    var html = [
-      "<body>",
-      `<h1>Connection failed! (${reconnectCounter})</h1>`,
-      `<h2>Reconnecting in ${reconnectDelay / 1000} seconds</h2>`,
-      "</body>",
-    ].join("");
-    win.loadURL('data:text/html;charset=utf-8,' + encodeURI(html));
-  } else{
-    serverOffline();
-  }
-  //console.log('[SOCKET] Connection failed!');
-}
-
-function serverConnectionAttempt(){
-  //win.loadURL('https://www.youtube.com/embed/LDU_Txk06tM');
-  //win.setProgressBar(0.2);
-  server.connect();
-  var html = [
-    "<body>",
-      "<h1>Attempting to connect...</h1>",
-    "</body>",
-  ].join("");
-  win.loadURL('data:text/html;charset=utf-8,' + encodeURI(html));
-}
-
-function serverOffline(){
-  var html = [
-    "<body>",
-      `<h1>Multiple unsuccessfull connections</h1>`,
-      `<h2>ProTube was unable to start, retry starting ProTube in 15 minutes</h2>`,
-      `<h2>HYTTIOAOAC has been notified of this error</h2>`,
-    "</body>",
-  ].join("");
-  win.loadURL('data:text/html;charset=utf-8,' + encodeURI(html));
-}
-
-function connectionSuccessfull(){
-  win.loadURL('https://www.youtube.com/embed/LDU_Txk06tM');
-}
