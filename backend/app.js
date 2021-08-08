@@ -10,6 +10,7 @@ io.attach(clientSocketPort, {
   pingTimeout: 5000,
   cookie: false,
 });
+console.log(`[SERVER] Created socketio server at :${clientSocketPort}${clientSocketGateway.name}`);
 
 clientSocketGateway.use((socket, next) => {
   console.log(`[CLIENT] Client from ${socket.handshake.address} with id ${socket.id} attempted to connect, validating...`);
@@ -21,8 +22,8 @@ clientSocketGateway.use((socket, next) => {
   }
 }).on('connection', socket => {
   console.log(`[CLIENT] Succesfully authorized client ${socket.id}`);
-  socket.on('test2', () => {
-    console.log('lol');
+  socket.on('disconnect', () => {
+    console.log(`[CLIENT] Lost connection with authorized client ${socket.id}`);
   });
   socket.emit('test');
 });
