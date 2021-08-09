@@ -4,7 +4,7 @@ let queue = [];
 let current = {};
 
 //Add a video to the queue
-module.exports.add = video => {
+exports.add = video => {
     //Check if the video is already in the queue. If so, stop here.
     if(findDoppelganger(video)) return false;
 
@@ -14,7 +14,7 @@ module.exports.add = video => {
 }
 
 //Add a video to the first position of the queue
-module.exports.addToTop = video => {
+exports.addToTop = video => {
     //Check if the video is already in the queue
     let doppelganger = findDoppelganger(video);
     if(doppelganger) {
@@ -28,17 +28,17 @@ module.exports.addToTop = video => {
 }
 
 //Update the current video with the video in queue position 0, and remove it from the queue
-module.exports.moveToNext = () => {
+exports.moveToNext = () => {
     current = queue[0];
     queue.shift();
 }
 
-module.exports.removeFirst = () => queue.shift();
-module.exports.getCurrent = () => current;
-module.exports.getNext = () => queue[0];
+exports.removeFirst = () => queue.shift();
+exports.getCurrent = () => current;
+exports.getNext = () => queue[0];
 
 //Calculate the total duration of the playlist and return it
-module.exports.getTotalDuration = () => {
+exports.getTotalDuration = () => {
     let sum = 0;
     queue.forEach(video => sum += video.seconds);
     return moment.utc(moment.duration(sum,'seconds').as('milliseconds')).format('HH:mm:ss');
