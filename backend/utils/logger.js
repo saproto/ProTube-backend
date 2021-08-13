@@ -3,6 +3,7 @@ require('colors');
 let prefix = {
     server: '[SERVER] '.yellow,
     screen: '[SCREEN] '.magenta,
+    youtube: '[YOUTUBE] '.red
 }
 
 exports.serverInfo = message => {
@@ -15,4 +16,8 @@ exports.serverError = message => {
 
 exports.screenInfo = message => {
     console.log(prefix.screen + message.brightMagenta);
+}
+
+exports.youtubeInfo = message => {
+    console.log(prefix.youtube + message);
 }

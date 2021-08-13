@@ -40,4 +40,14 @@ const screen = require('./modules/screen');
 const remote = require('./modules/remote');
 const adminRemote = require('./modules/admin-remote');
 const queue = require('./modules/queue-manager');
+const playback = require('./modules/playback-manager');
+
+exports.getCurrentVideo = queue.getCurrent;
+exports.getStatus = playback.getStatus;
+
+(async() => {
+    let videos = await youtube.search('kud');
+    queue.add(videos[0]);
+    queue.moveToNext();
+})();
 

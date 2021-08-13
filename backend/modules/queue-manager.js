@@ -1,4 +1,4 @@
-const moment = require('moment');
+const timeFormatter = require('../utils/time-formatter');
 
 let queue = [];
 let current = {};
@@ -31,6 +31,7 @@ exports.addToTop = video => {
 exports.moveToNext = () => {
     current = queue[0];
     queue.shift();
+    communicator.emit('new-video', current);
 }
 
 exports.removeFirst = () => queue.shift();
@@ -41,10 +42,15 @@ exports.getNext = () => queue[0];
 exports.getTotalDuration = () => {
     let sum = 0;
     queue.forEach(video => sum += video.seconds);
-    return moment.utc(moment.duration(sum,'seconds').as('milliseconds')).format('HH:mm:ss');
+    return timeFormatter.format_hh_mm_ss(sum);
 }
 
 //Check for an identical video in the queue
 const findDoppelganger = video => {
     return queue.filter(spot => spot.videoId === video.videoId)[0];
 }
+
+communicator.on('video-ended', () => {
+    if(queue.length > 0) this.moveToNext();
+    else current = {};
+});
