@@ -68,7 +68,7 @@ app.on('ready', () => {
     //setting up main window
     win = new BrowserWindow({ width: 800, height: 600 })
     //fancy loading screen before it has connected to protube
-    win.loadURL(`file://${__dirname}/loading_screen/index.html`);
+    win.loadURL(`file://${__dirname}/webpages/loading_screen/index.html`);
     win.isClosable(true);
     win.isFullScreenable(true);
     //win.setFullScreen(true);
