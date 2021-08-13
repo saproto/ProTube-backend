@@ -46,7 +46,7 @@ exports.getCurrentVideo = queue.getCurrent;
 exports.getStatus = playback.getStatus;
 
 (async() => {
-    let videos = await youtube.search('kud');
+    let videos = await youtube.search('party in the usa');
     queue.add(videos[0]);
     queue.moveToNext();
 })();

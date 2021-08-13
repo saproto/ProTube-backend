@@ -6,7 +6,7 @@ function onYouTubePlayerAPIReady() {
     player = new YT.Player('yt-player', {
         height: '100%',
         width: '100%',
-        videoId: 'dQw4w9WgXcQ',
+        videoId: '',
         playerVars: {
             controls: 0,
             showinfo: 0,
@@ -40,7 +40,6 @@ const youtubePlayerReady = () => {
     });
 
     socket.on('new-timestamp', timestamp => {
-        console.log('new timestamp: ' + timestamp);
         if(Math.abs(player.getCurrentTime() - timestamp.seconds) > 5 )
             player.seekTo(timestamp.seconds, true);
     });
