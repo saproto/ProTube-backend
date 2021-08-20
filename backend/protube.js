@@ -41,12 +41,14 @@ const remote = require('./modules/remote');
 const adminRemote = require('./modules/admin-remote');
 const queue = require('./modules/queue-manager');
 const playback = require('./modules/playback-manager');
+const search_screen = require('./modules/search-screen')
 
 exports.getCurrentVideo = queue.getCurrent;
 exports.getStatus = playback.getStatus;
 
 (async() => {
     let videos = await youtube.search('party in the usa');
+    //console.log(videos);
     queue.add(videos[0]);
     queue.moveToNext();
 })();

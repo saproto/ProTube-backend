@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="./compiled.css">
+  </head>
+  <body onload="reconnectToServer()"><!--
+    <div>
+      <form name="id-form">
+        <input class="id" name="id" maxlength="1" onkeyup="nextInput()" />
+        <input class="id" name="id" maxlength="1" onkeyup="nextInput()" />
+        <input class="id" name="id" maxlength="1" onkeyup="nextInput()" />
+        <input class="id" name="id" maxlength="1" onkeyup="nextInput()" />
+      </form>
+      <div name="code-block" class="special hidden">
+        Wait your special code is <span name="code"></span>?
+        <br />
+        <i onclick="reset()">Reset </i>
+      </div>
+    </div>-->
+
+
+    <div>
+        <form>
+            <input maxlength=1 />
+            <input maxlength=1 />
+            <input maxlength=1 />
+            <input maxlength=1 />
+        </form>
+        <div id="code-block" class="special hidden">
+        Wait your special code is <span id="code"></span>?
+        <br />
+        <i onclick="reset()">Reset
+        </i>
+        </div>
+    </div>
+  
+    <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+    <script src="./login.js"></script>
+  </body>
+</html>

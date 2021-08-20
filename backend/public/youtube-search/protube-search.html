@@ -1,0 +1,299 @@
+<!-- This example requires Tailwind CSS v2.0+ -->
+<html>
+  <head> </head>
+  <body>
+    <div class="lg:w-6/12 md:w-9/12 w-full mx-auto md:pt-8">
+      <div class="bg-custom_gray shadow md:rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+          <h3 class="text-lg leading-6 font-medium text-gray-900">Protube playlist panel</h3>
+          <div class="mt-2 max-w-xl text-sm text-gray-500">
+            <p>Search for any song on Youtube and add it to the protube playlist</p>
+          </div>
+          <form class="mt-5 sm:flex sm:items-center">
+            <div class="w-full sm:max-w-xs">
+              <input type="text" name="email" id="email" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full h-10 border-gray-300 rounded-md pl-3" placeholder="Title, author etc of any song" />
+            </div>
+            <button type="submit" class="mt-3 w-full inline-flex items-center justify-center px-4 py-2 border border-transparent shadow-sm font-medium rounded-md text-white bg-custom_blue2 hover:bg-opacity-70 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+              </svg>
+              Search
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="lg:w-6/12 md:w-9/12 w-full mx-auto pt-3">
+      <div class="bg-white shadow overflow-hidden md:rounded-lg">
+        <!-- 3 pages of ppls -->
+        <ul class="divide-y divide-gray-400">
+          <li class="group">
+            <a href="#" class="block bg-custom_gray group-hover:bg-gray-200">
+              <div class="flex items-center px-4 py-4 sm:px-6">
+                <div class="min-w-0 flex-1 flex items-center">
+                  <div class="flex-shrink-0 border-2 border-opacity-40 rounded-lg border-custom_blue2">
+                    <img class="h-12 w-20 rounded-md" src="https://i.ytimg.com/vi/qOG2UriJdHo/hq720.jpg" alt="" />
+                  </div>
+                  <div class="min-w-0 flex-1 px-4 md:gap-4">
+                    <div>
+                      <p class="text-sm font-medium text-custom_turquoise truncate">Weird Al" Yankovic - Party In The CIA (Parody of "Party In The U.S.A." by Miley Cyrus)</p>
+                      <p class="mt-2 flex items-center text-sm text-custom_blue2">
+                        <!-- Heroicon name: microphone -->
+                        <svg class="flex-shrink-0 mr-1.5 h-5 w-5 text-custom_blue2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 411.546 411.546" fill="currentColor" aria-hidden="true">
+                          <g>
+                            <path
+                              d="M338.96,28.886C320.333,10.259,295.566,0,269.222,0c-20.138,0-39.495,6.018-55.979,17.403
+                            c-2.912,2.011-4.514,4.396-4.758,7.088c-0.214,2.353,0.698,4.678,2.569,6.549l125.752,125.752c1.581,1.58,3.54,2.416,5.666,2.416
+                            c0.001,0,0.001,0,0.002,0c3.752,0,6.59-2.628,7.677-4.183C377.54,115.808,372.833,62.759,338.96,28.886z"
+                            />
+                            <path
+                              d="M201.24,45.987c-3.003-3.003-6.037-3.633-8.054-3.633c-5.96,0-9.863,5.056-11.265,7.23
+                            c-12.024,18.649-17.412,41.145-15.171,63.345c2.272,22.518,12.354,43.749,28.386,59.781c18.627,18.627,43.395,28.887,69.741,28.887
+                            c0.001,0,0,0,0.002,0c19.573,0,38.481-5.713,54.679-16.521c2.013-1.344,5.544-4.87,6.006-9.559c0.302-3.056-0.804-6.01-3.112-8.319
+                            L201.24,45.987z"
+                            />
+                            <path
+                              d="M228.797,386.546h-50.916V256.248l38.21-29.667c4.579-3.555,6.81-8.2,6.118-12.743c-0.692-4.543-4.203-8.313-9.629-10.344
+                            c-0.174-0.065-17.558-6.688-29.55-18.68c-11.993-11.992-18.617-29.376-18.681-29.546c-2.286-6.109-6.766-9.756-11.985-9.756
+                            c-4.035,0-7.979,2.217-11.104,6.242L48.067,271.789c-6.564,8.454-5.747,21.488,1.821,29.057l17.111,17.111
+                            c3.997,3.996,9.7,6.288,15.649,6.289c0,0,0,0,0,0c4.935,0,9.696-1.587,13.407-4.468l56.826-44.12v110.888h-50.916
+                            c-6.903,0-12.5,5.597-12.5,12.5s5.597,12.5,12.5,12.5h126.831c6.903,0,12.5-5.597,12.5-12.5S235.7,386.546,228.797,386.546z"
+                            />
+                          </g>
+                        </svg>
+                        <span class="truncate">Stoic Finance</span>
+
+                        <!-- Heroicon name: views -->
+                        <svg class="flex-shrink-0 mr-1.5 h-5 w-5 text-custom_blue2 ml-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                        <span class="truncate">1234455</span>
+
+                        <!-- Heroicon name: duration -->
+                        <svg class="flex-shrink-0 mr-1.5 h-5 w-5 text-custom_blue2 ml-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span class="truncate">02:22</span>
+                      </p>
+                    </div>
+                    <div class="hidden">
+                      <div>
+                        <p class="text-sm text-gray-900">
+                          Applied on
+                          <time datetime="2020-01-07">January 7, 2020</time>
+                        </p>
+                        <p class="mt-2 flex items-center text-sm text-gray-500">
+                          <!-- Heroicon name: solid/check-circle -->
+                          <svg class="flex-shrink-0 mr-1.5 h-5 w-5 text-green-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                          </svg>
+                          Completed phone screening
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <!-- Heroicon name: solid/chevron-right -->
+                  <svg class="h-7 w-7 text-gray-400 group-hover:rotate-90 group-hover:transition group-hover:duration-200 group-hover:text-custom_blue2 group-hover:ease-in-out" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+              </div>
+            </a>
+          </li>
+
+          <li class="group">
+            <a href="#" class="block bg-custom_gray group-hover:bg-gray-200">
+              <div class="flex items-center px-4 py-4 sm:px-6">
+                <div class="min-w-0 flex-1 flex items-center">
+                  <div class="flex-shrink-0 border-2 border-opacity-40 rounded-lg border-custom_blue2">
+                    <img class="h-12 w-20 rounded-md" src="https://i.ytimg.com/vi/qOG2UriJdHo/hq720.jpg" alt="" />
+                  </div>
+                  <div class="min-w-0 flex-1 px-4 md:gap-4">
+                    <div>
+                      <p class="text-sm font-medium text-custom_turquoise truncate">Weird Al" Yankovic - Party In The CIA (Parody of "Party In The U.S.A." by Miley Cyrus)</p>
+                      <p class="mt-2 flex items-center text-sm text-custom_blue2">
+                        <!-- Heroicon name: microphone -->
+                        <svg class="flex-shrink-0 mr-1.5 h-5 w-5 text-custom_blue2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 411.546 411.546" fill="currentColor" aria-hidden="true">
+                          <g>
+                            <path
+                              d="M338.96,28.886C320.333,10.259,295.566,0,269.222,0c-20.138,0-39.495,6.018-55.979,17.403
+                            c-2.912,2.011-4.514,4.396-4.758,7.088c-0.214,2.353,0.698,4.678,2.569,6.549l125.752,125.752c1.581,1.58,3.54,2.416,5.666,2.416
+                            c0.001,0,0.001,0,0.002,0c3.752,0,6.59-2.628,7.677-4.183C377.54,115.808,372.833,62.759,338.96,28.886z"
+                            />
+                            <path
+                              d="M201.24,45.987c-3.003-3.003-6.037-3.633-8.054-3.633c-5.96,0-9.863,5.056-11.265,7.23
+                            c-12.024,18.649-17.412,41.145-15.171,63.345c2.272,22.518,12.354,43.749,28.386,59.781c18.627,18.627,43.395,28.887,69.741,28.887
+                            c0.001,0,0,0,0.002,0c19.573,0,38.481-5.713,54.679-16.521c2.013-1.344,5.544-4.87,6.006-9.559c0.302-3.056-0.804-6.01-3.112-8.319
+                            L201.24,45.987z"
+                            />
+                            <path
+                              d="M228.797,386.546h-50.916V256.248l38.21-29.667c4.579-3.555,6.81-8.2,6.118-12.743c-0.692-4.543-4.203-8.313-9.629-10.344
+                            c-0.174-0.065-17.558-6.688-29.55-18.68c-11.993-11.992-18.617-29.376-18.681-29.546c-2.286-6.109-6.766-9.756-11.985-9.756
+                            c-4.035,0-7.979,2.217-11.104,6.242L48.067,271.789c-6.564,8.454-5.747,21.488,1.821,29.057l17.111,17.111
+                            c3.997,3.996,9.7,6.288,15.649,6.289c0,0,0,0,0,0c4.935,0,9.696-1.587,13.407-4.468l56.826-44.12v110.888h-50.916
+                            c-6.903,0-12.5,5.597-12.5,12.5s5.597,12.5,12.5,12.5h126.831c6.903,0,12.5-5.597,12.5-12.5S235.7,386.546,228.797,386.546z"
+                            />
+                          </g>
+                        </svg>
+                        <span class="truncate">Stoic Finance</span>
+
+                        <!-- Heroicon name: views -->
+                        <svg class="flex-shrink-0 mr-1.5 h-5 w-5 text-custom_blue2 ml-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                        <span class="truncate">1234455</span>
+
+                        <!-- Heroicon name: duration -->
+                        <svg class="flex-shrink-0 mr-1.5 h-5 w-5 text-custom_blue2 ml-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span class="truncate">02:22</span>
+                      </p>
+                    </div>
+                    <div class="hidden">
+                      <div>
+                        <p class="text-sm text-gray-900">
+                          Applied on
+                          <time datetime="2020-01-07">January 7, 2020</time>
+                        </p>
+                        <p class="mt-2 flex items-center text-sm text-gray-500">
+                          <!-- Heroicon name: solid/check-circle -->
+                          <svg class="flex-shrink-0 mr-1.5 h-5 w-5 text-green-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                          </svg>
+                          Completed phone screening
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <!-- Heroicon name: solid/chevron-right -->
+                  <svg class="h-7 w-7 text-gray-400 group-hover:rotate-90 group-hover:transition group-hover:duration-200 group-hover:text-custom_blue2 group-hover:ease-in-out" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+              </div>
+            </a>
+          </li>
+
+          <li class="group">
+            <a href="#" class="block bg-custom_gray group-hover:bg-gray-200">
+              <div class="flex items-center px-4 py-4 sm:px-6">
+                <div class="min-w-0 flex-1 flex items-center">
+                  <div class="flex-shrink-0 border-2 border-opacity-40 rounded-lg border-custom_blue2">
+                    <img class="h-12 w-20 rounded-md" src="https://i.ytimg.com/vi/qOG2UriJdHo/hq720.jpg" alt="" />
+                  </div>
+                  <div class="min-w-0 flex-1 px-4 md:gap-4">
+                    <div>
+                      <p class="text-sm font-medium text-custom_turquoise truncate">Weird Al" Yankovic - Party In The CIA (Parody of "Party In The U.S.A." by Miley Cyrus)</p>
+                      <p class="mt-2 flex items-center text-sm text-custom_blue2">
+                        <!-- Heroicon name: microphone -->
+                        <svg class="flex-shrink-0 mr-1.5 h-5 w-5 text-custom_blue2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 411.546 411.546" fill="currentColor" aria-hidden="true">
+                          <g>
+                            <path
+                              d="M338.96,28.886C320.333,10.259,295.566,0,269.222,0c-20.138,0-39.495,6.018-55.979,17.403
+                            c-2.912,2.011-4.514,4.396-4.758,7.088c-0.214,2.353,0.698,4.678,2.569,6.549l125.752,125.752c1.581,1.58,3.54,2.416,5.666,2.416
+                            c0.001,0,0.001,0,0.002,0c3.752,0,6.59-2.628,7.677-4.183C377.54,115.808,372.833,62.759,338.96,28.886z"
+                            />
+                            <path
+                              d="M201.24,45.987c-3.003-3.003-6.037-3.633-8.054-3.633c-5.96,0-9.863,5.056-11.265,7.23
+                            c-12.024,18.649-17.412,41.145-15.171,63.345c2.272,22.518,12.354,43.749,28.386,59.781c18.627,18.627,43.395,28.887,69.741,28.887
+                            c0.001,0,0,0,0.002,0c19.573,0,38.481-5.713,54.679-16.521c2.013-1.344,5.544-4.87,6.006-9.559c0.302-3.056-0.804-6.01-3.112-8.319
+                            L201.24,45.987z"
+                            />
+                            <path
+                              d="M228.797,386.546h-50.916V256.248l38.21-29.667c4.579-3.555,6.81-8.2,6.118-12.743c-0.692-4.543-4.203-8.313-9.629-10.344
+                            c-0.174-0.065-17.558-6.688-29.55-18.68c-11.993-11.992-18.617-29.376-18.681-29.546c-2.286-6.109-6.766-9.756-11.985-9.756
+                            c-4.035,0-7.979,2.217-11.104,6.242L48.067,271.789c-6.564,8.454-5.747,21.488,1.821,29.057l17.111,17.111
+                            c3.997,3.996,9.7,6.288,15.649,6.289c0,0,0,0,0,0c4.935,0,9.696-1.587,13.407-4.468l56.826-44.12v110.888h-50.916
+                            c-6.903,0-12.5,5.597-12.5,12.5s5.597,12.5,12.5,12.5h126.831c6.903,0,12.5-5.597,12.5-12.5S235.7,386.546,228.797,386.546z"
+                            />
+                          </g>
+                        </svg>
+                        <span class="truncate">Stoic Finance</span>
+
+                        <!-- Heroicon name: views -->
+                        <svg class="flex-shrink-0 mr-1.5 h-5 w-5 text-custom_blue2 ml-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                        <span class="truncate">1234455</span>
+
+                        <!-- Heroicon name: duration -->
+                        <svg class="flex-shrink-0 mr-1.5 h-5 w-5 text-custom_blue2 ml-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span class="truncate">02:22</span>
+                      </p>
+                    </div>
+                    <div class="hidden">
+                      <div>
+                        <p class="text-sm text-gray-900">
+                          Applied on
+                          <time datetime="2020-01-07">January 7, 2020</time>
+                        </p>
+                        <p class="mt-2 flex items-center text-sm text-gray-500">
+                          <!-- Heroicon name: solid/check-circle -->
+                          <svg class="flex-shrink-0 mr-1.5 h-5 w-5 text-green-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                          </svg>
+                          Completed phone screening
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <!-- Heroicon name: solid/chevron-right -->
+                  <svg class="h-7 w-7 text-gray-400 group-hover:rotate-90 group-hover:transition group-hover:duration-200 group-hover:text-custom_blue2 group-hover:ease-in-out" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+              </div>
+            </a>
+          </li>
+        </ul>
+        <!-- end 3 pages of ppls -->
+      </div>
+    </div>
+  </body>
+</html>
+
+
+
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+        background-color: #334257;
+      }
+
+
+
+      const colors = require('tailwindcss/colors')
+
+      module.exports = {
+        mode: 'jit',
+        theme: {
+          extend: {
+            colors: {
+              sky: colors.sky,
+              cyan: colors.cyan,
+              custom_blue: '#242f3f',
+              custom_blue2: '#476072',
+              custom_turquoise: '#548CA8',
+              custom_gray: '#EEEEEE',
+            },
+          },
+        },
+        variants: {},
+        plugins: [],
+      }
+      
