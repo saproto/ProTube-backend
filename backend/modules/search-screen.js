@@ -58,9 +58,7 @@ client.use((socket, next) => {
   console.log("[CLIENT] User connected succesfully!");
 
   //update session on client
-  socket.emit("session", {
-    sessionID: socket.sessionID,
-  });
+  socket.emit("session", socket.sessionID);
 
   socket.on('disconnect', () => {
     console.log(`[SERVER] Disconnected socket: ${socket.id}`)
