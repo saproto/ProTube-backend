@@ -3,13 +3,15 @@ const crypto = require("crypto");
 const { app } = require('electron');
 const client = io.of('/search-screen')
 const { InMemorySessionStore } = require("./sessionStore");
+const { callbackify } = require('util');
 const sessionStore = new InMemorySessionStore();
+const youtube = require('../utils/yt');
 
-const expireSession = 10; //time to expire the session (seconds)
+const expireSession = 300; //time to expire the session (seconds)
 let authToken = Math.floor(1000 + Math.random() * 9000);
 console.log(`[SERVER] New auth token: ${authToken}`);
 
-setInterval(regenerateAuthToken, 10000);
+setInterval(regenerateAuthToken, 300*1000);
 
 function regenerateAuthToken() {
   authToken = Math.floor(1000 + Math.random() * 9000);
@@ -62,7 +64,13 @@ client.use((socket, next) => {
 
   socket.on('disconnect', () => {
     console.log(`[SERVER] Disconnected socket: ${socket.id}`)
-  })
+  });
+
+  socket.on('retrieveVideos', async (search_string, callback) => {
+    let videos = await youtube.search(search_string);
+    callback(videos);
+    console.log('[SERVER] Returned list of music to client');
+  });
 });
 
 function validateClient(socketHandshakeToken){
