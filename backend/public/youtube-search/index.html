@@ -34,7 +34,7 @@
               <div class="w-full sm:max-w-xs">
                 <input type="text" id="search-string" class="text-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full h-10 border-gray-300 rounded-md pl-3" placeholder="Title, author etc of any song" />
               </div>
-              <button onclick="fetchVideos()" class="mt-3 w-full inline-flex items-center justify-center px-4 py-2 border border-transparent shadow-sm font-medium rounded-md text-white bg-custom_blue2 bg-red-800 hover:bg-opacity-70 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+              <button type="button" onclick="fetchVideos()" class="mt-3 w-full inline-flex items-center justify-center px-4 py-2 border border-transparent shadow-sm font-medium rounded-md text-white bg-custom_blue2 bg-red-800 hover:bg-opacity-70 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
                 <svg class="w-5 h-5 mr-2" id="searchIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                 </svg>
@@ -102,10 +102,10 @@
           <div class="text-xs text-gray-400 pb-4">Enter the PIN on the protube screen</div>
           <div class="mx-auto">
             <form id="form" class="text-center pb-2 mx-auto">
-              <input class="w-10 h-10 text-center text-xl border-2 border-blue-500" style="-moz-appearance:textfield" type="number" pattern="[0-9]*" inputmode="numeric" min="0" max="9" id="loginInput" size="1" />
-              <input class="w-10 h-10 text-center text-xl mx-2 border-2 border-blue-500" style="-moz-appearance:textfield" type="number" pattern="[0-9]*" inputmode="numeric" min="0" max="9" id="loginInput" maxlength="1" />
-              <input class="w-10 h-10 text-center text-xl mr-2 border-2 border-blue-500" style="-moz-appearance:textfield" type="number" pattern="[0-9]*" inputmode="numeric" min="0" max="9" id="loginInput" maxlength="1" />
-              <input class="w-10 h-10 text-center text-xl border-2 border-blue-500" style="-moz-appearance:textfield" type="number" pattern="[0-9]*" inputmode="numeric" min="0" max="9" id="loginInput" maxlength="1" />
+              <input class="w-10 h-10 text-center text-xl border-2 border-blue-500" style="appearance:textfield" type="number" pattern="[0-9]*" inputmode="numeric" min="0" max="9" id="loginInput" size="1" />
+              <input class="w-10 h-10 text-center text-xl mx-2 border-2 border-blue-500" style="appearance:textfield" type="number" pattern="[0-9]*" inputmode="numeric" min="0" max="9" id="loginInput" maxlength="1" />
+              <input class="w-10 h-10 text-center text-xl mr-2 border-2 border-blue-500" style="appearance:textfield" type="number" pattern="[0-9]*" inputmode="numeric" min="0" max="9" id="loginInput" maxlength="1" />
+              <input class="w-10 h-10 text-center text-xl border-2 border-blue-500" style="appearance:textfield" type="number" pattern="[0-9]*" inputmode="numeric" min="0" max="9" id="loginInput" maxlength="1" />
             </form>
             <div id="errorDiv" class=" text-red-500 flex hidden">
               <svg xmlns="http://www.w3.org/2000/svg" class=" h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

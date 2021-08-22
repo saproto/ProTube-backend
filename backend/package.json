@@ -3,6 +3,9 @@
     "version": "0.0.1",
     "description": "Dummy server of herbert for petra",
     "main": "app.js",
+    "scripts": {
+        "compile-css": "npx tailwindcss -o ./public/youtube-search/tailwind.css -c ./tailwind.config.js -i ./public/youtube-search/style.css "
+    },
     "dependencies": {
         "colors": "^1.4.0",
         "crypto": "^1.0.1",
