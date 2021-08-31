@@ -16,7 +16,7 @@ const socket = io(serverUrl, {
   autoConnect: true,
 });
 
-
+//called when page has loaded (for initial connection attempt on an id in storage)
 function windowLoaded() {
   // codeBlock = document.getElementById("code-block");
   // code = document.getElementById("code");
@@ -30,12 +30,14 @@ function windowLoaded() {
   document.getElementById("errorDiv").classList.add("hidden");
 }
 
+//pincode input managed
 inputs.forEach((input, key) => {
   if (key !== 0) {
     input.addEventListener("click", function () {
       inputs[0].focus();
     });
   }
+
   input.addEventListener("keyup", function (evt) {
     if (input.textLength > 1) {
       ;
@@ -55,18 +57,19 @@ inputs.forEach((input, key) => {
     }
     else if (input.value) {
       if (key === 3) {
-        // Last one tadaa
+        // Last one tadaa, connect to the socket
         userCode = [...inputs].map((input) => input.value).join("");
         connectSocket();
         //codeBlock.classList.remove("hidden");
         //code.innerText = userCode;
-      } else {
+      } else {  //go to next field
         inputs[key + 1].focus();
       }
     }
   });
 });
 
+//reset various things such as video resolts, the form 
 function reset() {
   form.reset();
   resetResults();
@@ -76,6 +79,7 @@ function reset() {
   //code.innerText = "";
 };
 
+//reset the video list to the default search icon
 function resetResults(){
   results.innerHTML= `<li class="group">
   <a href="#" class="block bg-custom_gray group-hover:bg-gray-200">
@@ -91,6 +95,7 @@ function resetResults(){
 </li>`;
 }
 
+//retrieve videos from server and display them
 function fetchVideos() {
   const searchIcon = document.getElementById("searchIcon");
   const search_string = document.getElementById("search-string");
@@ -194,12 +199,14 @@ function fetchVideos() {
   });
 }
 
+//connect to the server
 function connectSocket() {
   socket.auth.token = userCode;
   socket.connect();
   inputs[0].focus();
   reset();
 };
+//called when the connection was lost for some reason
 socket.on("disconnect", (reason) => {
   if (reason === "io server disconnect") {
     toggleModal(true, "Please reconnect to the sceen");
@@ -208,6 +215,7 @@ socket.on("disconnect", (reason) => {
   }
 });
 
+//called on socket connection error
 socket.on("connect_error", (err) => {
   if (err == "Error: Not authorized") {
     toggleModal(true, "Invalid PIN");
@@ -225,6 +233,7 @@ socket.on("session", sessionID => {
   toggleModal(false);
 });
 
+// toggle the modal and or display an error (true=visible)
 function toggleModal(visible, error) {
   const errorField = document.getElementById("errorField");
   const errorDiv = document.getElementById("errorDiv");

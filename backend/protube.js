@@ -29,7 +29,12 @@ server.on('listening', () => logger.serverInfo(`Listening on port ${port}`));
 
 //Create a global Socket.io instance for all modules to use
 const {Server} = require('socket.io');
-global.io = new Server(server);
+global.io = new Server(server, {
+    cors: {
+        origin: "http://localhost:8080",
+        //methods: ["GET", "POST"]
+    }
+});
 
 //Create a global EventEmitter for all modules to communicate with each other
 const {EventEmitter} = require('events');
@@ -41,7 +46,7 @@ const remote = require('./modules/remote');
 const adminRemote = require('./modules/admin-remote');
 const queue = require('./modules/queue-manager');
 const playback = require('./modules/playback-manager');
-const search_screen = require('./modules/search-screen')
+const search_screen = require('./modules/remote')
 
 exports.getCurrentVideo = queue.getCurrent;
 exports.getStatus = playback.getStatus;

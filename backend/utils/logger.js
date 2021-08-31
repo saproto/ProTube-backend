@@ -3,7 +3,8 @@ require('colors');
 let prefix = {
     server: '[SERVER] '.yellow,
     screen: '[SCREEN] '.magenta,
-    youtube: '[YOUTUBE] '.red
+    youtube: '[YOUTUBE] '.red,
+    client: '[CLIENT] '.blue
 }
 
 exports.serverInfo = message => {
@@ -20,4 +21,8 @@ exports.screenInfo = message => {
 
 exports.youtubeInfo = message => {
     console.log(prefix.youtube + message);
+}
+
+exports.clientInfo = message => {
+    console.log(prefix.client + message);
 }
