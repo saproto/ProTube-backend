@@ -4,8 +4,8 @@
     <div class="flex-1 flex flex-col px-8 pt-8 pb-4">
       <!-- ToDo: bij image per breakpoint hoogte instellen -->
       <img class="w-full h-48 object-cover flex-shrink-0 mx-auto rounded-md drop-shadow-lg" :src="result.thumbnail" alt="">
-      <h3 class="mt-4 font-bold text-gray-900 text-md font-medium truncate">{{ result.author.name }}</h3>
-      <h3 class="text-gray-700 text-sm font-medium truncate">{{ result.title }}</h3>
+      <h3 class="mt-4 font-bold text-gray-900 text-md font-medium">{{ result.title }}</h3>
+      <h3 class="text-gray-700 text-sm font-medium truncate">{{ result.author.name }}</h3>
       <div class=" mt-1 flex ">
         <div class="flex flex-1 justify-end">
           <svg class="flex-shrink-0 mr-1.5 h-5 w-5 text-custom_blue2 ml-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
