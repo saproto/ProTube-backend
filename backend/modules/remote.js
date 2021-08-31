@@ -1,12 +1,10 @@
-const express = require('express');
 const crypto = require("crypto");
-const { app } = require('electron');
 const client = io.of('/search-screen')
 const { InMemorySessionStore } = require("./sessionStore");
-const { callbackify } = require('util');
 const sessionStore = new InMemorySessionStore();
 const youtube = require('../utils/yt');
 const logger = require('../utils/logger');
+const queue = require('./queue-manager');
 
 const expireSession = 300; //time to expire the session (seconds)
 let authToken;
@@ -68,6 +66,12 @@ client.use((socket, next) => {
     let videos = await youtube.search(search_string);
     callback(videos);
     logger.youtubeInfo('Returned list of music to client (remote)');
+  });
+
+  socket.on('addToQueue', (video, callback) => {
+    const added = queue.add(video);
+    callback(added);
+    logger.queueInfo(`Added "${video.title}" to queue`);
   });
 });
 
