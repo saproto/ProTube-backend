@@ -1,0 +1,121 @@
+//main eventbus for entire vue programm
+import mitt from "mitt";
+export const eventBus = mitt();
+
+const io = window.io = require('socket.io-client');
+var socket;
+let silentConnect = false;
+
+export { initializeSocket };
+
+function resetSocket(pincode){
+    const serverUrl = `${process.env.VUE_APP_SOCKET_ADDRESS}/search-screen`;
+    let localSessionID = localStorage.getItem("sessionID");
+    socket = new io(serverUrl, {
+        auth: {
+            token: pincode, //socket handshake token
+            sessionID: localSessionID
+        },
+        timeout: 1*1000,
+        forceNew: true,
+        reconnection: false,
+        autoConnect: false,
+    });
+    if(pincode || localSessionID){
+        connectSocket(socket);
+    } else{
+        silentConnect = false;
+    }
+    return;
+}
+
+function connectSocket(_socket){
+    _socket.connect();
+
+    eventBus.on('fetchVideos', (search_string) => {
+        if(search_string == '') return false;
+        _socket.emit("retrieveVideos", search_string, (response) => {
+            if (response == "Could not find any videos") {
+                return;
+            } else {
+                eventBus.emit('displayVideos', response);
+            }
+        });
+    });
+
+    eventBus.on('addVideoToQueue', (video) =>{
+        if(video == '' ) return false;
+        _socket.emit('addVideoToQueue', video, (response) => {
+            let callbackMessage;
+            let success;
+            switch (response) {
+                case "Added successfully":
+                    success = 1;
+                    callbackMessage = "Added successfully";
+                    break;
+                case "Video already at playlist!":
+                    success = 2;
+                    callbackMessage = "Video already at playlist!";
+                    break;
+                default:
+                    success = 3;
+                    callbackMessage = "Unknown fault";
+                    break;
+            }
+            eventBus.emit('addVideoToQueue-callback', {
+                success: success,
+                message: callbackMessage,
+                videoId: video.videoId
+            });
+        });
+    });
+
+    _socket.on("session", sessionID => {
+        localStorage.setItem("sessionID", sessionID);
+
+    });
+
+    _socket.on("disconnect", () => {
+        socket.disconnect();
+        socket.removeAllListeners();
+        eventBus.emit('toggleLoginModalVisible', true);
+    });
+
+    _socket.on("connect_error", (err) => {
+        if(!silentConnect){
+            if (err == "Error: Not authorized") {
+                eventBus.emit('pinEntered-callback', {
+                    success: false,
+                    reason: "PIN invalid"
+                });
+            } else {
+                eventBus.emit('pinEntered-callback', {
+                    success: false,
+                    reason: "Unknown error"
+                });
+            }
+        } else{
+            silentConnect = false;
+        }
+    });
+
+    _socket.on('connect', () => {
+        eventBus.emit('pinEntered-callback', {
+            success: true,
+            reason: ""
+        });
+        setTimeout(function(){ eventBus.emit('toggleLoginModalVisible', false) }, 1000);
+    });
+}
+
+function initializeSocket(){
+    resetSocket();
+    silentConnect = true;
+}
+
+eventBus.on('pinEntered', (pincode) =>{
+    if(pincode != ''){
+        silentConnect = false;
+        resetSocket(pincode);
+    }
+});

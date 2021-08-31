@@ -31,7 +31,7 @@ server.on('listening', () => logger.serverInfo(`Listening on port ${port}`));
 const {Server} = require('socket.io');
 global.io = new Server(server, {
     cors: {
-        origin: "http://localhost:8080",
+        origin: "http://localhost:3000",
         //methods: ["GET", "POST"]
     }
 });

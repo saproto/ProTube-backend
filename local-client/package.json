@@ -1,7 +1,7 @@
 {
-    "name": "Petra-renewed",
+    "name": "local-client",
     "version": "0.0.1",
-    "description": "Renewed version of petra, used by protube and herbert",
+    "description": "Frontend part of protube (this is the app that has to display the screen)",
     "main": "app.js",
     "dependencies": {
         "dotenv": "^10.0.0",

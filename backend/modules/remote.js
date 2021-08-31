@@ -37,7 +37,7 @@ client.use((socket, next) => {
       //console.log(`[CLIENT] Session expired`);
     }
   }
-  //console.log(`[CLIENT] Session invalid, authing..`);
+  console.log(`[CLIENT] Session invalid, authing.. + ${socket.handshake.auth.token}`);
   if(validateClient(socket.handshake.auth.token)){
     //validated client, generating sessionID
     const newSessionID = crypto.randomBytes(16).toString("hex");
@@ -68,9 +68,14 @@ client.use((socket, next) => {
     logger.youtubeInfo('Returned list of music to client (remote)');
   });
 
-  socket.on('addToQueue', (video, callback) => {
-    const added = queue.add(video);
-    callback(added);
+  socket.on('addVideoToQueue', (video, callback) => {
+    //const added = queue.add(video);
+    const added = [
+      "Added successfully",
+      "Video already at playlist!",
+      "Whoopsie"
+    ];
+    callback(added[Math.floor(Math.random() * 3)]);
     logger.queueInfo(`Added "${video.title}" to queue`);
   });
 });
