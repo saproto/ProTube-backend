@@ -100,11 +100,11 @@ function addVideoToQueue(){
   loading.value = true;
   eventBus.emit('addVideoToQueue', _result.result);
 }
-eventBus.on('addVideoToQueue-callback', (callback)=> {
+eventBus.on('addVideoToQueue-callback', response => {
   loading.value = false;
-  if(callback.videoId == _result.result.videoId){
-    videoStatusCode.value = callback.success;
-    videoStatusMessage.value = callback.message;
+  if(response.videoId == _result.result.videoId){
+    videoStatusCode.value = response.result ? 1 : 2;
+    videoStatusMessage.value = response.message;
   }
 });
 

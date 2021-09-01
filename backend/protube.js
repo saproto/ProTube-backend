@@ -52,9 +52,8 @@ exports.getCurrentVideo = queue.getCurrent;
 exports.getStatus = playback.getStatus;
 
 (async() => {
-    let videos = await youtube.search('party in the usa');
+    let videos = await youtube.search('all over in 10 seconds');
     //console.log(videos);
     queue.add(videos[0]);
-    queue.moveToNext();
 })();
 

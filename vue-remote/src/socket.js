@@ -35,35 +35,21 @@ function connectSocket(_socket){
     eventBus.on('fetchVideos', (search_string) => {
         if(search_string == '') return false;
         _socket.emit("retrieveVideos", search_string, (response) => {
-            if (response == "Could not find any videos") {
-                return;
-            } else {
-                eventBus.emit('displayVideos', response);
-            }
+            if(!response) return;
+            eventBus.emit('displayVideos', response);
         });
     });
 
     eventBus.on('addVideoToQueue', (video) =>{
         if(video == '' ) return false;
-        _socket.emit('addVideoToQueue', video, (response) => {
-            let callbackMessage;
-            let success;
-            switch (response) {
-                case "Added successfully":
-                    success = 1;
-                    callbackMessage = "Added successfully";
-                    break;
-                case "Video already at playlist!":
-                    success = 2;
-                    callbackMessage = "Video already at playlist!";
-                    break;
-                default:
-                    success = 3;
-                    callbackMessage = "Unknown fault";
-                    break;
+        _socket.emit('addVideoToQueue', video, success => {
+            if(success) {
+                var callbackMessage = "Added successfully";
+            }else{
+                callbackMessage = "Video already at playlist!";
             }
             eventBus.emit('addVideoToQueue-callback', {
-                success: success,
+                result: success,
                 message: callbackMessage,
                 videoId: video.videoId
             });

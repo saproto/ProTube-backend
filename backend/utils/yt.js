@@ -8,6 +8,5 @@ exports.search = async(query) => {
 
     const {videos} = await youtubeSearch(query);
     if(!videos) return new Error('Could not find any videos');
-
     return videos.filter(video => video.seconds <= (parseInt(process.env.YOUTUBE_MAX_DURATION) || 600));
 }

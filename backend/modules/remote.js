@@ -63,19 +63,14 @@ client.use((socket, next) => {
   });
 
   socket.on('retrieveVideos', async (search_string, callback) => {
-    let videos = await youtube.search(search_string);
+    const videos = await youtube.search(search_string);
     callback(videos);
     logger.youtubeInfo('Returned list of music to client (remote)');
   });
 
   socket.on('addVideoToQueue', (video, callback) => {
-    //const added = queue.add(video);
-    const added = [
-      "Added successfully",
-      "Video already at playlist!",
-      "Whoopsie"
-    ];
-    callback(added[Math.floor(Math.random() * 3)]);
+    const added = queue.add(video);
+    callback(added);
     logger.queueInfo(`Added "${video.title}" to queue`);
   });
 });

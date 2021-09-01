@@ -2,9 +2,9 @@ const protube = require('../protube');
 
 const logger = require('../utils/logger');
 
-const screen = io.of('/screen');
+const screens = io.of('/screen');
 
-screen.on('connection', socket => {
+screens.on('connection', socket => {
     logger.screenInfo(`Screen connected from ${socket.handshake.address} with socket id ${socket.id}`);
 
     socket.on('request-player-status', () => {
@@ -16,9 +16,16 @@ screen.on('connection', socket => {
 });
 
 communicator.on('new-timestamp', timestamp => {
-    screen.emit('new-timestamp', timestamp);
+    screens.emit('new-timestamp', timestamp);
 });
 
-communicator.on('queueUpdate', () => {
+communicator.on('new-video', video => {
+    screens.emit('player-status', {
+        status: protube.getStatus(),
+        video: protube.getCurrentVideo()
+    });
+});
+
+communicator.on('queue-update', () => {
     
 });

@@ -13,6 +13,7 @@
               </div>
             </div>
           </li>
+          <Result v-for="(result, index) in results" :result="result" :index="index" :key="index"></Result>
         </ul>
     </div>
 </template>

@@ -1,4 +1,5 @@
 const timeFormatter = require('../utils/time-formatter');
+const _ = require('lodash');
 
 let queue = [];
 let current = {};
@@ -10,6 +11,9 @@ exports.add = video => {
 
     //Video is not already in the queue, so add it
     queue.push(video);
+    if(_.isEmpty(current)) {
+        this.moveToNext();
+    }
     return true;
 }
 
