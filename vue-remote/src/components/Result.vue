@@ -129,22 +129,5 @@ const enter = ((el, done) => {
 </script>
 
 <style>
-.icon-enter-from {
-    opacity: 0;
-}
-.icon-enter-to {
-    opacity: 1;
-}
-.icon-enter-active {
-    transition: all 1s ease;
-}
-.icon-leave-from {
-    opacity: 1;
-}
-.icon-leave-to {
-    opacity: 0;
-}
-.icon-leave-active {
-    transition: all 1s ease;
-}
+
 </style>

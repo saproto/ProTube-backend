@@ -2,10 +2,10 @@
     <div>
         <div class=" xl:max-w-screen-2xl  mx-auto md:pt-8 sm:pt-0">
             <transition name="search" mode="out-in" appear>
-                <SearchDiv />
+                <SearchWrapper />
             </transition>
             <transition name="results" mode="out-in" appear>
-                <ResultsDiv />
+                <ResultsWrapper />
             </transition>
         </div>
         <transition name="modal" appear >
@@ -18,8 +18,8 @@
 </template>
 
 <script setup>
-import SearchDiv from './components/SearchDiv.vue'
-import ResultsDiv from './components/ResultsDiv.vue'
+import SearchWrapper from './components/SearchWrapper.vue'
+import ResultsWrapper from './components/ResultsWrapper.vue'
 import LoginModal from './components/LoginModal.vue'
 import LoadModal from './components/LoadModal.vue'
 import { eventBus, initializeSocket } from './socket'

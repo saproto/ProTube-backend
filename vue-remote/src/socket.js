@@ -61,7 +61,11 @@ function connectSocket(_socket){
 
     });
 
-    _socket.on("disconnect", () => {
+    _socket.on("disconnect", (reason) => {
+        console.log(reason);
+        if(reason == "io server disconnect") {
+            localStorage.removeItem('sessionID');
+        }
         socket.disconnect();
         socket.removeAllListeners();
         eventBus.emit('toggleLoginModalVisible', true);

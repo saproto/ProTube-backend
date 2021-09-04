@@ -6,20 +6,15 @@ const youtube = require('../utils/yt');
 const logger = require('../utils/logger');
 const queue = require('./queue-manager');
 
-const expireSession = 300; //time to expire the session (seconds)
+const expireSession = process.env.SCREENCODE_DURATION || 3600; //time to expire the session (seconds)
 let authToken;
-regenerateAuthToken();
 
-setInterval(regenerateAuthToken, expireSession*1000);
-
-function regenerateAuthToken() {
-  authToken = Math.floor(1000 + Math.random() * 9000);
-  logger.serverInfo(`New auth token: ${authToken}`);
+communicator.on('newScreenCode', (code) => {
+  authToken = code;
   sessionStore.flushAllSessions();
   //disconnect all sockets
   client.disconnectSockets(false);
-}
-
+});
 
 client.use((socket, next) => {
   logger.clientInfo(`Client from ${socket.handshake.address} with id ${socket.id} attempted to connect, validating...`);

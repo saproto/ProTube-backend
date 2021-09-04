@@ -6,6 +6,7 @@ let prefix = {
     youtube: '[YOUTUBE] '.red,
     client: '[CLIENT] '.blue,
     queue: '[QUEUE] '.brightYellow,
+    localClient: '[LOCALCLIENT] '.cyan,
 }
 
 exports.serverInfo = message => {
@@ -30,4 +31,8 @@ exports.clientInfo = message => {
 
 exports.queueInfo = message => {
     console.log(prefix.queue + message.yellow);
+}
+
+exports.localClientInfo = message => {
+    console.log(prefix.localClient + message);
 }

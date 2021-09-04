@@ -2,7 +2,7 @@ const socket = io('/screen');
 
 let player;
 let current;
-function onYouTubePlayerAPIReady() {
+function onYouTubeIframeAPIReady() {
     player = new YT.Player('yt-player', {
         height: '100%',
         width: '100%',
@@ -12,26 +12,30 @@ function onYouTubePlayerAPIReady() {
             showinfo: 0,
             modestbranding: 1,
             iv_load_policy: 3,
+            autoplay: 1,
+            mute: 1,
+            muted: 1,
+            enablejsapi: 1
         },
         events: {
-            onReady: youtubePlayerReady
+            'onReady': youtubePlayerReady,
         }
     });
 }
 
-const youtubePlayerReady = () => {
+const youtubePlayerReady = (event) => {
+    //console.log("ready");
     socket.emit('request-player-status');
-
     socket.on('player-status', data => {
         nowPlaying = data.video;
         try {
             if(current !== nowPlaying.videoId)
             player.loadVideoById(nowPlaying.videoId);
+            player.unMute();
             current = nowPlaying.videoId;
         }catch(e) {
             //We're either not playing anything or the data was sent wrong.
         }
-
         switch(data.status) {
             case 'playing': player.playVideo(); break;
             case 'paused': player.pauseVideo(); break;

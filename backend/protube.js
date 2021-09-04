@@ -46,7 +46,9 @@ const remote = require('./modules/remote');
 const adminRemote = require('./modules/admin-remote');
 const queue = require('./modules/queue-manager');
 const playback = require('./modules/playback-manager');
-const search_screen = require('./modules/remote')
+const local_client = require('./modules/local-client');
+const screencode = require('./modules/screencode');
+
 
 exports.getCurrentVideo = queue.getCurrent;
 exports.getStatus = playback.getStatus;
