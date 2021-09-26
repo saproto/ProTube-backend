@@ -31,7 +31,7 @@ server.on('listening', () => logger.serverInfo(`Listening on port ${port}`));
 const {Server} = require('socket.io');
 global.io = new Server(server, {
     cors: {
-        origin: "http://localhost:3000",
+        origin: "http://localhost:8080",
         //methods: ["GET", "POST"]
     }
 });
@@ -54,8 +54,7 @@ exports.getCurrentVideo = queue.getCurrent;
 exports.getStatus = playback.getStatus;
 
 (async() => {
-    let videos = await youtube.search('all over in 10 seconds');
-    //console.log(videos);
+    let videos = await youtube.search('zLqU_hBTICY'); // proto logo
     queue.add(videos[0]);
 })();
 

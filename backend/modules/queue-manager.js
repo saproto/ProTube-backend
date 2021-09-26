@@ -10,7 +10,7 @@ exports.add = video => {
     if(findDoppelganger(video)) return false;
 
     //Video is not already in the queue, so add it
-    queue.push(video);
+    queue.splice(queue.length/2, 0, video);
     if(_.isEmpty(current)) {
         this.moveToNext();
     }

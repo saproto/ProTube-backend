@@ -25,13 +25,17 @@ function onYouTubeIframeAPIReady() {
 
 const youtubePlayerReady = (event) => {
     //console.log("ready");
+    player.unMute();
     socket.emit('request-player-status');
     socket.on('player-status', data => {
         nowPlaying = data.video;
         try {
             if(current !== nowPlaying.videoId)
             player.loadVideoById(nowPlaying.videoId);
-            player.unMute();
+            player.setPlaybackQuality('highres');
+            setTimeout(() => {
+                player.playVideo();
+            } ,100);
             current = nowPlaying.videoId;
         }catch(e) {
             //We're either not playing anything or the data was sent wrong.

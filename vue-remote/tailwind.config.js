@@ -1,26 +1,34 @@
 const colors = require('tailwindcss/colors')
 
 module.exports = {
-  purge: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
-  mode: 'jit',
-  darkMode: false, // or 'media' or 'class'
+  purge: ['./public/index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
+  //mode: 'jit',
+  darkMode: 'media', // or 'media' or 'class' or false
   theme: {
     extend: {
       colors: {
-        custom_blue: '#242f3f',
-        custom_blue2: '#476072',
-        custom_turquoise: '#548CA8',
-        custom_gray: '#EEEEEE',
+        proto_green: '#83B716',
+        true_gray: colors.trueGray,
+        proto_blue: '#00AAC0',
+        proto_background_gray: {
+          DEFAULT: '#f1f1f1',
+          dark: '#424242'
+        },
+        proto_secondary_gray: {
+          DEFAULT: '#fff',
+          dark: '#303030'
+        },
+        search_button_border: '#007d8d',
+        search_button_background: {
+          light: '#e9ecef',
+          DEFAULT: '#00889a',
+          dark: '#424242'
+        },
       },
     },
   },
   variants: {
     extend: {
-      animation: ['group-hover'],
-      rotate: ['hover', 'group-hover'],
-      borderWidth: ['responsive'],
-      transitionTimingFunction: ['group-hover'],
-      transitionDelay: ['group-hover']
     }
   },
   plugins: [

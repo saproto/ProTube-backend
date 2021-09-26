@@ -14,8 +14,8 @@ exports.playVideo = video => {
             });
         }
         else {
-            communicator.emit('video-ended');
             this.stopVideo();
+            communicator.emit('video-ended');
         }
     }, 1000);
     status = 'playing';

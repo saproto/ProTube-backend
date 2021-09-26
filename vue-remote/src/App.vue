@@ -8,6 +8,7 @@
                 <ResultsWrapper />
             </transition>
         </div>
+        <ToastModal />
         <transition name="modal" appear >
             <LoginModal v-if="loginModalVisible" />
         </transition>
@@ -22,6 +23,7 @@ import SearchWrapper from './components/SearchWrapper.vue'
 import ResultsWrapper from './components/ResultsWrapper.vue'
 import LoginModal from './components/LoginModal.vue'
 import LoadModal from './components/LoadModal.vue'
+import ToastModal from './components/ToastsModal.vue'
 import { eventBus, initializeSocket } from './socket'
 import { onMounted, ref } from 'vue'
 

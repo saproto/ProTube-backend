@@ -5,10 +5,6 @@
     </h1>
     <div class="flex flex-col">
       <div class="hidden mt-3 text-gray-700 space-x-3 inline-flex">
-        <h2 class="font-semibold">expected code:</h2>
-        <span class="">{{ token }}</span>
-      </div>
-      <div class="hidden mt-3 text-gray-700 space-x-3 inline-flex">
         <h2 class="font-semibold">returned code:</h2>
         <span class="">{{ passkey }}</span>
       </div>
@@ -30,11 +26,12 @@
               w-12
               h-16
               rounded-md
-              bg-gray-200
+              dark:bg-gray-50
               shadow-md
+              bg-gray-200
               border-none
               text-center
-              text-gray-500
+              text-gray-800
               font-bold
               text-4xl
               bg-opacity-50
@@ -101,7 +98,6 @@ onMounted(() => {
   focusOnFirstInput();
 });
  
-const token = ref(1234);
 const digitsFromInput = reactive({
   0: null,
   1: null,
