@@ -2,7 +2,7 @@
     "name": "backend",
     "version": "0.0.1",
     "description": "Backend part of protube",
-    "main": "app.js",
+    "main": "protube.js",
     "dependencies": {
         "colors": "^1.4.0",
         "cors": "^2.8.5",
