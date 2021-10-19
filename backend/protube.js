@@ -29,7 +29,12 @@ server.on('listening', () => logger.serverInfo(`Listening on port ${port}`));
 
 //Create a global Socket.io instance for all modules to use
 const {Server} = require('socket.io');
-global.io = new Server(server);
+global.io = new Server(server, {
+    cors: {
+        origin: "http://localhost:8080",
+        //methods: ["GET", "POST"]
+    }
+});
 
 //Create a global EventEmitter for all modules to communicate with each other
 const {EventEmitter} = require('events');
@@ -41,13 +46,15 @@ const remote = require('./modules/remote');
 const adminRemote = require('./modules/admin-remote');
 const queue = require('./modules/queue-manager');
 const playback = require('./modules/playback-manager');
+const local_client = require('./modules/local-client');
+const screencode = require('./modules/screencode');
+
 
 exports.getCurrentVideo = queue.getCurrent;
 exports.getStatus = playback.getStatus;
 
 (async() => {
-    let videos = await youtube.search('party in the usa');
+    let videos = await youtube.search('zLqU_hBTICY'); // proto logo
     queue.add(videos[0]);
-    queue.moveToNext();
 })();
 
