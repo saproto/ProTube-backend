@@ -1,16 +1,26 @@
-# ProTube
-The ProTube project of SaProto contains of three sub-projects;
-* Local Client
-* Backend
-* Vue-remote
+# Backend
+This is the backend application for ProTube of SaProto.
 
-There is also a folder named soundlibrary which is present for soundboard development and contains a few mp3 files
+## Installation
+Open up a terminal and run 
+```sh
+npm install
+```
+To build the frontend
+```sh
+npm run build
+```
+To start he project
+```sh
+npm run start
+```
+This should start the project on localhost:3000. The screen can be found at /protube/screen and the remote at /protube/remote.
 
-## Local Client
-This is an electron application that connects to the backend through a socket connection to display the remote authentication code and to play sounds from the soundboard.
+### CORS errors
+In the eveent of cors errors this can be modified at protube.js line 34
 
-## Backend
-This is the brains of the entire protube application which manages the playlist, generates codes, is the endpoint of the remote. etc
-
-## Vue-remote
-This is a vue 3 project of the remote with tailwindcss for its styling
+### Dotenv
+###### CLIENT_IDENTIFIER
+Idontification code for the local client (the electhon application)
+###### YOUTUBE_MAX_DURATION
+Limit for the duration of the youtube videos that can be added to the queue

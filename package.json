@@ -3,6 +3,11 @@
     "version": "0.0.1",
     "description": "Backend part of protube",
     "main": "protube.js",
+    "scripts": {
+        "postinstall": "cd vue-remote && npm install",
+        "build": "cd vue-remote && npm run build",
+        "start": "node protube.js"
+    },
     "dependencies": {
         "colors": "^1.4.0",
         "cors": "^2.8.5",

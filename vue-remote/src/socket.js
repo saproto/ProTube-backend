@@ -9,7 +9,7 @@ let silentConnect = false;
 export { initializeSocket };
 
 function resetSocket(pincode){
-    const serverUrl = `${process.env.VUE_APP_SOCKET_ADDRESS}/search-screen`;
+    const serverUrl = `/search-screen`;
     let localSessionID = localStorage.getItem("sessionID");
     socket = new io(serverUrl, {
         auth: {
