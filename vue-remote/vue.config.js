@@ -1,4 +1,4 @@
 module.exports = {
   publicPath: '/remote',
-  outputDir: '../backend/public'
+  outputDir: '../public/remote'
 }
