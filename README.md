@@ -17,10 +17,13 @@ npm run start
 This should start the project on localhost:3000. The screen can be found at /protube/screen and the remote at /protube/remote.
 
 ### CORS errors
-In the eveent of cors errors this can be modified at protube.js line 34
+In the event of cors errors this can be modified at protube.js line 34
 
 ### Dotenv
 ###### CLIENT_IDENTIFIER
-Idontification code for the local client (the electhon application)
+Identification code for the local client (the electron application)
 ###### YOUTUBE_MAX_DURATION
 Limit for the duration of the youtube videos that can be added to the queue
+###### API_KEY
+Key used to check the api authentication with, bearer token authorisation is used
+
