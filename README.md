@@ -10,7 +10,7 @@ To build the frontend
 ```sh
 npm run build
 ```
-To start he project
+To start the project
 ```sh
 npm run start
 ```
