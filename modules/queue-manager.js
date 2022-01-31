@@ -41,6 +41,7 @@ exports.moveToNext = () => {
 exports.removeFirst = () => queue.shift();
 exports.getCurrent = () => current;
 exports.getNext = () => queue[0];
+exports.getQueue = () => queue;
 
 //Calculate the total duration of the playlist and return it
 exports.getTotalDuration = () => {

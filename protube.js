@@ -52,6 +52,8 @@ const screencode = require('./modules/screencode');
 
 exports.getCurrentVideo = queue.getCurrent;
 exports.getStatus = playback.getStatus;
+exports.getQueue = queue.getQueue;
+exports.getQueueDuration = queue.getTotalDuration;
 
 (async() => {
     let videos = await youtube.search('zLqU_hBTICY'); // proto logo
