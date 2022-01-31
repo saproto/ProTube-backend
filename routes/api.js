@@ -7,7 +7,7 @@ const admin_remote = require('../modules/admin-remote')
 //api authentication with bearer token -everything below is authorized
 this.apiRouter.use(bearerToken());
 this.apiRouter.use(function (req, res, next) {
-    if (req.token == process.env.API_KEY) next();
+    if (req.token === process.env.API_KEY) next();
     res.status(401).json({
         success: false,
         message: 'Not Authorized for this API'
