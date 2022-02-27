@@ -9,8 +9,8 @@
 </template>
 
 <script setup>
-import Toast from './Toast.vue'
-import { eventBus } from '../socket'
+import Toast from '../Toast.vue'
+import { eventBus } from '../../eventbus'
 import { ref } from 'vue'
 
 const statusUpdates = ref([]);

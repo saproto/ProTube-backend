@@ -5,6 +5,7 @@ let prefix = {
     screen: '[SCREEN] '.magenta,
     youtube: '[YOUTUBE] '.red,
     client: '[CLIENT] '.blue,
+    admin: '[ADMIN] '.gray,
     queue: '[QUEUE] '.brightYellow,
     localClient: '[LOCALCLIENT] '.cyan,
 }
@@ -27,6 +28,10 @@ exports.youtubeInfo = message => {
 
 exports.clientInfo = message => {
     console.log(prefix.client + message);
+}
+
+exports.adminInfo = message => {
+    console.log(prefix.admin + message);
 }
 
 exports.queueInfo = message => {

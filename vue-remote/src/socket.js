@@ -1,15 +1,12 @@
-//main eventbus for entire vue programm
-import mitt from "mitt";
-export const eventBus = mitt();
-
 const io = window.io = require('socket.io-client');
 var socket;
 let silentConnect = false;
+import { eventBus } from './eventbus';
 
 export { initializeSocket };
 
 function resetSocket(pincode){
-    const serverUrl = `/search-screen`;
+    const serverUrl = process.env.VUE_APP_SOCKET_ADDRESS;
     let localSessionID = localStorage.getItem("sessionID");
     socket = new io(serverUrl, {
         auth: {

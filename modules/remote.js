@@ -1,5 +1,5 @@
 const crypto = require("crypto");
-const client = io.of('/search-screen')
+const client = io.of('/socket/remote')
 const { InMemorySessionStore } = require("./sessionStore");
 const sessionStore = new InMemorySessionStore();
 const youtube = require('../utils/yt');

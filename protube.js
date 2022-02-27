@@ -14,7 +14,7 @@ const port = process.env.PORT || 3000;
 const https = process.env.HTTPS || false;
 
 app.use('/protube/', express.static(path.join(__dirname, 'public')));
-app.use('/api/', apiRouter);
+// app.use('/api/', apiRouter);
 
 if(https) {
     //TODO: HTTPS IMPLEMENTATION
@@ -32,7 +32,7 @@ const {Server} = require('socket.io');
 global.io = new Server(server, {
     cors: {
         origin: "http://localhost:8080",
-        //methods: ["GET", "POST"]
+        // methods: ["GET", "POST"]
     }
 });
 

@@ -16,7 +16,7 @@
 </template>
 
 <script setup>
-import Pincode from './Pincode.vue'
+import Pincode from '../Pincode.vue'
 
 </script>
 

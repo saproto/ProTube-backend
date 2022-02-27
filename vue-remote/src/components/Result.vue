@@ -75,7 +75,7 @@
 
 <script setup>
 import { defineProps, computed, ref } from 'vue';
-import { eventBus } from '../socket'
+import { eventBus } from '../eventbus'
 import gsap from 'gsap'
 
 const _result = defineProps({

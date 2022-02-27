@@ -1,3 +1,4 @@
+/* eslint-disable */
 const socket = io('http://localhost:3000/screen');
 
 let player;
@@ -21,6 +22,12 @@ function onYouTubeIframeAPIReady() {
             'onReady': youtubePlayerReady,
         }
     });
+}
+
+export  { test };
+
+function test(){
+    console.log("Loaded screen script");
 }
 
 const youtubePlayerReady = (event) => {
