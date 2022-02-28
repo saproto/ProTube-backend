@@ -35,7 +35,7 @@ const _video = defineProps({
   video: Object,
 });
 
-console.log(_video);
+// console.log(_video);
 
 // const statusMessage = computed(() => {
 //   switch (_video.value.result) {

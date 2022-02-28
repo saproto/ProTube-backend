@@ -1,4 +1,4 @@
-const socket = io('http://localhost:3000/screen');
+const socket = io('/screen');
 
 let player;
 let current;
@@ -13,8 +13,7 @@ function onYouTubeIframeAPIReady() {
             modestbranding: 1,
             iv_load_policy: 3,
             autoplay: 1,
-            mute: 1,
-            muted: 1,
+            mute: 0,
             enablejsapi: 1
         },
         events: {
@@ -33,9 +32,9 @@ const youtubePlayerReady = (event) => {
             if(current !== nowPlaying.videoId)
             player.loadVideoById(nowPlaying.videoId);
             player.setPlaybackQuality('highres');
-            setTimeout(() => {
-                player.playVideo();
-            } ,100);
+            // setTimeout(() => {
+            //     player.playVideo();
+            // } ,100);
             current = nowPlaying.videoId;
         }catch(e) {
             //We're either not playing anything or the data was sent wrong.

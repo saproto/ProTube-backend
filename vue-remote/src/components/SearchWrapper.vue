@@ -26,7 +26,7 @@
     <div class=" flex-shrink-0 mr-6 my-auto">
         <!--<img class="w-30 h-0 md:h-36 object-cover flex-shrink-0 mx-auto dark:hidden block" src="logo_classic.png" />
         <img class="w-30 h-0 md:h-36 object-cover flex-shrink-0 mx-auto hidden dark:block" src="logo_dark.png" />-->
-        <img class="w-30 h-0 md:h-32 object-cover flex-shrink-0 mx-auto" src="logo_classic.png" />
+        <img class="w-30 h-0 md:h-32 object-cover flex-shrink-0 mx-auto" :src="require('@/assets/logo_classic.png')" />
     </div>
   </HeaderField>
 </template>

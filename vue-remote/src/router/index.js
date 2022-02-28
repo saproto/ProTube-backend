@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Remote from '@/views/Remote.vue'
 import AdminRemote from '@/views/AdminRemote.vue'
 import ProtubeScreen from '@/views/ProtubeScreen.vue'
+import AdminProtubeScreen from '@/views/AdminProtubeScreen.vue'
 
 const routes = [
   {
@@ -16,9 +17,15 @@ const routes = [
   },
   {
     path: '/screen',
-    name: 'Protube Screen',
+    name: 'Screen',
     component: ProtubeScreen
+  },
+  {
+    path: '/screen/admin',
+    name: 'Admin Screen',
+    component: AdminProtubeScreen
   }
+
 ]
 const router = createRouter({
   history: createWebHistory(process.env.VUE_APP_PUBLIC_PATH),

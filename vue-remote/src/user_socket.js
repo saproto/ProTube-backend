@@ -1,11 +1,11 @@
 const io = window.io = require('socket.io-client');
 var socket;
-import { eventBus } from '@/eventbus.js';
+import { eventBus } from './eventbus';
 
-export { connectAdminSocket };
+export { connectUserSocket };
 
-function connectAdminSocket(proto_session){
-    const serverUrl = process.env.VUE_APP_ADMIN_SOCKET_ADDRESS;
+function connectUserSocket(proto_session){
+    const serverUrl = process.env.VUE_APP_USER_SOCKET_ADDRESS;
     socket = new io(serverUrl, {
         auth: {
             token: proto_session, //socket handshake token
@@ -23,7 +23,6 @@ function connectAdminSocket(proto_session){
 
     // connection errors
     socket.on("connect_error", (err) => {
-        console.log(err);
         let error = "Unknown error occurred";
         if (err == "Error: Not authorized") {
             error = "Unauthorized!";
@@ -36,18 +35,5 @@ function connectAdminSocket(proto_session){
     socket.on('connect', () => {
         eventBus.emit('admin-socket-connect-success');
     });
-
-    socket.on('admin-newscreencode', (screencode) => {
-        eventBus.emit('admin-newscreencode', screencode);
-    });
 }
 
-export { getScreenCode }
-async function getScreenCode(){
-    console.log("requested screencode");
-    return new Promise( resolve => {
-        socket.emit('get_screen_code', code => {
-            resolve(code);
-        });
-    });
-}

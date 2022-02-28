@@ -1,4 +1,4 @@
-/* eslint-disable */
+
 const socket = io('http://localhost:3000/screen');
 
 let player;
@@ -9,41 +9,34 @@ function onYouTubeIframeAPIReady() {
         width: '100%',
         videoId: '',
         playerVars: {
-            controls: 0,
-            showinfo: 0,
-            modestbranding: 1,
-            iv_load_policy: 3,
             autoplay: 1,
-            mute: 1,
-            muted: 1,
-            enablejsapi: 1
+            mute: 0,
+            enablejsapi: 1,
+            modestbranding: 1
         },
         events: {
             'onReady': youtubePlayerReady,
         }
     });
 }
-
-export  { test };
-
-function test(){
-    console.log("Loaded screen script");
-}
-
 const youtubePlayerReady = (event) => {
     //console.log("ready");
-    player.unMute();
+    // player.unMute();
     socket.emit('request-player-status');
     socket.on('player-status', data => {
         nowPlaying = data.video;
         try {
             if(current !== nowPlaying.videoId)
             player.loadVideoById(nowPlaying.videoId);
-            player.setPlaybackQuality('highres');
-            setTimeout(() => {
-                player.playVideo();
-            } ,100);
+            player.setPlaybackQuality('tiny');
+            // setTimeout(() => {
+            //     player.playVideo();
+            // } ,100);
+            document.querySelector('.ytp-mute-button').click()
             current = nowPlaying.videoId;
+            // setTimeout(() => {
+            //     document.elementFromPoint(500, 500).click();
+            // }, 4000)
         }catch(e) {
             //We're either not playing anything or the data was sent wrong.
         }

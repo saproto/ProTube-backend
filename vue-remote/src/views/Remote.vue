@@ -11,7 +11,7 @@
             <LoginModal v-if="loginModalVisible" />
         </transition>
         <transition name="modal" appear >
-            <LoadModal opacity=70 v-if="loadModalVisible && !loginModalVisible" />
+            <LoadModal :opacity="70" v-if="loadModalVisible && !loginModalVisible" />
         </transition>
     </div>
 </template>
