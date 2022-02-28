@@ -21,7 +21,6 @@ eventBus.on('addVideoToQueue-callback', response => {
         for( var i = 0; i < statusUpdates.value.length; i++){ 
             if ( statusUpdates.value[i].videoId === response.videoId) statusUpdates.value.splice(i, 1); 
         }
-        console.log(statusUpdates.value);
     }, 2500);
 });
 </script>

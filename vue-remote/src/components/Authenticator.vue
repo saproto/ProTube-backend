@@ -37,7 +37,6 @@ checkForSessionCookie();
 
 // check if the session contains a proto_session cookie, if so, attempt to connect
 function checkForSessionCookie(){
-    console.log(props.admin);
     var cookies = document.cookie.split(';');
     for (var i = 0; i < cookies.length; i++){
         let cookie = cookies[i].split('=');
@@ -60,6 +59,14 @@ eventBus.on('admin-socket-connect-error', (reason) => {
 
 eventBus.on('admin-socket-connect-success', () => {
     authModalVisible.value = false;
+});
+
+eventBus.on('user-socket-connect-success', () => {
+    authModalVisible.value = false;
+});
+
+eventBus.on('user-socket-connect-error', (reason) => {
+    errormessage.value = reason.reason;
 });
 
 </script>

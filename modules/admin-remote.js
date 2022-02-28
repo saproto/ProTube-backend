@@ -1,6 +1,7 @@
 const admin = io.of('/socket/admin');
 const logger = require('../utils/logger');
-const screenCode = require('./screencode')
+const screenCode = require('./screencode');
+const userDataFetcher = require('./user');
 
 admin.use((socket, next) => {
   logger.adminInfo(`Admin from ${socket.handshake.address} with id ${socket.id} attempted to connect, validating...`);
@@ -13,6 +14,7 @@ admin.use((socket, next) => {
   return next(new Error("Not authorized"));
   //end middleware
 }).on('connection', socket => {
+  const proto_session_token = socket.handshake.auth.token;
   logger.adminInfo(`Successfully connected - ${socket.id}`);
 
   socket.on('disconnect', () => {
@@ -23,6 +25,11 @@ admin.use((socket, next) => {
     logger.adminInfo(`Requested the screen code: ${socket.id}`);
     callback(screenCode.getScreenCode());
   });
+
+  socket.on('get-user-data', (callback) => {
+    logger.adminInfo(`${socket.id} Requested user data`)
+    callback(userDataFetcher.getUserData(proto_session_token));
+  });
 });
 
 communicator.on('newScreenCode', (screenCode) => {
@@ -31,7 +38,6 @@ communicator.on('newScreenCode', (screenCode) => {
 
 // use this function to authorize an incoming admin request (return a boolean)
 function validateAdmin(proto_session_token){
-  let isAuthorized = true;
-  // let isAuthorized = false;
-  return isAuthorized;
+  // check if the session token is a valid account and then check if that account has admin rights
+  return userDataFetcher.logInUser(proto_session_token) && userDataFetcher.getUserData(proto_session_token).isAdmin;
 }

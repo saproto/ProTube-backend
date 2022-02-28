@@ -122,7 +122,6 @@ eventBus.on('addVideoToQueue-callback', response => {
   loading.value = false;
   if(response.videoId == _result.result.videoId){
     videoStatusCode.value = response.result ? 1 : 2;
-    console.log(videoStatusCode.value);
     videoStatusMessage.value = response.message;
   }
 });

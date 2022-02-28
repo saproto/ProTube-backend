@@ -44,6 +44,7 @@ global.communicator = new EventEmitter();
 const screen = require('./modules/screen');
 const remote = require('./modules/remote');
 const adminRemote = require('./modules/admin-remote');
+const user = require('./modules/user');
 const queue = require('./modules/queue-manager');
 const playback = require('./modules/playback-manager');
 const local_client = require('./modules/local-client');

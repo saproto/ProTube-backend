@@ -27,13 +27,22 @@ function connectUserSocket(proto_session){
         if (err == "Error: Not authorized") {
             error = "Unauthorized!";
         }
-        eventBus.emit('admin-socket-connect-error', {
+        eventBus.emit('user-socket-connect-error', {
             reason: error
         });
     });
 
     socket.on('connect', () => {
-        eventBus.emit('admin-socket-connect-success');
+        console.log("success!");
+        eventBus.emit('user-socket-connect-success');
     });
 }
 
+export { getUserData }
+async function getUserData(){
+    return new Promise( resolve => {
+        socket.emit('get-user-data', (userdata) => {
+            resolve(userdata);
+        });
+    });
+}

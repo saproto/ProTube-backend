@@ -51,3 +51,12 @@ async function getScreenCode(){
         });
     });
 }
+
+export { getUserData }
+async function getUserData(){
+    return new Promise( resolve => {
+        socket.emit('get-user-data', (userdata) => {
+            resolve(userdata);
+        });
+    });
+}

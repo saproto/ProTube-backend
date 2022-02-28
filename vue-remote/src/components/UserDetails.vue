@@ -4,7 +4,7 @@
       <div class="mt-2 max-w-xl text-sm text-gray-200 ">
         <p>With great power comes great responsibility</p>
       </div>
-      <h2 class="mt-4 leading-6 font-medium text-white md:text-6xl text-3xl">Welcome User!</h2>
+      <h2 class="mt-4 leading-6 font-medium text-white md:text-6xl text-3xl">Welcome {{ username }}</h2>
     </div>
     <div class=" flex-shrink-0 mr-6 my-auto">
         <!--<img class="w-30 h-0 md:h-36 object-cover flex-shrink-0 mx-auto dark:hidden block" src="logo_classic.png" />
@@ -14,4 +14,9 @@
 </template>
 
 <script setup>
+import { defineProps } from 'vue';
+
+defineProps({
+  username: String
+});
 </script>

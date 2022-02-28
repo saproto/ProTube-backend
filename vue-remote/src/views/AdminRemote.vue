@@ -1,7 +1,7 @@
 <template>
     <div> 
         <HeaderField>
-            <UserDetails />
+            <UserDetails :username="username" />
         </HeaderField>
         
         <ContentField>
@@ -18,9 +18,14 @@ import HeaderField from '@/layout/HeaderField.vue'
 import ContentField from '@/layout/ContentField.vue'
 import UserDetails from '@/components/UserDetails.vue'
 import { eventBus } from '../eventbus'
+import { getUserData } from '@/admin_socket.js'
+import { ref } from 'vue'
 
-eventBus.on('admin-socket-connect-success', () => {
-    //retrieveCurrentSetting()
+const username = ref("");
+
+eventBus.on('admin-socket-connect-success', async () => {
+    var userdata = await getUserData();
+    username.value = userdata.username;
 });
 </script>
 
