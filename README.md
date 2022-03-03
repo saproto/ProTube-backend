@@ -14,7 +14,7 @@ To start the project
 ```sh
 npm run start
 ```
-This should start the project on localhost:3000. The screen can be found at /protube/screen and the remote at /protube/remote.
+This should start the project on localhost:3000. The screen can be found at /protube/screen and the remote at /protube/remote, the admin remote at /protube/remote/admin, the admin screen at /protube/screen/admin (with code).
 
 ### CORS errors
 In the event of cors errors this can be modified at protube.js line 34

@@ -10,10 +10,16 @@ const app = express();
 const path = require('path');
 const {apiRouter} = require('./routes/api');
 
+// Used for a SPA to redirect all paths to the index.html file
+var history = require('connect-history-api-fallback');
+app.use(history({
+    index: '/protube/index.html'
+}));
+
 const port = process.env.PORT || 3000;
 const https = process.env.HTTPS || false;
 
-app.use('/protube/', express.static(path.join(__dirname, 'public')));
+app.use('/', express.static(path.join(__dirname, 'public')));
 // app.use('/api/', apiRouter);
 
 if(https) {

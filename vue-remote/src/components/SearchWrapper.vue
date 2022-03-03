@@ -25,7 +25,7 @@
       <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-2 xl:grid-cols-4 gap-2">
         <router-link to="/remote/admin" v-if="logIn && userData.isAdmin" class="text-center py-2 px-4 bg-proto_blue text-white hover:opacity-80 rounded-md">Admin remote</router-link>
         <router-link to="/screen/admin" v-if="logIn && userData.isAdmin" class="text-center py-2 px-4 bg-proto_blue text-white hover:opacity-80 rounded-md">Admin screen</router-link>
-        <router-link to="/user/statistics" v-if="logIn" class="text-center py-2 px-4 bg-proto_blue text-white hover:opacity-80 rounded-md">Your Statistics</router-link>
+        <!--<router-link to="/user/statistics" v-if="logIn" class="text-center py-2 px-4 bg-proto_blue text-white hover:opacity-80 rounded-md">Your Statistics</router-link>-->
         <router-link to="/statistics" v-if="logIn" class="text-center py-2 px-4 bg-proto_blue text-white hover:opacity-80 rounded-md">Statistics</router-link>
       </div>
     </div>

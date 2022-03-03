@@ -10,6 +10,7 @@
     },
     "dependencies": {
         "colors": "^1.4.0",
+        "connect-history-api-fallback": "^1.6.0",
         "cors": "^2.8.5",
         "crypto": "^1.0.1",
         "dotenv": "^10.0.0",
