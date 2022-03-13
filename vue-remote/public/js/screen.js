@@ -28,11 +28,10 @@ const youtubePlayerReady = (event) => {
         try {
             if(current !== nowPlaying.videoId)
             player.loadVideoById(nowPlaying.videoId);
-            player.setPlaybackQuality('tiny');
+            player.setPlaybackQuality('highres');
             // setTimeout(() => {
             //     player.playVideo();
             // } ,100);
-            document.querySelector('.ytp-mute-button').click()
             current = nowPlaying.videoId;
             // setTimeout(() => {
             //     document.elementFromPoint(500, 500).click();
@@ -48,6 +47,8 @@ const youtubePlayerReady = (event) => {
     });
 
     socket.on('new-timestamp', timestamp => {
+        console.log(timestamp.seconds);
+        console.log(player.getCurrentTime() - timestamp.seconds)
         if(Math.abs(player.getCurrentTime() - timestamp.seconds) > 5 )
             player.seekTo(timestamp.seconds, true);
     });

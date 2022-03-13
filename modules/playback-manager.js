@@ -40,5 +40,6 @@ exports.pauseVideo = () => {
 exports.getStatus = () => status;
 
 communicator.on('new-video', video => {
+    clearInterval(playbackInterval);
     this.playVideoFromStart(video);
 });

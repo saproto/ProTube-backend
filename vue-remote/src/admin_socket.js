@@ -38,14 +38,18 @@ function connectAdminSocket(proto_session){
     });
 
     socket.on('admin-newscreencode', (screencode) => {
-        eventBus.emit('admin-newscreencode', screencode);
+        eventBus.emit('admin-socket-screencode-update', screencode);
+    });
+
+    socket.on('admin-queue-update', (queue) => {
+        eventBus.emit('admin-socket-queue-update', queue);
     });
 }
 
 export { getScreenCode }
 async function getScreenCode(){
     console.log("requested screencode");
-    return new Promise( resolve => {
+    return await new Promise( resolve => {
         socket.emit('get_screen_code', code => {
             resolve(code);
         });
@@ -54,9 +58,34 @@ async function getScreenCode(){
 
 export { getUserData }
 async function getUserData(){
-    return new Promise( resolve => {
+    return await new Promise( resolve => {
         socket.emit('get-user-data', (userdata) => {
             resolve(userdata);
         });
     });
+}
+
+export { getVideoQueue }
+async function getVideoQueue(){
+    return await new Promise( resolve => {
+        socket.emit('get-video-queue', (queue) => {
+            resolve(queue);
+        });
+    });
+}
+
+export { regenScreenCode }
+function regenScreenCode(){
+    socket.emit('create-new-screen-code');
+}
+
+export { skipNextInQueue }
+async function skipNextInQueue(){
+    if(await new Promise( resolve => {
+        socket.emit('skip-next-in-queue', (success) => {
+            resolve(success);
+        });
+    })){
+        eventBus.emit('admin-socket-skipped-video-update');
+    }
 }

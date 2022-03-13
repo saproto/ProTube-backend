@@ -14,6 +14,7 @@ exports.add = video => {
     if(_.isEmpty(current)) {
         this.moveToNext();
     }
+    communicator.emit('queue-update');
     return true;
 }
 
