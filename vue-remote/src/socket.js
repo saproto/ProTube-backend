@@ -39,15 +39,10 @@ function connectSocket(_socket){
 
     eventBus.on('addVideoToQueue', (video) =>{
         if(video == '' ) return false;
-        _socket.emit('addVideoToQueue', video, success => {
-            if(success) {
-                var callbackMessage = "Added successfully";
-            }else{
-                callbackMessage = "Video already at playlist!";
-            }
+        _socket.emit('addVideoToQueue', video, callback => {
             eventBus.emit('addVideoToQueue-callback', {
-                result: success,
-                message: callbackMessage,
+                result: callback.success,
+                message: callback.error,
                 videoId: video.videoId
             });
         });

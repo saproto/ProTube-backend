@@ -20,6 +20,9 @@
                 <button @click="regenScreenCode" class="shadow-md bg-proto_blue hover:bg-opacity-80 text-white py-1 px-2 ml-5 rounded-md my-auto flex">
                     New code
                 </button>
+                <button @click="resumeProtube" class="shadow-md bg-proto_blue hover:bg-opacity-80 text-white py-1 px-2 ml-5 rounded-md my-auto flex">
+                    Resume ProTube
+                </button>
             </div>
         </ContentField>
 
@@ -30,7 +33,7 @@
                 <div class="flex flex-nowrap ">
                     <Suspense>
                         <template #default>
-                            <RadioStations :radiofilter="radiofilter" />
+                            <RadioStations v-on:added-radio="displayToast" :radiofilter="radiofilter" />
                         </template>
                         <template #fallback>
                             <div v-for="index in 10" :key="index" class="inline-block px-3">
@@ -94,7 +97,7 @@ import UserDetails from '@/components/UserDetails.vue'
 import Toast from '@/components/Toast.vue'
 import RadioStations from '@/components/RadioStations.vue'
 import { eventBus } from '../eventbus'
-import { getUserData, getVideoQueue, regenScreenCode, skipNextInQueue } from '@/admin_socket.js'
+import { getUserData, getVideoQueue, regenScreenCode, skipNextInQueue, resumeProTube } from '@/admin_socket.js'
 import { ref, computed } from 'vue'
 
 const username = ref("");
@@ -120,6 +123,11 @@ function displayToast(message){
             toasts.value.splice(index, 1);
         }
     }, 2500);
+}
+
+async function resumeProtube(){
+    if(await resumeProTube()) displayToast("Successfully resumed ProTube!");
+    else displayToast("Failed to resume ProTube!");
 }
 
 eventBus.on('admin-socket-connect-success', async () => {

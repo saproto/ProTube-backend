@@ -12,7 +12,7 @@ function connectAdminSocket(proto_session){
         },
         timeout: 2*1000,
         forceNew: true,
-        reconnection: false,
+        reconnection: true,
         autoConnect: false,
     });
     socket.connect();
@@ -88,4 +88,24 @@ async function skipNextInQueue(){
     })){
         eventBus.emit('admin-socket-skipped-video-update');
     }
+}
+
+export { setRadio }
+// eslint-disable-next-line
+async function setRadio(radiostation){
+    return await new Promise( resolve => {
+        socket.emit('set-radio', radiostation, callback => {
+            resolve(callback);
+        });
+    });
+}
+
+export { resumeProTube }
+// eslint-disable-next-line
+async function resumeProTube(){
+    return await new Promise( resolve => {
+        socket.emit('resume-protube', callback => {
+            resolve(callback);
+        });
+    });
 }

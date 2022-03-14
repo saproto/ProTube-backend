@@ -1,45 +1,48 @@
 <template>
     <div v-for="radio in filteredRadioStations" :key="radio" class="inline-block px-3">
-        <button @click="set_radio" :id="radio.id" class="p-4 w-48 truncate overflow-hidden rounded-lg shadow-md bg-proto_blue text-white hover:bg-opacity-80">
-            {{ radio.name }}
+        <button @click="set_radio" :id="radio.z" :name="radio.o" class="p-4 w-48 truncate overflow-hidden rounded-lg shadow-md bg-proto_blue text-white hover:bg-opacity-80">
+            {{ radio.o }}
         </button>
     </div>
 </template>
 
 <script setup>
-import { ref, computed, defineProps } from 'vue'
+import { ref, computed, defineProps, defineEmits } from 'vue'
+import { setRadio } from '@/admin_socket';
+
 
 const radiostations = ref([]);
 const props = defineProps({
     radiofilter: String
 });
 
+const emit = defineEmits(['video-added']);
+
 const filteredRadioStations = computed(() => {
-    return radiostations.value.filter((station) => station.name.toLowerCase().includes(props.radiofilter.toLowerCase()));
+    return radiostations.value.filter((station) => station.o.toLowerCase().includes(props.radiofilter.toLowerCase()));
 })
 
-await getRadioStations();
+// load in the script file that contains all the radio stations
+let externalScript = document.createElement('script');
+externalScript.setAttribute('src', 'https://www.nederland.fm/common/radio/zenders/nederland.js');
+externalScript.setAttribute('id', 'radiostations');
+document.head.appendChild(externalScript);
+externalScript.onload = async () => {
+    await getRadioStations();
+}
 
 async function getRadioStations(){
-    var all_radiostations = await fetch(`https://prod.radio-api.net/stations/local?count=100`);
-    all_radiostations = await all_radiostations.json();
+    let stations = window.zenders;
+    radiostations.value = stations.items;
+}
 
-    var all_radiostations_dupe = JSON.parse(JSON.stringify(all_radiostations));
-
-    all_radiostations_dupe.playables.forEach((station, index) => {
-        if(!station.playable || station.streams.length == 0){
-            all_radiostations.playables.splice(index, 1);
-            console.log(station);
-        }
-    })
-
-    radiostations.value = all_radiostations.playables;
-    return true;
-} 
-
-function set_radio(event){
+async function set_radio(event){
     var requested_radio = event.target.id;
-    console.log(requested_radio);
+    if(await setRadio(requested_radio)){
+        emit('added-radio', `Started playing: ${event.target.name} `)
+    } else {
+        emit('added-radio', `Failed to start: ${event.target.name} `)
+    }
 }
 </script>
 

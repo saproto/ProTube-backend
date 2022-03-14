@@ -1,5 +1,6 @@
 const timeFormatter = require('../utils/time-formatter');
 const _ = require('lodash');
+const { getStatus } = require('./playback-manager');
 
 let queue = [];
 let current = {};
@@ -29,14 +30,21 @@ exports.addToTop = video => {
     }
     //Video is not already in the queue, so add it to the top
     queue.unshift(video);
+    communicator.emit('queue-update');
     return true;
 }
 
 //Update the current video with the video in queue position 0, and remove it from the queue
 exports.moveToNext = () => {
-    current = queue[0];
+    if(getStatus() != 'radio') current = queue[0];
     queue.shift();
-    communicator.emit('new-video', current);
+    communicator.emit('queue-update');
+    if(getStatus() != 'radio') communicator.emit('new-video', current);
+}
+
+exports.setRadio = (radio) => {
+    current = radio;
+    communicator.emit('new-radio', radio);
 }
 
 exports.removeFirst = () => queue.shift();

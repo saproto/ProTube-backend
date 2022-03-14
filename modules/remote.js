@@ -8,6 +8,7 @@ const queue = require('./queue-manager');
 
 const expireSession = process.env.SCREENCODE_DURATION || 3600; //time to expire the session (seconds)
 let authToken;
+let allowNewVideos = true;
 
 communicator.on('newScreenCode', (code) => {
   authToken = code;
@@ -64,9 +65,14 @@ client.use((socket, next) => {
   });
 
   socket.on('addVideoToQueue', (video, callback) => {
-    const added = queue.add(video);
-    callback(added);
-    logger.queueInfo(`Added "${video.title}" to queue`);
+    console.log(allowNewVideos);
+    if(allowNewVideos){
+      const added = queue.add(video);
+      if (added) callback({success: true, error: "Successfully added to the queue!"});
+      else callback({success: false, error: "Video already in the queue!"});
+      logger.queueInfo(`Added "${video.title}" to queue`);
+    }
+    callback({success: false, error: "No videos are allowed!"});
   });
 });
 
@@ -74,7 +80,13 @@ function validateClient(socketHandshakeToken){
   return socketHandshakeToken == authToken;
 }
 
+exports.blockQueue = () => {
+  allowNewVideos = false;
+}
 
+exports.enableQueue = () => {
+  allowNewVideos = true;
+}
 // const server = require('http').createServer(app);
 // const io = require('socket.io')(server);
 

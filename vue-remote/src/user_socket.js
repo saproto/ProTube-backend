@@ -12,7 +12,7 @@ function connectUserSocket(proto_session){
         },
         timeout: 2*1000,
         forceNew: true,
-        reconnection: false,
+        reconnection: true,
         autoConnect: false,
     });
     socket.connect();

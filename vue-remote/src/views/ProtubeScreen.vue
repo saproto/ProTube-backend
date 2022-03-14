@@ -10,26 +10,38 @@
       </div>  
     </div>
   </div>
+  <RadioModal v-show="currentRadio" :radio="currentRadio" />
   <div class="min-w-screen min-h-screen" id='yt-player' />
 </template>
 
   
 <script setup>
-import { defineProps } from 'vue'
+import { defineProps, ref } from 'vue'
+import '@/screen3.js'
+import { eventBus } from '@/eventbus.js';
+import RadioModal from '@/components/modals/RadioModal.vue'
+
+const currentRadio = ref("");
 
 defineProps({
   screenCode: Number
 })
 
+let scripts = [
+  'http://localhost:3000/socket.io/socket.io.min.js',
+  // process.env.VUE_APP_PUBLIC_PATH + '/js/screen.js',
+  'https://www.youtube.com/iframe_api'
+];
+for(let i = 0; i < scripts.length; i++){
+  let externalScript = document.createElement('script');
+  externalScript.setAttribute('src', scripts[i]);
+  document.head.appendChild(externalScript);
+}
 
-  let scripts = [
-    'http://localhost:3000/socket.io/socket.io.min.js',
-    process.env.VUE_APP_PUBLIC_PATH + '/js/screen.js',
-    'https://www.youtube.com/iframe_api'
-  ];
-  for(let i = 0; i < scripts.length; i++){
-    let externalScript = document.createElement('script');
-    externalScript.setAttribute('src', scripts[i]);
-    document.head.appendChild(externalScript);
-  }
+eventBus.on('radio_playing', (radio) => {
+  console.log("radio change");
+  currentRadio.value = radio;
+  console.log(currentRadio.value);
+  console.log("Radio changed");
+});
 </script>

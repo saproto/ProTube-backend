@@ -26,6 +26,10 @@ communicator.on('new-video', video => {
     });
 });
 
+communicator.on('new-radio', radiostation => {
+    screens.emit('new-radio', radiostation);
+});
+
 communicator.on('queue-update', () => {
     
 });
