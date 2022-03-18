@@ -16,12 +16,15 @@ communicator.on('newScreenCode', (code) => {
 client.use( async (socket, next) => {
   try{
     // if cookie is valid
+    logger.clientInfo(`${socket.id} attempts to connect to the remote`);
     if(await authenticator.validateClient(socket.handshake.headers.cookie, socket.handshake.auth.token == screencode.getScreenCode())){
       const existingSession = await authenticator.getSessionData(socket.handshake.headers.cookie);
+      // if screencode is also valid, continue
       if(existingSession && existingSession.screencode_correct){
         return next();
       }
-    } else if(socket.handshake.auth.token != screencode.getScreenCode()){
+      // valid cookie, invalid screencode
+      logger.clientInfo(`${socket.id} Failed to connect with incorrect screencode`);
       return next(new Error("Invalid screencode"));
     }
   } catch (error){

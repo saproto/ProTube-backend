@@ -42,24 +42,12 @@ exports.addToTop = video => {
 exports.moveToNext = () => {
     // Queue has an item, can be shifted
     if(queue.length > 0){
-        console.log(`QUeue length before moveToNext is: ${queue.length}`);
-        console.log(`The status is: ${getStatus()}`);
-        console.log('The current queue is:');
-        console.log(queue);
-        console.log(`With current item as:`);
-        console.log(current);
         // if we're on the radio do not set the next in line to current
         if(getStatus() != 'radio') current = queue[0];
         queue.shift();
         communicator.emit('queue-update');
         // if we're not on radio update the screens with the new video
         if(getStatus() != 'radio') communicator.emit('new-video', current);
-        console.log(`QUeue length after moveToNext is: ${queue.length}`);
-        console.log(`The status is: ${getStatus()}`);
-        console.log('The current queue is:');
-        console.log(queue);
-        console.log(`With current item as:`);
-        console.log(current);
         return true;
     }
     return false;
