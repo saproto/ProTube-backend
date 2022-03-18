@@ -11,7 +11,7 @@
                     <p class="text-center text-md text-gray-500 w-full "> Volume Slider</p>
                     <input class="bg-proto_blue hover:bg-opacity-80 rounded-xl h-2 w-full border outline-none border-gray-500 appearance-none" type="range" min="1" max="100" value="50">
                 </div>
-                <button @click="skipNextInQueue" class="shadow-md bg-proto_blue hover:bg-opacity-80 text-white py-1 px-2 ml-5 rounded-md my-auto flex">
+                <button @click="skipnextInQueue" class="shadow-md bg-proto_blue hover:bg-opacity-80 text-white py-1 px-2 ml-5 rounded-md my-auto flex">
                    QuickSkip
                     <svg xmlns="http://www.w3.org/2000/svg" class=" h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
@@ -145,9 +145,14 @@ eventBus.on('admin-socket-screencode-update', (code) => {
     displayToast('New screen code: '+code);
 });
 
-eventBus.on('admin-socket-skipped-video-update', () => {
-    displayToast('Skipped first video!');
-});
+
+async function skipnextInQueue(){
+    if(await skipNextInQueue()){
+       displayToast('Skipped first video!'); 
+    } else {
+        displayToast('Failed to skip first video!');
+    }
+}
 
 </script>
 

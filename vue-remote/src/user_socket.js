@@ -1,21 +1,18 @@
 const io = window.io = require('socket.io-client');
 var socket;
-import { eventBus } from './eventbus';
+import { eventBus } from '@/eventbus.js';
 
 export { connectUserSocket };
 
-function connectUserSocket(proto_session){
+function connectUserSocket(){
     const serverUrl = process.env.VUE_APP_USER_SOCKET_ADDRESS;
     socket = new io(serverUrl, {
-        auth: {
-            token: proto_session, //socket handshake token
-        },
-        timeout: 2*1000,
-        forceNew: true,
+        timeout: 5*1000,
+        forceNew: false,
+        withCredentials: true,
         reconnection: true,
-        autoConnect: false,
+        autoConnect: true,
     });
-    socket.connect();
 
     socket.on("disconnect", (reason) => {
         console.log("disconnected socket: " + reason);
@@ -26,6 +23,8 @@ function connectUserSocket(proto_session){
         let error = "Unknown error occurred";
         if (err == "Error: Not authorized") {
             error = "Unauthorized!";
+        } else if(err == "Error: Unable to validate"){
+            error = "Login error!";
         }
         eventBus.emit('user-socket-connect-error', {
             reason: error

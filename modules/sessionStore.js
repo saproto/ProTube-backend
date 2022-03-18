@@ -1,6 +1,6 @@
 /* abstract */ class SessionStore {
     findSession(id) {}
-    saveSession(id, session) {}
+    saveSession(id, sessiondata) {}
     findAllSessions() {}
     flushAllSessions() {}
     deleteSession(id) {}
@@ -16,8 +16,8 @@
       return this.sessions.get(id);
     }
   
-    saveSession(id, session) {
-      this.sessions.set(id, session);
+    saveSession(id, sessiondata) {
+      this.sessions.set(id, sessiondata);
     }
   
     findAllSessions() {

@@ -36,8 +36,10 @@ server.on('listening', () => logger.serverInfo(`Listening on port ${port}`));
 //Create a global Socket.io instance for all modules to use
 const {Server} = require('socket.io');
 global.io = new Server(server, {
+    pingTimeout: 10000,
     cors: {
         origin: "http://localhost:8080",
+        credentials: true,
         // methods: ["GET", "POST"]
     }
 });

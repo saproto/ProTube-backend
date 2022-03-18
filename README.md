@@ -27,3 +27,33 @@ Limit for the duration of the youtube videos that can be added to the queue
 ###### API_KEY
 Key used to check the api authentication with, bearer token authorisation is used
 
+
+### User Authentication
+At this moment there is a test user auth method that you'll need to implement manually in a laravel project. 
+In the AuthController for example:
+```php
+/**
+     * @param Request $request
+     * @return View|RedirectResponse
+     */
+    public function requestUserdetails(Request $request)
+    {
+        if(Auth::user()){
+            return [
+                'authenticated' => true,
+                'username' => Auth::user()->calling_name,
+                'is_admin' => Auth::user()->can('protube') || Auth::user()->isTempadmin()
+            ];
+        }
+        return [
+            'authenticated' => false
+        ];
+    }
+```
+
+And then add the route in web.php in the section routes related to authentication (± line 60)
+```php
+Route::get('userdetails', ['as' => 'requestusername', 'uses' => 'AuthController@requestUserdetails']);
+```
+
+Make sure to set the line 30 in the authenticator.js module to the right url for the userdetails. Note to update the cors rule if protube vue does not run on port 8080 (in protube.js)

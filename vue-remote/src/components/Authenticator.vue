@@ -22,8 +22,8 @@ import { eventBus } from '../eventbus'
 import { connectAdminSocket } from '../admin_socket'
 import { connectUserSocket } from '../user_socket'
 
-const authModalVisible = ref(false);
-const noCookieModal = ref(true);
+const authModalVisible = ref(true);
+const noCookieModal = ref(false);
 const errormessage = ref(false);
 
 const props = defineProps({
@@ -37,36 +37,37 @@ checkForSessionCookie();
 
 // check if the session contains a proto_session cookie, if so, attempt to connect
 function checkForSessionCookie(){
-    var cookies = document.cookie.split(';');
-    for (var i = 0; i < cookies.length; i++){
-        let cookie = cookies[i].split('=');
-        if( cookie[0].includes('proto_session')){
-            authModalVisible.value = true;
-            noCookieModal.value = false;
-            if(props.admin){
-                connectAdminSocket(cookie[1]);
-                return;
-            }
-            connectUserSocket(cookie[1]);
-            return;
-        }
+    if(props.admin){
+        connectAdminSocket();
+    } else {
+        connectUserSocket();
     }
 }
 
 eventBus.on('admin-socket-connect-error', (reason) => {
-    errormessage.value = reason.reason;
+    if(reason.reason == "Login error!"){
+        noCookieModal.value = true;
+    } else {
+        errormessage.value = reason.reason;
+    }
 });
 
 eventBus.on('admin-socket-connect-success', () => {
     authModalVisible.value = false;
+    errormessage.value = "";
 });
 
 eventBus.on('user-socket-connect-success', () => {
     authModalVisible.value = false;
+    errormessage.value = "";
 });
 
 eventBus.on('user-socket-connect-error', (reason) => {
-    errormessage.value = reason.reason;
+    if(reason.reason == "Login error!"){
+        noCookieModal.value = true;
+    } else {
+        errormessage.value = reason.reason;
+    }
 });
 
 </script>

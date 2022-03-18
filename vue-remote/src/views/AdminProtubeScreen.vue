@@ -16,7 +16,7 @@ eventBus.on('admin-socket-connect-success', async () => {
     screenCode.value = await getScreenCode();
 });
 
-eventBus.on('admin-newscreencode', (screencode) => {
+eventBus.on('new-screencode', (screencode) => {
    screenCode.value = screencode;
 });
 

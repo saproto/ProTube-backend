@@ -4,18 +4,15 @@ import { eventBus } from '@/eventbus.js';
 
 export { connectAdminSocket };
 
-function connectAdminSocket(proto_session){
+function connectAdminSocket(){
     const serverUrl = process.env.VUE_APP_ADMIN_SOCKET_ADDRESS;
     socket = new io(serverUrl, {
-        auth: {
-            token: proto_session, //socket handshake token
-        },
-        timeout: 2*1000,
-        forceNew: true,
+        timeout: 5*1000,
+        forceNew: false,
+        withCredentials: true,
         reconnection: true,
-        autoConnect: false,
+        autoConnect: true
     });
-    socket.connect();
 
     socket.on("disconnect", (reason) => {
         console.log("disconnected socket: " + reason);
@@ -23,10 +20,11 @@ function connectAdminSocket(proto_session){
 
     // connection errors
     socket.on("connect_error", (err) => {
-        console.log(err);
         let error = "Unknown error occurred";
         if (err == "Error: Not authorized") {
             error = "Unauthorized!";
+        } else if(err == "Error: Unable to validate"){
+            error = "Login error!";
         }
         eventBus.emit('admin-socket-connect-error', {
             reason: error
@@ -81,13 +79,11 @@ function regenScreenCode(){
 
 export { skipNextInQueue }
 async function skipNextInQueue(){
-    if(await new Promise( resolve => {
+    return await new Promise( resolve => {
         socket.emit('skip-next-in-queue', (success) => {
             resolve(success);
         });
-    })){
-        eventBus.emit('admin-socket-skipped-video-update');
-    }
+    });
 }
 
 export { setRadio }

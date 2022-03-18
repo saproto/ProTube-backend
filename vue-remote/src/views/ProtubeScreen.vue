@@ -1,5 +1,6 @@
 <template>
-  <div v-if="screenCode" aria-live="assertive" class="fixed inset-0 flex px-4 py-6 pointer-events-none sm:p-6 items-start">
+  <RadioModal v-show="currentRadio" :radio="currentRadio" class="z-0"/>
+  <div :class="screenCodeIsVisible ? 'z-10' : ''" aria-live="assertive" class="fixed inset-0 flex px-4 py-6 pointer-events-none sm:p-6 items-start">
     <div class="w-full flex flex-col items-center space-y-4">
       <div class="max-w-sm bg-white dark:bg-proto_secondary_gray-dark shadow-lg rounded-lg pointer-events-auto ring-1 ring-black ring-opacity-5 overflow-hidden">
         <div class="p-4">
@@ -10,7 +11,6 @@
       </div>  
     </div>
   </div>
-  <RadioModal v-show="currentRadio" :radio="currentRadio" />
   <div class="min-w-screen min-h-screen" id='yt-player' />
 </template>
 
@@ -22,6 +22,7 @@ import { eventBus } from '@/eventbus.js';
 import RadioModal from '@/components/modals/RadioModal.vue'
 
 const currentRadio = ref("");
+const screenCodeIsVisible = ref(true);
 
 defineProps({
   screenCode: Number
@@ -39,9 +40,11 @@ for(let i = 0; i < scripts.length; i++){
 }
 
 eventBus.on('radio_playing', (radio) => {
-  console.log("radio change");
   currentRadio.value = radio;
-  console.log(currentRadio.value);
-  console.log("Radio changed");
+  screenCodeIsVisible.value = false;
+});
+
+eventBus.on('show-screencode', () => {
+   screenCodeIsVisible.value = true;
 });
 </script>

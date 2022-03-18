@@ -44,22 +44,19 @@ exports.switchRadio = (station) => {
         this.stopVideo();
         status = 'radio';
         queueManager.addToTop(queueManager.getCurrent());
-        remote.blockQueue();
     }
     queueManager.setRadio(station);
 }
 
+// resuming to protube, enabling the queue and start playing immediately if the queue is filled
 exports.resumeProTube = () => {
+    // only resume if we are not on radio
+    communicator.emit('show-screencode');
     if(status == 'radio'){
-        if(queueManager.getQueue().length > 0){
-            this.playVideoFromStart(queueManager.getNext());
-            queueManager.removeFirst();
-            communicator.emit('queue-update');
-        } else {
-            return false;
-        }
-        remote.enableQueue();
-        return true;
+        // re-show the screencode
+        queueManager.enableQueue();
+        status = 'radio-ending';
+        return queueManager.moveToNext();
     }
     return false;
 }
