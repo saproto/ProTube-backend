@@ -25,7 +25,6 @@
 * User id/iets anders om de user te identifying (done), voor database en niet meerdere keren videos inserten
 * Aparte database aanmaken
 ### Lagere prioriteit
-- Auth::user() niet meerdere keren callen
 - Organiseer Vue app
 
 ## Todo:
