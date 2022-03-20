@@ -21,12 +21,8 @@
 
 ## Anders:
 ### Hoge prioriteit
-* Branch aanmaken voor auth dingen
-* Route verplaatsen naar API
-* Userdata endpoint naar .env
 * Local client moet altijd toegang hebben tot admin screen
-* cURL niet gebruiken in backend if mogelijk, anders, fix errors
-* User id/iets anders om de user te identifying, voor database en niet meerdere keren videos inserten
+* User id/iets anders om de user te identifying (done), voor database en niet meerdere keren videos inserten
 * Aparte database aanmaken
 ### Lagere prioriteit
 - Auth::user() niet meerdere keren callen
