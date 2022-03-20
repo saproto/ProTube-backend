@@ -1,7 +1,7 @@
 <template>
     <div> 
         <HeaderField>
-            <UserDetails :username="username" />
+            <UserDetails :name="name" />
         </HeaderField>
         
         <ContentField>
@@ -102,7 +102,7 @@ import { eventBus } from '../eventbus'
 import { getUserData, getVideoQueue, regenScreenCode, skipNextInQueue, resumeProTube } from '@/admin_socket.js'
 import { ref, computed } from 'vue'
 
-const username = ref("");
+const name = ref("");
 const radiofilter = ref("");
 const videoqueue = ref([]);
 const toasts = ref([]);
@@ -136,7 +136,7 @@ eventBus.on('admin-socket-connect-success', async () => {
     var userdata = await getUserData();
     var _videoqueue = await getVideoQueue();
     videoqueue.value = _videoqueue
-    username.value = userdata.username;
+    name.value = userdata.name;
 });
 
 eventBus.on('admin-socket-queue-update', (queue) => {

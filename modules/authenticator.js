@@ -19,9 +19,10 @@ exports.validateClient = async (_cookies, screencode_correct=false) => {
             if(screencode_correct && !existingSession.screencode_correct){
                 sessionStore.deleteSession(proto_cookie);
                 sessionStore.saveSession(proto_cookie, {
-                    username: existingSession.username,
+                    name: existingSession.name,
                     is_admin: existingSession.is_admin,
-                    screencode_correct: screencode_correct
+                    screencode_correct: screencode_correct,
+                    user_id: existingSession.user_id
                 });
             }
             return true;
@@ -36,9 +37,10 @@ exports.validateClient = async (_cookies, screencode_correct=false) => {
         if(userdata.authenticated){
             // Store the cookie in the session
             sessionStore.saveSession(proto_cookie, {
-                username: userdata.username,
+                name: userdata.name,
                 is_admin: userdata.is_admin,
-                screencode_correct: screencode_correct
+                screencode_correct: screencode_correct,
+                user_id: userdata.user_id
             });
             return true;
         }
