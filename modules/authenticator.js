@@ -27,7 +27,7 @@ exports.validateClient = async (_cookies, screencode_correct=false) => {
             return true;
         }
         // Cookie is new, validate it at the webserver
-        let userdata = await fetch('https://localhost:8085/userdetails', {
+        let userdata = await fetch('https://localhost:8080/api/protube/userdetails', {
         headers: {
             cookie: `proto_session=${proto_cookie}`
         }});
