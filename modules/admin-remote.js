@@ -5,7 +5,7 @@ const screenCode = require('./screencode');
 const playbackManager = require('./playback-manager')
 // const userDataFetcher = require('./user');
 const authenticator = require('./authenticator.js');
-const { Curl } = require("node-libcurl");
+const fetch = require('node-fetch');
 
 admin.use(async (socket, next) => {
   logger.adminInfo(`Admin from ${socket.handshake.address} with id ${socket.id} attempted to connect, validating...`);
@@ -58,12 +58,12 @@ admin.use(async (socket, next) => {
 
   socket.on('set-radio', async (radiostation, callback) => {
     logger.adminInfo(`${socket.id} Setting the radio to: ${radiostation}`);
-      let station_to_play = await validateRadioStation(radiostation);
-      if(station_to_play){
-        playbackManager.switchRadio(station_to_play);
-        callback(true);
-      }
-      callback(false);
+    let station_to_play = await validateRadioStation(radiostation);
+    if(station_to_play){
+      playbackManager.switchRadio(station_to_play);
+      callback(true);
+    }
+    callback(false);
   });
 
   socket.on('resume-protube', async (callback) => {
@@ -93,27 +93,21 @@ communicator.on('queue-update', () => {
 
 // check if the given radiostation is valid
 async function validateRadioStation(radiostation){
-  try {
-    const curler = new Curl();
-    curler.setOpt(Curl.option.URL, 'https://www.nederland.fm/common/radio/zenders/nederland.js');
-
-    curler.perform();
-
-    return await new Promise( resolve => {
-      curler.on("end", function (statusCode, data, headers) {
-        if(statusCode == 200){
-          let stations = JSON.parse(data.split(' = ')[1]);
-          stations.items.forEach((station) => {
-            if(radiostation === station.z){
-              resolve(station);
-            }
-          });
+  return new Promise(async resolve => {
+    try {
+      response = await fetch('https://www.nederland.fm/common/radio/zenders/nederland.js');
+      const data = await response.text();
+      let stations = JSON.parse(await data.split(' = ')[1]).items;
+      stations.forEach((station) => {
+        if(radiostation === station.z){
+          //found our specified station in the available stations list, resolve the station
+          resolve(station);
         }
-        this.close();
-        resolve(false);
       });
-    });
-  } catch {
-    return false;
-  }
+      //no station with this name found, resolve without a station
+      resolve(false);
+    } catch(e) {
+      resolve(false);
+    }
+  });
 }
