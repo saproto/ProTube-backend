@@ -1,35 +1,33 @@
-//main eventbus for entire vue programm
-import mitt from "mitt";
-export const eventBus = mitt();
-
 const io = window.io = require('socket.io-client');
 var socket;
 let silentConnect = false;
+import { eventBus } from './eventbus';
 
 export { initializeSocket };
 
 function resetSocket(pincode){
-    const serverUrl = `/search-screen`;
-    let localSessionID = localStorage.getItem("sessionID");
+    const serverUrl = process.env.VUE_APP_SOCKET_ADDRESS;
     socket = new io(serverUrl, {
         auth: {
-            token: pincode, //socket handshake token
-            sessionID: localSessionID
+            token: pincode //socket handshake token
         },
-        timeout: 1*1000,
-        forceNew: true,
+        timeout: 5*1000,
+        forceNew: false,
+        withCredentials: true,
         reconnection: false,
         autoConnect: false,
     });
-    if(pincode || localSessionID){
-        connectSocket(socket);
-    } else{
-        silentConnect = false;
-    }
+    connectSocket(socket);
+    // if(pincode || localSessionID){
+    //     connectSocket(socket);
+    // } else{
+    //     silentConnect = false;
+    // }
     return;
 }
 
 function connectSocket(_socket){
+    console.log("connecting...");
     _socket.connect();
 
     eventBus.on('fetchVideos', (search_string) => {
@@ -42,30 +40,20 @@ function connectSocket(_socket){
 
     eventBus.on('addVideoToQueue', (video) =>{
         if(video == '' ) return false;
-        _socket.emit('addVideoToQueue', video, success => {
-            if(success) {
-                var callbackMessage = "Added successfully";
-            }else{
-                callbackMessage = "Video already at playlist!";
-            }
+        _socket.emit('addVideoToQueue', video, callback => {
             eventBus.emit('addVideoToQueue-callback', {
-                result: success,
-                message: callbackMessage,
+                result: callback.success,
+                message: callback.error,
                 videoId: video.videoId
             });
         });
     });
 
-    _socket.on("session", sessionID => {
-        localStorage.setItem("sessionID", sessionID);
-
-    });
-
     _socket.on("disconnect", (reason) => {
         console.log(reason);
-        if(reason == "io server disconnect") {
-            localStorage.removeItem('sessionID');
-        }
+        // if(reason == "io server disconnect") {
+        //     localStorage.removeItem('sessionID');
+        // }
         socket.disconnect();
         socket.removeAllListeners();
         eventBus.emit('toggleLoginModalVisible', true);
@@ -74,6 +62,11 @@ function connectSocket(_socket){
     _socket.on("connect_error", (err) => {
         if(!silentConnect){
             if (err == "Error: Not authorized") {
+                eventBus.emit('pinEntered-callback', {
+                    success: false,
+                    reason: "Unable to authorize with proto"
+                });
+            } else if (err == "Error: Invalid screencode") {
                 eventBus.emit('pinEntered-callback', {
                     success: false,
                     reason: "PIN invalid"
@@ -98,6 +91,7 @@ function connectSocket(_socket){
     });
 }
 
+// Executed once on mounted of remote
 function initializeSocket(){
     resetSocket();
     silentConnect = true;

@@ -10,11 +10,17 @@ const app = express();
 const path = require('path');
 const {apiRouter} = require('./routes/api');
 
+// Used for a SPA to redirect all paths to the index.html file
+var history = require('connect-history-api-fallback');
+app.use(history({
+    index: '/protube/index.html'
+}));
+
 const port = process.env.PORT || 3000;
 const https = process.env.HTTPS || false;
 
-app.use('/protube/', express.static(path.join(__dirname, 'public')));
-app.use('/api/', apiRouter);
+app.use('/', express.static(path.join(__dirname, 'public')));
+// app.use('/api/', apiRouter);
 
 if(https) {
     //TODO: HTTPS IMPLEMENTATION
@@ -30,9 +36,11 @@ server.on('listening', () => logger.serverInfo(`Listening on port ${port}`));
 //Create a global Socket.io instance for all modules to use
 const {Server} = require('socket.io');
 global.io = new Server(server, {
+    pingTimeout: 10000,
     cors: {
         origin: "http://localhost:8080",
-        //methods: ["GET", "POST"]
+        credentials: true,
+        // methods: ["GET", "POST"]
     }
 });
 
@@ -44,6 +52,7 @@ global.communicator = new EventEmitter();
 const screen = require('./modules/screen');
 const remote = require('./modules/remote');
 const adminRemote = require('./modules/admin-remote');
+const user = require('./modules/user');
 const queue = require('./modules/queue-manager');
 const playback = require('./modules/playback-manager');
 const local_client = require('./modules/local-client');

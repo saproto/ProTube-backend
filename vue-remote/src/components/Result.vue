@@ -75,7 +75,7 @@
 
 <script setup>
 import { defineProps, computed, ref } from 'vue';
-import { eventBus } from '../socket'
+import { eventBus } from '../eventbus'
 import gsap from 'gsap'
 
 const _result = defineProps({
@@ -122,7 +122,6 @@ eventBus.on('addVideoToQueue-callback', response => {
   loading.value = false;
   if(response.videoId == _result.result.videoId){
     videoStatusCode.value = response.result ? 1 : 2;
-    console.log(videoStatusCode.value);
     videoStatusMessage.value = response.message;
   }
 });

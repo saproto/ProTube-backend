@@ -1,8 +1,11 @@
 const timeFormatter = require('../utils/time-formatter');
 const _ = require('lodash');
+const logger = require('../utils/logger');
+const playbackManager = require('./playback-manager');
 
 let queue = [];
 let current = {};
+let queue_is_blocked = false;
 
 //Add a video to the queue
 exports.add = video => {
@@ -11,9 +14,11 @@ exports.add = video => {
 
     //Video is not already in the queue, so add it
     queue.splice(queue.length/2, 0, video);
-    if(_.isEmpty(current)) {
+    if(_.isEmpty(current) || getStatus() == 'radio-ending') {
         this.moveToNext();
     }
+    communicator.emit('queue-update');
+    logger.queueInfo(`Added "${video.title}" to queue`);
     return true;
 }
 
@@ -28,20 +33,39 @@ exports.addToTop = video => {
     }
     //Video is not already in the queue, so add it to the top
     queue.unshift(video);
+    communicator.emit('queue-update');
+    logger.queueInfo(`Added "${video.title}" to top of queue`);
     return true;
 }
 
 //Update the current video with the video in queue position 0, and remove it from the queue
 exports.moveToNext = () => {
-    current = queue[0];
-    queue.shift();
-    communicator.emit('new-video', current);
+    // Queue has an item, can be shifted
+    if(queue.length > 0){
+        // if we're on the radio do not set the next in line to current
+        if(playbackManager.getStatus() != 'radio') current = queue[0];
+        queue.shift();
+        communicator.emit('queue-update');
+        // if we're not on radio update the screens with the new video
+        if(playbackManager.getStatus() != 'radio') communicator.emit('new-video', current);
+        return true;
+    }
+    return false;
+}
+
+exports.setRadio = (radio) => {
+    current = radio;
+    this.blockQueue();
+    communicator.emit('new-radio', radio);
 }
 
 exports.removeFirst = () => queue.shift();
 exports.getCurrent = () => current;
 exports.getNext = () => queue[0];
 exports.getQueue = () => queue;
+exports.blockQueue = () => queue_is_blocked = true;
+exports.enableQueue = () => queue_is_blocked = false;
+exports.queueIsEnabled = () => !queue_is_blocked;
 
 //Calculate the total duration of the playlist and return it
 exports.getTotalDuration = () => {

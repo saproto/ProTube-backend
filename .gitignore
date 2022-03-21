@@ -2,4 +2,7 @@ node_modules/
 .DS_Store
 .env
 
-public/remote/
+public/*
+.idea/*
+package-lock.json
+vue-remote/package-lock.json

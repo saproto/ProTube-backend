@@ -1,25 +1,37 @@
 <template>
     <div class="fixed z-10 inset-0 overflow-y-auto sm:-to" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div class="fixed inset-0 bg-proto_background_gray-dark bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+            <div class="fixed inset-0 bg-proto_background_gray-dark transition-opacity" :class="background_opacity" aria-hidden="true"></div>
+            <p class="bg-opacity-10 bg-opacity-20 bg-opacity-30 bg-opacity-40 bg-opacity-50 bg-opacity-60 bg-opacity-70 bg-opacity-80 bg-opacity-90 bg-opacity-100 bg-opacity-0" />
 
             <!-- This element is to trick the browser into centering the modal contents. -->
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-
-            <!-- load icon -->
-            <div class="loader-wrapper">
-                <div class="center">
-                    <div class="circle2"></div>
-                    <div class="circle2"></div>
-                </div>
+            <div class="inline-block text-center transform transition-all align-middle ">
+              <div>
+                  <div class="center">
+                      <div class="circle2"></div>
+                      <div class="circle2"></div>
+                  </div>
+              </div>
+              <div class="text-gray-200 text-xl mt-4">
+                {{ message }}
+              </div>
             </div>
-
         </div>
     </div>
 </template>
 
 <script setup>
+import { defineProps, computed } from 'vue';
 
+const props = defineProps({
+  message: String,
+  opacity: Number
+});
+
+const background_opacity = computed (() => {
+    return "bg-opacity-"+props.opacity;
+})
 </script>
 
 <style>

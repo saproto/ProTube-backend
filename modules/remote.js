@@ -1,59 +1,42 @@
-const crypto = require("crypto");
-const client = io.of('/search-screen')
-const { InMemorySessionStore } = require("./sessionStore");
-const sessionStore = new InMemorySessionStore();
+const client = io.of('/socket/remote')
 const youtube = require('../utils/yt');
 const logger = require('../utils/logger');
 const queue = require('./queue-manager');
+const screencode = require('./screencode.js');
+const authenticator = require('./authenticator.js');
 
-const expireSession = process.env.SCREENCODE_DURATION || 3600; //time to expire the session (seconds)
-let authToken;
-
+// A new screencode was generated
 communicator.on('newScreenCode', (code) => {
-  authToken = code;
-  sessionStore.flushAllSessions();
+  authenticator.flushAllSessions();
   //disconnect all sockets
   client.disconnectSockets(false);
 });
 
-client.use((socket, next) => {
-  logger.clientInfo(`Client from ${socket.handshake.address} with id ${socket.id} attempted to connect, validating...`);
-  const sessionID = socket.handshake.auth.sessionID; //get the session id of the connecting user
-  if(sessionID){
-    //console.log(`[CLIENT] Client spotted with session`);
-    const existingSession = sessionStore.findSession(sessionID);
-    if(existingSession){//found existing and valid session, verify age
-      if(existingSession.unix+expireSession > Math.floor(new Date() / 1000)){ //age verification
-        console.log(existingSession);
-        logger.clientInfo(`Session validated - ${socket.id}`);
-        socket.sessionID = sessionID;
+// A remote connection is attempted
+client.use( async (socket, next) => {
+  try{
+    // if cookie is valid
+    logger.clientInfo(`${socket.id} attempts to connect to the remote`);
+    if(await authenticator.validateClient(socket.handshake.headers.cookie, socket.handshake.auth.token == screencode.getScreenCode())){
+      const existingSession = await authenticator.getSessionData(socket.handshake.headers.cookie);
+      // if screencode is also valid, continue
+      if(existingSession && existingSession.screencode_correct){
         return next();
       }
-      //console.log(`[CLIENT] Session expired`);
+      // valid cookie, invalid screencode
+      logger.clientInfo(`${socket.id} Failed to connect with incorrect screencode`);
+      return next(new Error("Invalid screencode"));
     }
+  } catch (error){
+    logger.clientInfo(`${socket.id} Failed to connect with: ${error.toString()}`)
   }
-  console.log(`[CLIENT] Session invalid, authing.. + ${socket.handshake.auth.token}`);
-  if(validateClient(socket.handshake.auth.token)){
-    //validated client, generating sessionID
-    const newSessionID = crypto.randomBytes(16).toString("hex");
-    sessionStore.saveSession(newSessionID, {
-      unix: Math.floor(new Date() / 1000)
-    });
-    socket.sessionID = newSessionID;
-    logger.clientInfo(`Authorized ${socket.id}`);
-    return next();
-  } else{
-    logger.clientInfo(`Failed authentication - ${socket.id}`);
-    return next(new Error("Not authorized"));
-  }
-  //end middleware
-}).on('connection', socket => {
+  // proto_session cookie is invalid/ non existent
+  return next(new Error("Not authorized"));
+}).on('connection', (socket) => {
   logger.clientInfo(`Successfully connected - ${socket.id}`);
 
-  //update session on client
-  socket.emit("session", socket.sessionID);
-
-  socket.on('disconnect', () => {
+  socket.on('disconnect', (error) => {
+    console.log(error);
     logger.clientInfo(`Disconnected socket: ${socket.id}`)
   });
 
@@ -64,156 +47,11 @@ client.use((socket, next) => {
   });
 
   socket.on('addVideoToQueue', (video, callback) => {
-    const added = queue.add(video);
-    callback(added);
-    logger.queueInfo(`Added "${video.title}" to queue`);
+    if(queue.queueIsEnabled()){
+      const added = queue.add(video);
+      if (added) callback({success: true, error: "Successfully added to the queue!"});
+      else callback({success: false, error: "Video already in the queue!"});
+    }
+    callback({success: false, error: "No videos are allowed!"});
   });
 });
-
-function validateClient(socketHandshakeToken){
-  return socketHandshakeToken == authToken;
-}
-
-
-// const server = require('http').createServer(app);
-// const io = require('socket.io')(server);
-
-
-
-// const sessionMiddleware = session({
-//   secret: 'keyboard cat',
-//   cookie: {
-//     maxAge: 10000
-//   },
-//   resave: true,
-//   saveUninitialized: true,
-// });
-// register middleware in Express
-//app.use(sessionMiddleware);
-// register middleware in Socket.IO
-// client.use((socket, next) => {
-//   session({
-//     secret: 'keyboard cat',
-//     cookie: {
-//       maxAge: 10000
-//     },
-//     resave: true,
-//     saveUninitialized: true,
-//   });
-//   next();
-// });
-
-//const port = process.env.PORT || 3000;
-//server.listen(port, () => console.log('server listening on port ' + port));
-
-// const client = io.of('/search-screen')
-// const crypto = require("crypto");
-// const { InMemorySessionStore } = require("./sessionStore");
-// const sessionStore = new InMemorySessionStore();
-// const session = require('express-session');
-// //var sio = require("socket.io")(server);
-
-
-
-// const sessionMiddleware = session({ 
-//   secret: 'keyboard cat', 
-//   cookie: { 
-//     maxAge: 10000 
-//   },
-//   resave: true,
-//   saveUninitialized: true,
-// });
-// app.use(sessionMiddleware);
-
-// //const sessionMiddleware = session({ cookie: { maxAge: 60000 }});
-
-// // client.use((socket, next) => {
-// //   const sessionID = socket.handshake.auth.sessionID;
-// //   if (sessionID) {
-// //     // find existing session
-
-// //     const session = sessionStore.findSession(sessionID);
-// //     if (session) {
-// //       socket.sessionID = sessionID;
-// //       console.log(`[CLIENT] Existing session with id: ${sessionID}`);
-// //       //socket.userID = session.userID;
-// //       //socket.username = session.username;
-// //       next();
-// //     }
-// //     console.log(`[CLIENT] Invalid session`);
-// //     next();
-// //   } else {
-// //     //generating new session
-// //     console.log(`[CLIENT] No session found`);
-// //     socket.sessionID = crypto.randomBytes(16).toString("hex");
-// //     next();
-// //   }
-// // });
-// client.use(sharedsession(session, {
-//   autoSave:true
-// })); 
-
-// // client.use((socket, next) => {
-// //   console.log(socket.request.session);
-// //   sessionMiddleware(socket.request, socket.request.res, next);
-// //   console.log(sessionMiddleware);
-// // });
-//   // //session stuff
-//   // console.log(`[CLIENT] Client from ${socket.handshake.address} with id ${socket.id} attempted to connect, validating...`);
-//   // const sessionID = req.session;//socket.handshake.auth.sessionID;  //session from authing user
-//   // if (sessionID) {
-//   //   // find existing session
-//   //   const session = sessionStore.findAllSessions();
-//   //   console.log(sessionID);
-//   //   if (session) {  //if found a valid session
-//   //     socket.sessionID = sessionID;
-//   //     console.log(`[CLIENT] Existing session with id: ${sessionID}`);
-//   //     //socket.userID = session.userID;
-//   //     //socket.username = session.username;
-//   //     next();
-//   //   }
-//   //   console.log(`[CLIENT] Invalid session, authing token...`);
-//   // } //no session (new user, authing it)
-//   // //   //generating new session
-//   // //   console.log(`[CLIENT] No session found`);
-//   // //   socket.sessionID = crypto.randomBytes(16).toString("hex");
-//   // //   next();
-//   // // }
-
-//   // //sessionMiddleware(socket.request, {}, next);
-//   // console.log(`[CLIENT] Received auth token ${socket.handshake.auth.token}`);
-//   // //let sessionExist = findSession(socket.handshake.auth.sessionID);
-//   // //console.log(`[CLIENT] Session received: ${sessionExist}`);
-//   // if (validateClient(socket.handshake.auth.token)) {
-//   //   socket.sessionID = crypto.randomBytes(16).toString("hex");
-//   //   console.log(`[CLIENT] New user, generated a new session ${socket.sessionID}`);
-//   //   sessionStore.saveSession(socket.sessionID, { connected: true });
-//   //   next();
-//   // } else {
-//   //   next(new Error("Not authorized"));
-//   //   console.log(`[CLIENT] ${socket.id} failed to authorize`);
-//   // }
-// client.on('connection', socket => {
-//   console.log(`[CLIENT] Succesfully authorized and connected client ${socket.id}`);
-//   //console.log(socket.request);
-//   // if (sessionStore.findSession(socket.handshake.auth.sessionID)) {
-//   //   sessionStore.saveSession(socket.sessionID);
-//   //   console.log(`[CLIENT] Saved new session ${socket.sessionID}`);
-//   // }
-//   const session = socket.request.session;
-//   session.connections++;
-//   session.save();
-//   console.log(session);
-//   //giving the client a session key
-//   // socket.emit("session", {
-//   //   sessionID: session.
-//   // });
-
-//   socket.on('disconnect', () => {
-//     console.log(`[CLIENT] Lost connection with authorized client ${socket.id}`);
-//   });
-// });
-//   //function to authenticate incoming socket connections
-// function validateClient(socketHandshakeToken){
-//     return socketHandshakeToken == process.env.WEB_CLIENT_IDENTIFIER || 123;
-//   }

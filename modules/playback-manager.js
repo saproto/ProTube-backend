@@ -1,6 +1,8 @@
 const timeFormatter = require('../utils/time-formatter');
+const queueManager = require('./queue-manager');
+const remote = require('./remote');
 
-let status = 'idle'; //playing, paused, idle
+let status = 'idle'; //playing, paused, idle, radio
 let timestamp = 0;
 let playbackInterval;
 
@@ -37,8 +39,31 @@ exports.pauseVideo = () => {
     status = 'paused';
 }
 
-exports.getStatus = () => status;
+exports.switchRadio = (station) => {
+    if(status != 'radio'){
+        this.stopVideo();
+        status = 'radio';
+        queueManager.addToTop(queueManager.getCurrent());
+    }
+    queueManager.setRadio(station);
+}
+
+// resuming to protube, enabling the queue and start playing immediately if the queue is filled
+exports.resumeProTube = () => {
+    // only resume if we are not on radio
+    communicator.emit('show-screencode');
+    if(status == 'radio'){
+        // re-show the screencode
+        queueManager.enableQueue();
+        status = 'radio-ending';
+        return queueManager.moveToNext();
+    }
+    return false;
+}
+
+exports.getStatus = () => { return status }
 
 communicator.on('new-video', video => {
+    clearInterval(playbackInterval);
     this.playVideoFromStart(video);
 });
