@@ -39,8 +39,14 @@ function connectAdminSocket(){
         eventBus.emit('admin-socket-screencode-update', screencode);
     });
 
+    // there was a change in the queue, update this on the admin remote
     socket.on('admin-queue-update', (queue) => {
         eventBus.emit('admin-socket-queue-update', queue);
+    });
+
+    // the volume on the screens was changed
+    socket.on('admin-new-volume', (volume) => {
+        eventBus.emit('admin-new-volume', volume);
     });
 }
 
@@ -87,7 +93,6 @@ async function skipNextInQueue(){
 }
 
 export { setRadio }
-// eslint-disable-next-line
 async function setRadio(radiostation){
     return await new Promise( resolve => {
         socket.emit('set-radio', radiostation, callback => {
@@ -97,10 +102,18 @@ async function setRadio(radiostation){
 }
 
 export { resumeProTube }
-// eslint-disable-next-line
 async function resumeProTube(){
     return await new Promise( resolve => {
         socket.emit('resume-protube', callback => {
+            resolve(callback);
+        });
+    });
+}
+
+export { volumeChange }
+async function volumeChange(volume){
+    return await new Promise( resolve => {
+        socket.emit('volume-change', volume, callback => {
             resolve(callback);
         });
     });

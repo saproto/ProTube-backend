@@ -1,7 +1,7 @@
 const timeFormatter = require('../utils/time-formatter');
 const _ = require('lodash');
 const logger = require('../utils/logger');
-const { getStatus } = require('./playback-manager');
+const playbackManager = require('./playback-manager');
 
 let queue = [];
 let current = {};
@@ -43,11 +43,11 @@ exports.moveToNext = () => {
     // Queue has an item, can be shifted
     if(queue.length > 0){
         // if we're on the radio do not set the next in line to current
-        if(getStatus() != 'radio') current = queue[0];
+        if(playbackManager.getStatus() != 'radio') current = queue[0];
         queue.shift();
         communicator.emit('queue-update');
         // if we're not on radio update the screens with the new video
-        if(getStatus() != 'radio') communicator.emit('new-video', current);
+        if(playbackManager.getStatus() != 'radio') communicator.emit('new-video', current);
         return true;
     }
     return false;
