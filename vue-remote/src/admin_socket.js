@@ -20,7 +20,7 @@ function connectAdminSocket(){
 
     // connection errors
     socket.on("connect_error", (err) => {
-        let error = "Unknown error occurred";
+        let error = "Unable to connect to ProTube";
         if (err == "Error: Not authorized") {
             error = "Unauthorized!";
         } else if(err == "Error: Unable to validate"){

@@ -1,5 +1,7 @@
 <template>
-    <ErrorModal message="404 - Page not found!" />
+    <ErrorModal opacity=100 >
+        404 - Page not found!
+    </ErrorModal>
 </template>
 
 <script setup>

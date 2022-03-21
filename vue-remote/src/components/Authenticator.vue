@@ -7,7 +7,9 @@
         <NoCookieModal v-if="noCookieModal"/>
 
         <transition name="modal" appear>
-            <ErrorModal v-if="errormessage" :message="errormessage" :key="errormessage" />
+            <ErrorModal v-if="errormessage" :key="errormessage" >
+                {{ errormessage }}
+            </ErrorModal>
         </transition>
 
     </div>
@@ -50,6 +52,7 @@ eventBus.on('admin-socket-connect-error', (reason) => {
     } else {
         errormessage.value = reason.reason;
     }
+    authModalVisible.value = false;
 });
 
 eventBus.on('admin-socket-connect-success', () => {

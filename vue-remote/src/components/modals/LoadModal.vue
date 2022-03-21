@@ -26,7 +26,10 @@ import { defineProps, computed } from 'vue';
 
 const props = defineProps({
   message: String,
-  opacity: Number
+  opacity: {
+      type: Number, 
+      default: 70
+    }
 });
 
 const background_opacity = computed (() => {
