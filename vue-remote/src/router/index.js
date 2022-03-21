@@ -3,11 +3,16 @@ import Remote from '@/views/Remote.vue'
 import AdminRemote from '@/views/AdminRemote.vue'
 import ProtubeScreen from '@/views/ProtubeScreen.vue'
 import AdminProtubeScreen from '@/views/AdminProtubeScreen.vue'
+import ErrorPage from '@/views/ErrorPage.vue'
 
 const routes = [
   {
+    path: '/',
+    redirect: '/remote'
+  },
+  {
     path: '/remote',
-    name: 'Home',
+    name: 'Remote',
     component: Remote
   },
   {
@@ -24,6 +29,11 @@ const routes = [
     path: '/screen/admin',
     name: 'Admin Screen',
     component: AdminProtubeScreen
+  },
+  { 
+    path: '/:pathMatch(.*)*', 
+    name: "Page not found!",
+    component: ErrorPage 
   }
 
 ]

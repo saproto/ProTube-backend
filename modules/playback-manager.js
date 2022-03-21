@@ -61,7 +61,7 @@ exports.resumeProTube = () => {
     return false;
 }
 
-exports.getStatus = () => status;
+exports.getStatus = () => { return status }
 
 communicator.on('new-video', video => {
     clearInterval(playbackInterval);

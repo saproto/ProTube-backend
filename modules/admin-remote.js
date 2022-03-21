@@ -75,6 +75,18 @@ admin.use(async (socket, next) => {
     logger.adminInfo(`${socket.id} Requested to skip a video`);
     callback(moveToNext());
   });
+
+  // change the screen's volume 
+  socket.on('volume-change', (volume, callback) => {
+    logger.adminInfo(`${socket.id} Requested to change the volume to: ${volume}`);
+    callback(1);
+  });
+
+
+  // change the screen's volume 
+  socket.on('get-volume', (callback) => {
+    // callback(playbackManager.getVolume());
+  });
 });
 
 communicator.on('newScreenCode', (screenCode) => {
@@ -85,11 +97,10 @@ communicator.on('queue-update', () => {
   admin.emit('admin-queue-update', getQueue());
 });
 
-// // use this function to authorize an incoming admin request (return a boolean)
-// function validateAdmin(proto_session_token){
-//   // check if the session token is a valid account and then check if that account has admin rights
-//   // return userDataFetcher.logInUser(proto_session_token) && userDataFetcher.getUserData(proto_session_token).isAdmin;
-// }
+// broadcast new volume to all connected admins
+communicator.on('new-volume', (volume) => {
+  admin.emit('admin-new-volume', volume);
+});
 
 // check if the given radiostation is valid
 async function validateRadioStation(radiostation){

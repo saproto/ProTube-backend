@@ -9,11 +9,11 @@
                 <label class="text-gray-600 text-2xl absolute"> Master Controls</label>
                 <div class="w-full md:w-2/3">
                     <p class=" text-right md:text-center text-md text-gray-500 w-full "> Volume Slider</p>
-                    <input class="bg-proto_blue hover:bg-opacity-80 rounded-xl h-2 w-full border outline-none border-gray-500 appearance-none" type="range" min="1" max="100" value="50">
+                    <input @change="volumeSliderMoved" class="bg-proto_blue hover:bg-opacity-80 rounded-xl h-2 w-full border outline-none border-gray-500 appearance-none" type="range" min="1" max="100" :value="volumeCalculated">
                 </div>
                 <div class="flex">
                     <button @click="skipnextInQueue" class="shadow-md bg-proto_blue hover:bg-opacity-80 text-white py-1 px-2 ml-5 rounded-md my-auto flex">
-                    QuickSkip
+                        QuickSkip
                         <svg xmlns="http://www.w3.org/2000/svg" class=" h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
                         </svg>
@@ -99,13 +99,14 @@ import UserDetails from '@/components/UserDetails.vue'
 import Toast from '@/components/Toast.vue'
 import RadioStations from '@/components/RadioStations.vue'
 import { eventBus } from '../eventbus'
-import { getUserData, getVideoQueue, regenScreenCode, skipNextInQueue, resumeProTube } from '@/admin_socket.js'
+import { getUserData, getVideoQueue, regenScreenCode, skipNextInQueue, resumeProTube, volumeChange } from '@/admin_socket.js'
 import { ref, computed } from 'vue'
 
 const name = ref("");
 const radiofilter = ref("");
 const videoqueue = ref([]);
 const toasts = ref([]);
+const volumeCalculated = ref(50);
 
 const total_queue_duration = computed(() => {
     var totalseconds = 0;
@@ -127,6 +128,13 @@ function displayToast(message){
     }, 2500);
 }
 
+
+async function volumeSliderMoved(event){
+    console.log(event.target.value);
+    if(await volumeChange(event.target.value)) displayToast("Successfully changed the volume!");
+    else displayToast("Failed to change volume!");
+}
+
 async function resumeProtube(){
     if(await resumeProTube()) displayToast("Successfully resumed ProTube!");
     else displayToast("Failed to resume ProTube!");
@@ -137,6 +145,11 @@ eventBus.on('admin-socket-connect-success', async () => {
     var _videoqueue = await getVideoQueue();
     videoqueue.value = _videoqueue
     name.value = userdata.name;
+});
+
+// a change in volume 
+eventBus.on('admin-new-volume', (volume) => {
+    volumeCalculated.value = volume;
 });
 
 eventBus.on('admin-socket-queue-update', (queue) => {
