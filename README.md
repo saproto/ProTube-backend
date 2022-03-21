@@ -29,31 +29,6 @@ Key used to check the api authentication with, bearer token authorisation is use
 
 
 ### User Authentication
-At this moment there is a test user auth method that you'll need to implement manually in a laravel project. 
-In the AuthController for example:
-```php
-/**
-     * @param Request $request
-     * @return View|RedirectResponse
-     */
-    public function requestUserdetails(Request $request)
-    {
-        if(Auth::user()){
-            return [
-                'authenticated' => true,
-                'username' => Auth::user()->calling_name,
-                'is_admin' => Auth::user()->can('protube') || Auth::user()->isTempadmin()
-            ];
-        }
-        return [
-            'authenticated' => false
-        ];
-    }
-```
+At this moment there is a test user auth method that can be used for the dev environment. Run this project: https://github.com/saproto/saproto/tree/misc/protube-api 
 
-And then add the route in web.php in the section routes related to authentication (± line 60)
-```php
-Route::get('userdetails', ['as' => 'requestusername', 'uses' => 'AuthController@requestUserdetails']);
-```
-
-Make sure to set the line 30 in the authenticator.js module to the right url for the userdetails. Note to update the cors rule if protube vue does not run on port 8080 (in protube.js)
+Then set the env variable of the node project API_ENDPOINT to (most likely) https://localhost:8080/api/protube. If you can reach /api/protube/userdetails from the browser but ProTube really refuses to connect and the API_ENDPOINT is correct. You can try to change line 40 of docker-compose.yml at the laravel project by removing '127.0.0.1:'
