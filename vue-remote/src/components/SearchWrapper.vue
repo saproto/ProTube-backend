@@ -40,10 +40,10 @@
 
 <script setup>
 import { ref } from 'vue';
-import { eventBus } from '@/eventbus.js'
+import { eventBus } from '@/js/eventbus.js'
 import HeaderField from '@/layout/HeaderField.vue'
 import Authenticator from '@/components/Authenticator.vue'
-import { getUserData } from '@/user_socket.js'
+import { getUserData } from '@/js/user_socket.js'
 
 const search_string = ref("");
 const logIn = ref(false);

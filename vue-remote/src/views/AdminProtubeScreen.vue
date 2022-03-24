@@ -6,8 +6,8 @@
 <script setup>
 import ProtubeScreen from '@/views/ProtubeScreen.vue'
 import Authenticator from '@/components/Authenticator.vue'
-import { eventBus } from '@/eventbus.js'
-import { getScreenCode } from '@/admin_socket.js'
+import { eventBus } from '@/js/eventbus.js'
+import { getScreenCode } from '@/js/admin_socket.js'
 import { ref } from 'vue'
 
 const screenCode = ref('0000');

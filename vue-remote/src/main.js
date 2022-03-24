@@ -2,8 +2,8 @@ import { createApp } from 'vue'
 
 import App from './App.vue'
 
-import { eventBus } from './eventbus'
-import { onYouTubeIframeAPIReady, youtubePlayerReady } from './screen3'
+import { eventBus } from '@/js/eventbus'
+import { onYouTubeIframeAPIReady, youtubePlayerReady } from '@/js/screen_socket'
 
 import './assets/tailwind.css'
 
