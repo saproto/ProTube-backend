@@ -1,6 +1,6 @@
 <template>
     <div> 
-        <transition name="modal" appear>
+        <transition name="modal">
             <LoadModal v-if="authModalVisible" message="Authenticating..." :opacity="100" />
         </transition>
 
@@ -16,13 +16,13 @@
 </template>
 
 <script setup>
-import LoadModal from '../components/modals/LoadModal.vue'
-import NoCookieModal from '../components/modals/NoCookieModal.vue'
-import ErrorModal from '../components/modals/ErrorModal.vue'
+import LoadModal from '@/components/modals/LoadModal.vue'
+import NoCookieModal from '@/components/modals/NoCookieModal.vue'
+import ErrorModal from '@/components/modals/ErrorModal.vue'
 import { defineProps, ref } from 'vue'
-import { eventBus } from '../eventbus'
-import { connectAdminSocket } from '../admin_socket'
-import { connectUserSocket } from '../user_socket'
+import { eventBus } from '@/js/eventbus'
+import { connectAdminSocket } from '@/js/admin_socket'
+import { connectUserSocket } from '@/js/user_socket'
 
 const authModalVisible = ref(true);
 const noCookieModal = ref(false);
@@ -39,11 +39,9 @@ checkForSessionCookie();
 
 // check if the session contains a proto_session cookie, if so, attempt to connect
 function checkForSessionCookie(){
-    if(props.admin){
-        connectAdminSocket();
-    } else {
-        connectUserSocket();
-    }
+    if(props.admin) return connectAdminSocket();
+    
+    connectUserSocket();
 }
 
 eventBus.on('admin-socket-connect-error', (reason) => {

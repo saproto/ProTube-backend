@@ -1,6 +1,6 @@
 const io = window.io = require('socket.io-client');
 let socket = null;
-import { eventBus } from '@/eventbus.js';
+import { eventBus } from '@/js/eventbus.js';
 let player;
 let current;
 let radio = false;

@@ -8,7 +8,7 @@
 
 <script setup>
 import { ref, computed, defineProps, defineEmits } from 'vue'
-import { setRadio } from '@/admin_socket';
+import { setRadio } from '@/js/admin_socket';
 
 
 const radiostations = ref([]);

@@ -98,8 +98,8 @@ import ContentField from '@/layout/ContentField.vue'
 import UserDetails from '@/components/UserDetails.vue'
 import Toast from '@/components/Toast.vue'
 import RadioStations from '@/components/RadioStations.vue'
-import { eventBus } from '../eventbus'
-import { getUserData, getVideoQueue, regenScreenCode, skipNextInQueue, resumeProTube, volumeChange } from '@/admin_socket.js'
+import { eventBus } from '@/js/eventbus'
+import { getUserData, getVideoQueue, regenScreenCode, skipNextInQueue, resumeProTube, volumeChange } from '@/js/admin_socket.js'
 import { ref, computed } from 'vue'
 
 const name = ref("");

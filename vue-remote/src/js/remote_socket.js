@@ -1,7 +1,7 @@
 const io = window.io = require('socket.io-client');
 var socket;
 let silentConnect = false;
-import { eventBus } from './eventbus';
+import { eventBus } from '@/js/eventbus';
 
 export { initializeSocket };
 

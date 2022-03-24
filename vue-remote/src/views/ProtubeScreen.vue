@@ -17,8 +17,8 @@
   
 <script setup>
 import { defineProps, ref } from 'vue'
-import '@/screen3.js'
-import { eventBus } from '@/eventbus.js';
+import '@/js/screen_socket.js'
+import { eventBus } from '@/js/eventbus.js';
 import RadioModal from '@/components/modals/RadioModal.vue'
 
 const currentRadio = ref("");

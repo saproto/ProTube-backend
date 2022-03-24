@@ -19,9 +19,9 @@
 </template>
 
 <script setup>
-import Result from './Result.vue'
+import Result from '@/components/Result.vue'
 import { ref } from 'vue'
-import { eventBus } from '../eventbus'
+import { eventBus } from '@/js/eventbus'
 import ContentField from '@/layout/ContentField.vue'
 
 const results = ref([]);

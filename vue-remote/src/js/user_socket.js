@@ -1,6 +1,6 @@
 const io = window.io = require('socket.io-client');
 var socket;
-import { eventBus } from '@/eventbus.js';
+import { eventBus } from '@/js/eventbus.js';
 
 export { connectUserSocket };
 

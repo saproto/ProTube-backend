@@ -18,13 +18,13 @@
 
 
 <script setup>
-import SearchWrapper from '../components/SearchWrapper.vue'
-import ResultsWrapper from '../components/ResultsWrapper.vue'
-import LoginModal from '../components/modals/LoginModal.vue'
-import LoadModal from '../components/modals/LoadModal.vue'
-import ToastModal from '../components/modals/ToastsModal.vue'
-import { initializeSocket } from '../socket'
-import { eventBus } from '../eventbus'
+import SearchWrapper from '@/components/SearchWrapper.vue'
+import ResultsWrapper from '@/components/ResultsWrapper.vue'
+import LoginModal from '@/components/modals/LoginModal.vue'
+import LoadModal from '@/components/modals/LoadModal.vue'
+import ToastModal from '@/components/modals/ToastsModal.vue'
+import { initializeSocket } from '@/js/remote_socket'
+import { eventBus } from '@/js/eventbus'
 import { onMounted, ref } from 'vue'
 
 const loginModalVisible = ref(true);

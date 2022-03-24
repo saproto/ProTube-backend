@@ -92,7 +92,7 @@
  
 <script setup>
 import { computed, reactive, ref, onMounted  } from 'vue';
-import { eventBus } from '../eventbus';
+import { eventBus } from '@/js/eventbus';
  
 onMounted(() => {
   focusOnFirstInput();
