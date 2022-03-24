@@ -1,6 +1,6 @@
 ## UX verbeteringen:
 ### Hoge prioriteit
-* Melding van niet-ingelogd voor code
+- [ ] Melding van niet-ingelogd voor code
 * Code invoeren (bij een press naar volgende vak, reset naar vakje 1 bij foutieve code)
 * Dialog van dat je moet inloggen (session not found) een transparent dialog maken
 * Knop maken om de session check te retryen
