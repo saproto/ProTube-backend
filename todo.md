@@ -1,10 +1,10 @@
 ## UX verbeteringen:
 ### Hoge prioriteit
-- [ ] Melding van niet-ingelogd voor code
+- [x] Melding van niet-ingelogd voor code
 - [ ] Code invoeren (bij een press naar volgende vak, reset naar vakje 1 bij foutieve code)
 - [x] Dialog van dat je moet inloggen (session not found) een transparent dialog maken
 - [x] Knop maken om de session check te retryen
-- [ ] Login knop weghalen
+- [x] Login knop weghalen
 - [ ] Empty queue text moet weg als queue niet empty is
 - [ ] Tekst in dark mode moet wit?
 - [x] I.p.v. unknown error occured met rood driehoekje iets van 'connection lost, is ProTube still running?'
