@@ -1,7 +1,8 @@
 ## UX verbeteringen:
 ### Hoge prioriteit
 - [x] Melding van niet-ingelogd voor code
-- [ ] Code invoeren (bij een press naar volgende vak, reset naar vakje 1 bij foutieve code)
+- [x] Foutieve code reset naar vak 1
+- [ ] Code invoeren bij een press naar volgende vak ipv release
 - [x] Dialog van dat je moet inloggen (session not found) een transparent dialog maken
 - [x] Knop maken om de session check te retryen
 - [x] Login knop weghalen

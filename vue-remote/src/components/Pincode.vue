@@ -95,6 +95,7 @@ import { computed, reactive, ref, onMounted  } from 'vue';
 import { eventBus } from '@/js/eventbus';
  
 onMounted(() => {
+  code_0.value = document.getElementById('code_0');
   focusOnFirstInput();
 });
  
