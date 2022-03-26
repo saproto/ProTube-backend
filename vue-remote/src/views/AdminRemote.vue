@@ -74,7 +74,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div v-if="videoqueue" class="text-gray-400 ml-8"> Empty queue </div>
+                        <div v-if="videoqueue.length < 1" class="text-gray-400 ml-8"> Empty queue </div>
                     </div>
                 </div>
         </ContentField>
