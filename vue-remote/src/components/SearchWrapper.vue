@@ -1,9 +1,9 @@
 <template>
   <HeaderField>
     <div class="flex-1">
-      <h3 class=" leading-6 font-medium text-white text-2xl">Protube playlist panel</h3>
+      <h3 class=" leading-6 font-medium text-white text-2xl">ProTube playlist panel</h3>
       <div class="mt-2 max-w-xl text-sm text-gray-200 ">
-        <p>Search for any song on YouTube and add it to the Protube playlist</p>
+        <p>Search for any song on YouTube and add it to the ProTube playlist</p>
       </div>
       <form @submit="fetchVideos" onsubmit="return false" class="mt-5 flex  sm:items-center">
         <div class="w-full h-10 flex group md:max-w-md ">
@@ -16,42 +16,39 @@
             </svg>
           </button>
         </div>
-        <button @click="logIn = true" v-if="!logIn" class="py-2 ml-4 px-4 bg-proto_blue text-white hover:opacity-80 rounded-md">Login</button>
         
       </form>      
     </div>
     <div class="flex-shrink-0 mr-6 ml-2 justify-center mb-6 mt-auto">
-      <div v-if="logIn" class="text-white text-2xl my-2"> Welcome {{ userData.username }}!</div>
+      <div class="text-white text-2xl my-2"> Welcome {{ userData.name }}!</div>
       <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-2 xl:grid-cols-4 gap-2">
-        <router-link to="/remote/admin" v-if="logIn && userData.isAdmin" class="text-center py-2 px-4 bg-proto_blue text-white hover:opacity-80 rounded-md">Admin remote</router-link>
-        <router-link to="/screen/admin" v-if="logIn && userData.isAdmin" class="text-center py-2 px-4 bg-proto_blue text-white hover:opacity-80 rounded-md">Admin screen</router-link>
+        <router-link to="/remote/admin" v-if="userData.isAdmin" class="text-center py-2 px-4 bg-proto_blue text-white hover:opacity-80 rounded-md">Admin remote</router-link>
+        <router-link to="/screen/admin" v-if="userData.isAdmin" class="text-center py-2 px-4 bg-proto_blue text-white hover:opacity-80 rounded-md">Admin screen</router-link>
+        <router-link to="/screen/admin" v-else class="text-center py-2 px-4 bg-proto_blue text-white hover:opacity-80 rounded-md">Screen</router-link>
         <!--<router-link to="/user/statistics" v-if="logIn" class="text-center py-2 px-4 bg-proto_blue text-white hover:opacity-80 rounded-md">Your Statistics</router-link>-->
-        <router-link to="/statistics" v-if="logIn" class="text-center py-2 px-4 bg-proto_blue text-white hover:opacity-80 rounded-md">Statistics</router-link>
+        <router-link to="/statistics" class="text-center py-2 px-4 bg-proto_blue text-white hover:opacity-80 rounded-md">Statistics</router-link>
       </div>
     </div>
-    <div :class="logIn ? 'lg:block' : 'md:block' " class="hidden lg:block flex-shrink-0 mr-6 my-auto">
+    <div  class="hidden lg:block flex-shrink-0 mr-6 my-auto">
         <!--<img class="w-30 h-0 md:h-36 object-cover flex-shrink-0 mx-auto dark:hidden block" src="logo_classic.png" />
         <img class="w-30 h-0 md:h-36 object-cover flex-shrink-0 mx-auto hidden dark:block" src="logo_dark.png" />-->
         <img class="w-30 h-0 md:h-32 object-cover flex-shrink-0 mx-auto" :src="require('@/assets/logo_classic.png')" />
     </div>
   </HeaderField>
-  <Authenticator v-if="logIn"/>
 </template>
 
 <script setup>
 import { ref } from 'vue';
 import { eventBus } from '@/js/eventbus.js'
 import HeaderField from '@/layout/HeaderField.vue'
-import Authenticator from '@/components/Authenticator.vue'
 import { getUserData } from '@/js/user_socket.js'
 
 const search_string = ref("");
-const logIn = ref(false);
 const userData = ref({
-  username: null,
+  name: null,
   isAdmin: false
 });
-// const loggedIn = ref(false);
+
 
 function fetchVideos() {
   if(search_string.value != ''){
@@ -61,7 +58,7 @@ function fetchVideos() {
 
 eventBus.on('user-socket-connect-success', async () => {
   var userdata = await getUserData();
-  userData.value.username = userdata.username;
+  userData.value.name = userdata.name;
   userData.value.isAdmin = userdata.isAdmin;
 });
 

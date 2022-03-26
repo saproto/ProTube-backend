@@ -14,7 +14,7 @@ exports.add = video => {
 
     //Video is not already in the queue, so add it
     queue.splice(queue.length/2, 0, video);
-    if(_.isEmpty(current) || getStatus() == 'radio-ending') {
+    if(_.isEmpty(current) || playbackManager.getStatus() == 'radio-ending') {
         this.moveToNext();
     }
     communicator.emit('queue-update');

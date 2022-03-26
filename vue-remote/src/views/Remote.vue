@@ -13,6 +13,7 @@
         <transition name="modal" appear >
             <LoadModal :opacity="70" v-if="loadModalVisible && !loginModalVisible" />
         </transition>
+        <Authenticator />
     </div>
 </template>
 
@@ -22,6 +23,7 @@ import SearchWrapper from '@/components/SearchWrapper.vue'
 import ResultsWrapper from '@/components/ResultsWrapper.vue'
 import LoginModal from '@/components/modals/LoginModal.vue'
 import LoadModal from '@/components/modals/LoadModal.vue'
+import Authenticator from '@/components/Authenticator.vue'
 import ToastModal from '@/components/modals/ToastsModal.vue'
 import { initializeSocket } from '@/js/remote_socket'
 import { eventBus } from '@/js/eventbus'
