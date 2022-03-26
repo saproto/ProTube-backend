@@ -31,7 +31,7 @@
         <ContentField>
             <label class="text-gray-600 text-2xl absolute"> Radiostations</label>
             <input minlength="1" v-model="radiofilter" class="bg-white min-w-min placeholder-gray-500  focus:placeholder-gray-600  text-gray-700 pl-2 rounded-md border border-gray-400 outline-none ml-48" placeholder="Filter"/>
-            <div class="flex overflow-x-scroll pt-10 no-scrollbar">
+            <div class="flex overflow-x-scroll pt-10 scrollbar">
                 <div class="flex flex-nowrap ">
                     <Suspense>
                         <template #default>
@@ -172,6 +172,7 @@ async function skipnextInQueue(){
 </script>
 
 <style>
+
 .no-scrollbar::-webkit-scrollbar {
     display: none;
 }
