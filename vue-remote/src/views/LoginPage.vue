@@ -1,7 +1,7 @@
 <template>
     <div> 
         <transition name="modal">
-            <LoadModal v-if="authModalVisible" message="Authenticating..." :opacity="100" />
+            <LoadModal message="Authenticating..." :opacity="100" />
         </transition>
 
         <NoCookieModal v-if="noCookieModal"/>
@@ -19,30 +19,23 @@
 import LoadModal from '@/components/modals/LoadModal.vue'
 import NoCookieModal from '@/components/modals/NoCookieModal.vue'
 import ErrorModal from '@/components/modals/ErrorModal.vue'
-import { defineProps, ref } from 'vue'
+// import { logInUser, logInAdmin } from '@/js/authenticator'
+import { defineProps, onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { eventBus } from '@/js/eventbus'
-import { connectAdminSocket } from '@/js/admin_socket'
-import { connectUserSocket } from '@/js/user_socket'
 
-const authModalVisible = ref(true);
 const noCookieModal = ref(false);
 const errormessage = ref(false);
 
 const props = defineProps({
-  admin: {
-      type: Boolean, 
-      default: false
-    }
+    targetPath: String,
+    requests_admin: Boolean
 });
-/* eslint-disable */
-// checkForSessionCookie();
+const router = useRouter();
 
-// check if the session contains a proto_session cookie, if so, attempt to connect
-function checkForSessionCookie(){
-    if(props.admin) return connectAdminSocket();
-    
-    connectUserSocket();
-}
+onMounted(() => {
+    eventBus.emit('authenticator-user-connect-attempt');
+})
 
 eventBus.on('admin-socket-connect-error', (reason) => {
     if(reason.reason == "Login error!"){
@@ -50,16 +43,16 @@ eventBus.on('admin-socket-connect-error', (reason) => {
     } else {
         errormessage.value = reason.reason;
     }
-    authModalVisible.value = false;
 });
 
 eventBus.on('admin-socket-connect-success', () => {
-    authModalVisible.value = false;
+    router.push({ name: props.targetPath } )
     errormessage.value = "";
 });
 
 eventBus.on('user-socket-connect-success', () => {
-    authModalVisible.value = false;
+    if(props.requests_admin) eventBus.emit('authenticator-admin-connect-attempt');
+    else router.push({ name: props.targetPath || "Remote"} );
     errormessage.value = "";
 });
 
@@ -70,8 +63,4 @@ eventBus.on('user-socket-connect-error', (reason) => {
         errormessage.value = reason.reason;
     }
 });
-
 </script>
-
-<style>
-</style>

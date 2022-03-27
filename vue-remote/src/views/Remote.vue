@@ -11,9 +11,8 @@
             <LoginModal v-if="loginModalVisible" />
         </transition>
         <transition name="modal" appear >
-            <LoadModal :opacity="70" v-if="loadModalVisible && !loginModalVisible" />
+            <LoadModal :message="loadModalMessage" :opacity="70" v-if="loadModalVisible && !loginModalVisible" />
         </transition>
-        <Authenticator />
     </div>
 </template>
 
@@ -23,17 +22,23 @@ import SearchWrapper from '@/components/SearchWrapper.vue'
 import ResultsWrapper from '@/components/ResultsWrapper.vue'
 import LoginModal from '@/components/modals/LoginModal.vue'
 import LoadModal from '@/components/modals/LoadModal.vue'
-import Authenticator from '@/components/Authenticator.vue'
+// import Authenticator from '@/components/Authenticator.vue'
 import ToastModal from '@/components/modals/ToastsModal.vue'
 import { initializeSocket } from '@/js/remote_socket'
 import { eventBus } from '@/js/eventbus'
-import { onMounted, ref } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 
 const loginModalVisible = ref(true);
 const loadModalVisible = ref(false);
+const loadModalMessage = ref("");
 
 onMounted(() => {
     initializeSocket();
+});
+
+// purposely kill socket on page leave to prevent duplicate sockets
+onBeforeUnmount(() =>{
+    eventBus.emit('remote-kill-sockets');
 });
 
 //intercept events for modal toggling
@@ -44,14 +49,16 @@ eventBus.on('toggleLoginModalVisible', (visible) => {
 
 eventBus.on('addVideoToQueue', ()=> {
     loadModalVisible.value = true;
+    loadModalMessage.value = `Adding video to queue...`;
 });
 
 eventBus.on('displayVideos', ()=> {
     loadModalVisible.value = false;
 });
 
-eventBus.on('fetchVideos', () => {
+eventBus.on('fetchVideos', (search_string) => {
     loadModalVisible.value = true;
+    loadModalMessage.value = `Searching for ${search_string}...`;
 });
 
 eventBus.on('addVideoToQueue-callback', ()=> {

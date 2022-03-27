@@ -8,19 +8,20 @@ function connectUserSocket(){
     const serverUrl = process.env.VUE_APP_USER_SOCKET_ADDRESS;
     socket = new io(serverUrl, {
         timeout: 5*1000,
-        forceNew: false,
+        forceNew: true,
         withCredentials: true,
-        reconnection: true,
+        // reconnection: true,
         autoConnect: true,
     });
 
     socket.on("disconnect", (reason) => {
         console.log("disconnected socket: " + reason);
+        eventBus.emit('user-socket-disconnect');
     });
 
     // connection errors
     socket.on("connect_error", (err) => {
-        let error = "Unknown error occurred";
+        let error = "Unable to connect to ProTube";
         if (err == "Error: Not authorized") {
             error = "Unauthorized!";
         } else if(err == "Error: Unable to validate"){

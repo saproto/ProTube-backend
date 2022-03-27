@@ -49,6 +49,10 @@ function connectSocket(_socket){
         });
     });
 
+    eventBus.on('remote-kill-sockets', () => {
+        _socket.disconnect();
+    });
+
     _socket.on("disconnect", (reason) => {
         console.log(reason);
         // if(reason == "io server disconnect") {
