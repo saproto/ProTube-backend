@@ -1,9 +1,9 @@
 <template>
     <div> 
-        <transition name="search" mode="out-in" appear>
+        <transition name="search" mode="out-in">
             <HeaderField>
                 <div class="md:flex-1">
-                    <h3 class=" leading-6 font-medium text-white text-2xl">Protube admin panel</h3>
+                    <h3 class=" leading-6 font-medium text-white text-2xl">ProTube admin panel</h3>
                     <div class="mt-2 max-w-xl text-sm text-gray-200 ">
                         <p>With great power comes great responsibility</p>
                     </div>
@@ -15,13 +15,17 @@
         <transition name="results" mode="out-in" appear>
             <ContentField>
                 <div class="md:flex">
-                    <label class="text-gray-600 text-2xl absolute"> Master Controls</label>
-                    <div class="w-full md:w-2/3">
-                        <p class=" text-right md:text-center text-md text-gray-500 w-full "> Volume Slider</p>
+                    <label class="text-gray-600 dark:text-white text-2xl absolute"> Master Controls</label>
+                    <div class="w-full md:w-1/3">
+                        <p class=" text-right md:text-center text-md text-gray-500 dark:text-white w-full "> Volume Slider</p>
                         <input @change="volumeSliderMoved" class="bg-proto_blue hover:bg-opacity-80 rounded-xl h-2 w-full border outline-none border-gray-500 appearance-none" type="range" min="1" max="100" :value="volumeCalculated">
+                        <font-awesome-icon class="cursor-pointer text-2xl mx-2 text-gray-600 dark:text-white" icon="backward" />
+                        <font-awesome-icon v-if="playing" @click="resumeProtube" class="cursor-pointer text-2xl mx-2 text-gray-600 dark:text-white" icon="pause" />
+                        <font-awesome-icon v-else @click="resumeProtube" class="cursor-pointer text-2xl mx-2 text-gray-600 dark:text-white" icon="play" />
+                        <font-awesome-icon @click="skipToNext" class="cursor-pointer text-2xl mx-2 text-gray-600 dark:text-white" icon="forward" />
                     </div>
                     <div class="flex">
-                        <button @click="skipnextInQueue" class="shadow-md bg-proto_blue hover:bg-opacity-80 text-white py-1 px-2 ml-5 rounded-md my-auto flex">
+                        <button @click="skipToNext" class="shadow-md bg-proto_blue hover:bg-opacity-80 text-white py-1 px-2 ml-5 rounded-md my-auto flex">
                             QuickSkip
                             <svg xmlns="http://www.w3.org/2000/svg" class=" h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
@@ -38,10 +42,9 @@
                 </div>
             </ContentField>
         </transition>
-
         <transition name="results" mode="out-in" appear>
             <ContentField>
-                <label class="text-gray-600 text-2xl absolute"> Radiostations</label>
+                <label class="text-gray-600 dark:text-white text-2xl absolute"> Radiostations</label>
                 <input minlength="1" v-model="radiofilter" class="bg-white min-w-min placeholder-gray-500  focus:placeholder-gray-600  text-gray-700 pl-2 rounded-md border border-gray-400 outline-none ml-48" placeholder="Filter"/>
                 <div class="flex overflow-x-scroll pt-10 no-scrollbar">
                     <div class="flex flex-nowrap ">
@@ -64,7 +67,7 @@
 
         <transition name="results" mode="out-in" appear>
             <ContentField>
-                <label class="text-gray-600 text-2xl absolute"> The current Queue - {{ total_queue_duration }}</label>
+                <label class="text-gray-600 dark:text-white text-2xl absolute"> The current Queue - {{ total_queue_duration }}</label>
                     <div class="flex overflow-x-scroll pt-10 no-scrollbar">
                         <div class="flex flex-nowrap h-full">
                             <div v-for="(result, index) in videoqueue" :result="result" :index="index" :key="result.videoId" class="inline-block px-3 w-96 h-full" >
@@ -120,6 +123,7 @@ const radiofilter = ref("");
 const videoqueue = ref([]);
 const toasts = ref([]);
 const volumeCalculated = ref(50);
+const playing = ref(false);
 
 const total_queue_duration = computed(() => {
     var totalseconds = 0;
@@ -155,8 +159,14 @@ async function volumeSliderMoved(event){
 }
 
 async function resumeProtube(){
-    if(await resumeProTube()) displayToast("Successfully resumed ProTube!");
-    else displayToast("Failed to resume ProTube!");
+    if(await resumeProTube()) {
+      displayToast("Successfully resumed ProTube!");
+      playing.value = true;
+    }
+    else {
+      displayToast("Failed to resume ProTube!");
+      playing.value = false;
+    }
 }
 
 // eventBus.on('admin-socket-connect-success', async () => {
@@ -180,7 +190,7 @@ eventBus.on('admin-socket-screencode-update', (code) => {
 });
 
 
-async function skipnextInQueue(){
+async function skipToNext(){
     if(await skipNextInQueue()){
        displayToast('Skipped first video!'); 
     } else {
