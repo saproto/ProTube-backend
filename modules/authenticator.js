@@ -27,6 +27,17 @@ exports.validateClient = async (_cookies, screencode_correct=false) => {
             }
             return true;
         }
+        // secret validation for local client (electron app)
+        if(proto_cookie == process.env.CLIENT_IDENTIFIER) {
+            sessionStore.saveSession(proto_cookie, {
+                name: "Client-Screen",
+                is_admin: true,
+                screencode_correct: true,
+                user_id: -1
+            });
+            logger.localClientInfo("Succesfully connected!");
+            return true;
+        }
         // Cookie is new, validate it at the webserver
         let userdata = await fetch(`${process.env.API_ENDPOINT}/userdetails`, {
         headers: {

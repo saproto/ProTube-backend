@@ -1,10 +1,13 @@
 <template>
-    <div :class="currentRoute == 'Screen' || currentRoute == 'Admin Screen' ? '' : 'xl:max-w-screen-2xl  mx-auto md:pt-8 sm:pt-0'">
+    <div v-if="currentRoute == 'Screen' || currentRoute == 'Admin Screen'">
         <router-view v-slot="{ Component, route }">
             <transition :name="route.meta.transition || ''">
                 <component :is="Component" />
             </transition>
         </router-view>
+    </div>
+    <div v-else class="xl:max-w-screen-2xl mx-auto md:pt-8 sm:pt-0">
+        <router-view />
     </div>
 </template>
 

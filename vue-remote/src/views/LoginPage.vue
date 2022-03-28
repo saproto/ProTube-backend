@@ -40,6 +40,7 @@ onMounted(() => {
 eventBus.on('admin-socket-connect-error', (reason) => {
     if(reason.reason == "Login error!"){
         noCookieModal.value = true;
+        errormessage.value = "";
     } else {
         errormessage.value = reason.reason;
     }

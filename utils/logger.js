@@ -4,7 +4,7 @@ let prefix = {
     server: '[SERVER] '.yellow,
     screen: '[SCREEN] '.magenta,
     youtube: '[YOUTUBE] '.red,
-    client: '[CLIENT] '.blue,
+    client: '[REMOTECLIENT] '.blue,
     admin: '[ADMIN] '.gray,
     user: '[USER] '.green,
     queue: '[QUEUE] '.brightYellow,

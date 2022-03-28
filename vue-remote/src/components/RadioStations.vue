@@ -7,7 +7,7 @@
 </template>
 
 <script setup>
-import { ref, computed, defineProps, defineEmits } from 'vue'
+import { ref, computed, defineProps, defineEmits, onBeforeMount } from 'vue'
 import { setRadio } from '@/js/admin_socket';
 
 
@@ -22,14 +22,20 @@ const filteredRadioStations = computed(() => {
     return radiostations.value.filter((station) => station.o.toLowerCase().includes(props.radiofilter.toLowerCase()));
 })
 
-// load in the script file that contains all the radio stations
-let externalScript = document.createElement('script');
-externalScript.setAttribute('src', 'https://www.nederland.fm/common/radio/zenders/nederland.js');
-externalScript.setAttribute('id', 'radiostations');
-document.head.appendChild(externalScript);
-externalScript.onload = async () => {
+onBeforeMount(async () => {
+    // load in the script file that contains all the radio stations
+    if(! document.getElementById('radiostations')){
+        let externalScript = document.createElement('script');
+        externalScript.setAttribute('src', 'https://www.nederland.fm/common/radio/zenders/nederland.js');
+        externalScript.setAttribute('id', 'radiostations');
+        document.head.appendChild(externalScript);
+        externalScript.onload = async () => {
+            await getRadioStations();
+        }
+        return;
+    }
     await getRadioStations();
-}
+})
 
 async function getRadioStations(){
     let stations = window.zenders;

@@ -10,7 +10,7 @@ function connectAdminSocket(){
         timeout: 5*1000,
         forceNew: true,
         withCredentials: true,
-        // reconnection: true,
+        reconnection: false,
         autoConnect: true
     });
 

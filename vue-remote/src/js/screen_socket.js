@@ -9,8 +9,7 @@ let nowPlaying;
 // called by the yt iframe api, this triggers the entire screen
 export { onYouTubeIframeAPIReady }
 function onYouTubeIframeAPIReady() {
-    socket = new io('http://localhost:3000/screen');
-
+    createSocket();
     player = new window.YT.Player('yt-player', {
         height: '100%',
         width: '100%',
@@ -26,9 +25,30 @@ function onYouTubeIframeAPIReady() {
         }
     });
 }
+
+function createSocket(){
+    socket = new io('http://localhost:3000/screen', {
+        timeout: 5*1000,
+        forceNew: true,
+        withCredentials: true,
+        reconnection: true,
+        autoConnect: true
+    });
+}
+
+// on going back to the screen reset it so onytiframeapiready can be triggered successfully
+export { resetYTplayer }
+function resetYTplayer(){
+    current = null;
+    nowPlaying = null;
+    radio = false;
+}
+
 export { youtubePlayerReady }
 // eslint-disable-next-line
 const youtubePlayerReady = (event) => {
+    console.log("player ready ");
+    console.log(player);
     socket.emit('request-player-status');
     socket.on('player-status', data => {
         console.log(data);
@@ -36,7 +56,7 @@ const youtubePlayerReady = (event) => {
         try {
             if(current !== nowPlaying.videoId && data.status != 'radio' && data.status != 'radio-ending'){
                 player.loadVideoById(nowPlaying.videoId);
-                player.setPlaybackQuality('highres');
+                player.setPlaybackQuality('hd1080');
                 setTimeout(() => {
                     player.playVideo();
                 } ,100);
@@ -47,11 +67,9 @@ const youtubePlayerReady = (event) => {
             if( data.status == 'radio-ending'){
                 eventBus.emit('show-screencode');
             }
-            // setTimeout(() => {
-            //     document.elementFromPoint(500, 500).click();
-            // }, 4000)
         }catch(e) {
             //We're either not playing anything or the data was sent wrong.
+            console.log(e.toString());
         }
         switch(data.status) {
             case 'playing': player.playVideo(); break;
@@ -89,5 +107,11 @@ const youtubePlayerReady = (event) => {
     // re-show screencode on radio -> protube switch
     socket.on('show-screencode', () => {
         eventBus.emit('show-screencode');
+    });
+
+    // exiting the page, kill the socket
+    eventBus.on('screen-kill-sockets', () => {
+        console.log("killing screen socket")
+        socket.disconnect();
     });
 }

@@ -7,6 +7,7 @@ let timestamp = 0;
 let playbackInterval;
 
 exports.playVideo = video => {
+    status = 'playing';
     playbackInterval = setInterval(() => {
         if(timestamp < video.seconds) {
             timestamp++;
@@ -20,7 +21,6 @@ exports.playVideo = video => {
             communicator.emit('video-ended');
         }
     }, 1000);
-    status = 'playing';
 };
 
 exports.playVideoFromStart = video => {
