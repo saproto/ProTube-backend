@@ -128,7 +128,9 @@ const playing = ref(false);
 const total_queue_duration = computed(() => {
     var totalseconds = 0;
     videoqueue.value.forEach((video) => {
-        totalseconds += video.duration.seconds;
+        if(video.duration !== undefined){
+            totalseconds += video.duration.seconds;
+        }
     });
     var date = new Date(null);
     date.setSeconds(totalseconds);
