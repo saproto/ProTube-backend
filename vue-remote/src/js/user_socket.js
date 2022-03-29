@@ -15,7 +15,6 @@ function connectUserSocket(){
     });
 
     socket.on("disconnect", (reason) => {
-        console.log("disconnected socket: " + reason);
         if(reason == 'io server disconnect') {
             socket.disconnect();
             return eventBus.emit('to-authenticator-from-usersocket-socket-disconnect', 'Session expired!');

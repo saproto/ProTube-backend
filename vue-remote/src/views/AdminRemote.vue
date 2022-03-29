@@ -158,7 +158,6 @@ onUnmounted(() => {
 })
 
 async function volumeSliderMoved(event){
-    console.log(event.target.value);
     if(await volumeChange(event.target.value)) displayToast("Successfully changed the volume!");
     else displayToast("Failed to change volume!");
 }

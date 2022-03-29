@@ -83,8 +83,6 @@ const youtubePlayerReady = (event) => {
             eventBus.emit('to-protubescreen-from-screensocket-radio-playing', "");
             player.playVideo();
         }
-        console.log(timestamp.seconds);
-        console.log(player.getCurrentTime() - timestamp.seconds)
         if(Math.abs(player.getCurrentTime() - timestamp.seconds) > 5 )
             player.seekTo(timestamp.seconds, true);
     });

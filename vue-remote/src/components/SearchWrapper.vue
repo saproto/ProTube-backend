@@ -36,7 +36,6 @@ const emit = defineEmits(['fetch-videos']);
 
 onMounted(async () => {
   var userdata = await getUserData();
-  console.log(userdata);
   userData.value.name = userdata.name;
   userData.value.isAdmin = userdata.isAdmin;
 });

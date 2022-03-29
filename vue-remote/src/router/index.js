@@ -77,7 +77,6 @@ const router = createRouter({
 
 // authentication middleware
 router.beforeEach((to, from, next) => {
-  console.log("Router: coming from: "+from.name+" to: "+to.name);
 
   let socketdetails = socketDetails();
   // prevent login route looping

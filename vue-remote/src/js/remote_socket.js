@@ -22,7 +22,6 @@ function resetSocket(pincode){
 }
 
 function connectSocket(){
-    console.log("connecting...");
     socket.connect();
 
     socket.on("disconnect", () => {

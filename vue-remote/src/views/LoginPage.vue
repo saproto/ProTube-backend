@@ -59,7 +59,6 @@ function mountListeners(){
     });
 
     eventBus.on('to-loginpage-from-usersocket-socket-connect-success', () => {
-        console.log("successfull connect to user");
         if(props.requests_admin) logInAdmin();
         else router.push({ name: props.targetPath || "Remote"} );
         errormessage.value = "";

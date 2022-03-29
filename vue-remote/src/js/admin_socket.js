@@ -56,7 +56,6 @@ function connectAdminSocket(){
 
 export { getScreenCode }
 async function getScreenCode(){
-    console.log("requested screencode");
     return await new Promise( resolve => {
         socket.emit('get_screen_code', code => {
             resolve(code);
