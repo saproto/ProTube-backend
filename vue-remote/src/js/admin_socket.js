@@ -15,8 +15,11 @@ function connectAdminSocket(){
     });
 
     socket.on("disconnect", (reason) => {
-        console.log("disconnected socket: " + reason);
-        eventBus.emit('admin-socket-disconnect');
+        if(reason == 'io server disconnect') {
+            socket.disconnect();
+            return eventBus.emit('to-authenticator-from-adminsocket-socket-disconnect', 'Session expired!');
+        }
+        eventBus.emit('to-authenticator-from-adminsocket-socket-disconnect', 'Lost connection');
     });
 
     // connection errors
@@ -27,27 +30,27 @@ function connectAdminSocket(){
         } else if(err == "Error: Unable to validate"){
             error = "Login error!";
         }
-        eventBus.emit('admin-socket-connect-error', {
-            reason: error
-        });
+        eventBus.emit('to-authenticator-from-adminsocket-socket-connect-error', {reason: error});
+        eventBus.emit('to-loginpage-from-adminsocket-socket-connect-error', {reason: error});
     });
 
     socket.on('connect', () => {
-        eventBus.emit('admin-socket-connect-success');
+        eventBus.emit('to-authenticator-from-adminsocket-socket-connect-success');
+        eventBus.emit('to-loginpage-from-adminsocket-socket-connect-success');
     });
 
     socket.on('admin-newscreencode', (screencode) => {
-        eventBus.emit('admin-socket-screencode-update', screencode);
+        eventBus.emit('to-adminremote-from-adminsocket-screencode-update', screencode);
     });
 
     // there was a change in the queue, update this on the admin remote
     socket.on('admin-queue-update', (queue) => {
-        eventBus.emit('admin-socket-queue-update', queue);
+        eventBus.emit('to-adminremote-from-adminsocket-queue-update', queue);
     });
 
     // the volume on the screens was changed
     socket.on('admin-new-volume', (volume) => {
-        eventBus.emit('admin-new-volume', volume);
+        eventBus.emit('to-adminremote-from-adminsocket-new-volume', volume);
     });
 }
 

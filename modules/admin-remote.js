@@ -53,6 +53,7 @@ admin.use(async (socket, next) => {
 
   socket.on('create-new-screen-code', () => {
     logger.adminInfo(`${socket.id} Requested new screencode`);
+    authenticator.flushAllSessions();
     screenCode.adminResetScreenCode();
   });
 

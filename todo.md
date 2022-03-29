@@ -9,7 +9,7 @@
 - [x] Empty queue text moet weg als queue niet empty is
 - [ ] Tekst in dark mode moet wit?
 - [x] I.p.v. unknown error occured met rood driehoekje iets van 'connection lost, is ProTube still running?'
-- [ ] Bij automatische nieuwe screen code, niet iedereen kicken (sessions tijdelijk, niet dependent on code)
+- [x] Bij automatische nieuwe screen code, niet iedereen kicken (sessions tijdelijk, niet dependent on code)
 - [ ] Bij admin panel in de queue zien wie de video erin heeft gegooid
 - [ ] Geselecteerde video's kunnen verwijderen, niet alleen de eerste
 - [ ] Fair video's toevoegen

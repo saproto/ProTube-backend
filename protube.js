@@ -65,7 +65,9 @@ exports.getQueue = queue.getQueue;
 exports.getQueueDuration = queue.getTotalDuration;
 
 (async() => {
-    let videos = await youtube.search('zLqU_hBTICY'); // proto logo
-    queue.add(videos[0]);
-})();
+    try{
+        let videos = await youtube.search('zLqU_hBTICY'); // proto logo
+        queue.add(videos[0]);
+    } catch {}
+});
 

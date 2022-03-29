@@ -12,44 +12,23 @@
 </template>
 
 <script setup>
-import { connectAdminSocket } from "@/js/admin_socket";
-import { connectUserSocket } from "@/js/user_socket";
+// import { connectAdminSocket } from "@/js/admin_socket";
+// import { connectUserSocket } from "@/js/user_socket";
 import { useRoute, useRouter } from 'vue-router'
 import { computed } from 'vue'
+import { setCurrentRoute } from '@/js/authenticator'
 import { eventBus } from '@/js/eventbus'
 
 const router = useRouter();
 const currentRoute = computed(() => {
-    return useRoute().name
+    const path = useRoute().name;
+    setCurrentRoute(path);
+    return path;
 });
 
-// authenticator wants to init a socket connection
-eventBus.on('authenticator-admin-connect-attempt', () => {
-    connectAdminSocket();
+eventBus.on('authenticator-router-push', (route) => {
+    router.push(route);
 });
-
-// authenticator wants to init a socket connection
-eventBus.on('authenticator-user-connect-attempt', () => {
-    connectUserSocket();
-});
-
-// on disconnect redirect to login page to reauthenticate
-eventBus.on('admin-socket-disconnect', () => {
-    console.log(currentRoute);
-    router.push({name: 'Login', params: {
-        targetPath: currentRoute.value,
-        requests_admin: true
-    }})
-});
-
-// on disconnect redirect to login page to reauthenticate
-eventBus.on('user-socket-disconnect', () => {
-    router.push({name: 'Login', params: {
-        targetPath: currentRoute.value,
-        requests_admin: false
-    }})
-});
-
 </script>
 
 <style>

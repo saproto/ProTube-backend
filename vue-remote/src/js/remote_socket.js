@@ -18,81 +18,83 @@ function resetSocket(pincode){
         autoConnect: false,
     });
     connectSocket(socket);
-    // if(pincode || localSessionID){
-    //     connectSocket(socket);
-    // } else{
-    //     silentConnect = false;
-    // }
     return;
 }
 
-function connectSocket(_socket){
+function connectSocket(){
     console.log("connecting...");
-    _socket.connect();
+    socket.connect();
 
-    eventBus.on('fetchVideos', (search_string) => {
-        if(search_string == '') return false;
-        _socket.emit("retrieveVideos", search_string, (response) => {
-            if(!response) return;
-            eventBus.emit('displayVideos', response);
-        });
+    socket.on("disconnect", () => {
+        socket.disconnect();
+        socket.removeAllListeners();
+        eventBus.emit('to-remote-from-remotesocket-toggle-loginmodal-visibility', true);
     });
 
-    eventBus.on('addVideoToQueue', (video) =>{
-        if(video == '' ) return false;
-        _socket.emit('addVideoToQueue', video, callback => {
-            eventBus.emit('addVideoToQueue-callback', {
+    socket.on("connect_error", (err) => {
+        if(!silentConnect){
+            let reason = "Unknown error";
+            if (err == "Error: Not authorized") {
+                reason = "Unable to authorize with proto"
+            } else if (err == "Error: Invalid screencode") {
+                reason = "PIN invalid";
+            }
+            eventBus.emit('to-pincode-from-remotesocket-connect-error', {
+                success: false,
+                reason: reason
+            });
+        } else{
+            silentConnect = false;
+        }
+    });
+
+    socket.on('connect', () => {
+        eventBus.emit('to-pincode-from-remotesocket-connect-success', {
+            success: true,
+            reason: ""
+        });
+        setTimeout(function(){ 
+            eventBus.emit('to-remote-from-remotesocket-toggle-loginmodal-visibility', false); 
+        }, 1000);
+    });
+}
+
+// pincode entered, try to setup a connection
+export { pinEntered }
+function pinEntered(pincode){
+    silentConnect = false;
+    resetSocket(pincode);
+}
+
+
+// fetching videos
+export { fetchVideosSocket }
+async function fetchVideosSocket(search_string){
+    return await new Promise( resolve => {
+        socket.emit('retrieveVideos', search_string, callback => {
+            resolve(callback);
+        });
+    });
+}
+
+// trying to add a video to the queue
+export { addVideoToQueueSocket }
+async function addVideoToQueueSocket(video){
+    return await new Promise( resolve => {
+        socket.emit('addVideoToQueue', video, callback => {
+            resolve({
                 result: callback.success,
                 message: callback.error,
                 videoId: video.videoId
             });
         });
     });
+}
 
-    eventBus.on('remote-kill-sockets', () => {
-        _socket.disconnect();
-    });
-
-    _socket.on("disconnect", (reason) => {
-        console.log(reason);
-        // if(reason == "io server disconnect") {
-        //     localStorage.removeItem('sessionID');
-        // }
-        socket.disconnect();
-        socket.removeAllListeners();
-        eventBus.emit('toggleLoginModalVisible', true);
-    });
-
-    _socket.on("connect_error", (err) => {
-        if(!silentConnect){
-            if (err == "Error: Not authorized") {
-                eventBus.emit('pinEntered-callback', {
-                    success: false,
-                    reason: "Unable to authorize with proto"
-                });
-            } else if (err == "Error: Invalid screencode") {
-                eventBus.emit('pinEntered-callback', {
-                    success: false,
-                    reason: "PIN invalid"
-                });
-            } else {
-                eventBus.emit('pinEntered-callback', {
-                    success: false,
-                    reason: "Unknown error"
-                });
-            }
-        } else{
-            silentConnect = false;
-        }
-    });
-
-    _socket.on('connect', () => {
-        eventBus.emit('pinEntered-callback', {
-            success: true,
-            reason: ""
-        });
-        setTimeout(function(){ eventBus.emit('toggleLoginModalVisible', false) }, 1000);
-    });
+// exiting the page, kill the socket
+export { killSocket }
+function killSocket(){
+    socket.disconnect();
 }
 
 // Executed once on mounted of remote
@@ -100,10 +102,3 @@ function initializeSocket(){
     resetSocket();
     silentConnect = true;
 }
-
-eventBus.on('pinEntered', (pincode) =>{
-    if(pincode != ''){
-        silentConnect = false;
-        resetSocket(pincode);
-    }
-});

@@ -1,4 +1,6 @@
 import { eventBus } from '@/js/eventbus'
+import { connectAdminSocket } from "@/js/admin_socket";
+import { connectUserSocket } from "@/js/user_socket";
 
 let socketdetails = {
     user_socket: {
@@ -8,44 +10,83 @@ let socketdetails = {
         connected: false
     }
 }
+let currentRoute = null;
 
 export { socketDetails }
 function socketDetails(){
     return socketdetails;
 }
+export { logInAdmin }
+function logInAdmin(){
+    connectAdminSocket();
+    return;
+}
 
-// export { logInAdmin }
-// function logInAdmin(){
-//     eventBus.emit('authenticator-admin-connect-attempt');
-//     return;
-// }
+export { logInUser }
+function logInUser(){
+    connectUserSocket();
+    return;
+}
 
-// export { logInUser }
-// function logInUser(){
-//     eventBus.emit('authenticator-user-connect-attempt');
-//     return;
-// }
+export { setCurrentRoute }
+function setCurrentRoute(route){
+    currentRoute = route;
+}
 
-eventBus.on('admin-socket-connect-error', () => {
+// on disconnect redirect to login page to reauthenticate
+eventBus.on('to-authenticator-from-adminsocket-socket-disconnect', (reason) => {
     socketdetails.admin_socket.connected = false;
+    if(reason == 'Session expired!') return redirectToSessionExpired(currentRoute);
+    
+    return eventBus.emit('authenticator-router-push', {
+        name: 'Login', 
+        params: {
+            targetPath: currentRoute,
+            requests_admin: true
+        }
+    });
 });
 
-eventBus.on('admin-socket-connect-success', () => {
-    socketdetails.admin_socket.connected = true;
-});
-
-eventBus.on('user-socket-connect-success', () => {
-    socketdetails.user_socket.connected = true;
-});
-
-eventBus.on('user-socket-connect-error', () => {
+// on disconnect redirect to login page to reauthenticate
+eventBus.on('to-authenticator-from-usersocket-socket-disconnect', (reason) => {
     socketdetails.user_socket.connected = false;
+    if(reason == 'Session expired!') return redirectToSessionExpired(currentRoute);
+    
+    return eventBus.emit('authenticator-router-push', {
+        name: 'Login', 
+        params: {
+            targetPath: currentRoute,
+            requests_admin: false
+        }
+    });
 });
 
-eventBus.on('admin-socket-disconnect', () => {
-    socketdetails.admin_socket.connected = false;
-});
 
-eventBus.on('user-socket-disconnect', () => {
-    socketdetails.user_socket.connected = false;
-});
+function redirectToSessionExpired(path){
+    // prevent duplicate from error to error on second socket disconnect
+    if(path == 'Error') return;
+
+    return eventBus.emit('authenticator-router-push', { 
+        name: 'Error', 
+        params: {
+            'errorCode': 440,
+            'sourcePath': path
+        }            
+    });
+}
+
+    eventBus.on('to-authenticator-from-adminsocket-socket-connect-error', () => {
+        socketdetails.admin_socket.connected = false;
+    });
+
+    eventBus.on('to-authenticator-from-adminsocket-socket-connect-success', () => {
+        socketdetails.admin_socket.connected = true;
+    });
+
+    eventBus.on('to-authenticator-from-usersocket-socket-connect-success', () => {
+        socketdetails.user_socket.connected = true;
+    });
+
+    eventBus.on('to-authenticator-from-usersocket-socket-connect-error', () => {
+        socketdetails.user_socket.connected = false;
+    });

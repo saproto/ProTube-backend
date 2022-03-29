@@ -91,12 +91,18 @@
 </template>
  
 <script setup>
-import { computed, reactive, ref, onMounted  } from 'vue';
-import { eventBus } from '@/js/eventbus';
+import { computed, reactive, ref, onMounted, onUnmounted  } from 'vue';
+import { pinEntered } from '@/js/remote_socket'
+import { eventBus } from '@/js/eventbus'
  
 onMounted(() => {
+  mountListeners();
   code_0.value = document.getElementById('code_0');
   focusOnFirstInput();
+});
+
+onUnmounted(() => {
+  unMountListeners();
 });
  
 const digitsFromInput = reactive({
@@ -107,9 +113,9 @@ const digitsFromInput = reactive({
 });
  
 const code_0 = ref(null);
-var lastPressed;
-var fieldIsEmpty;
-var originalTarget;
+let lastPressed;
+let fieldIsEmpty;
+let originalTarget;
 
 const codeStatusIndicatorStyle = computed (() => {
     if(passkeyAccepted.value && !loading.value){
@@ -125,9 +131,9 @@ const passkey = computed(() => {
   return allInputsFilled() ? constructPasskey() : null;
 });
  
-var passkeyAccepted = ref(null);
-var connectError = ref("");
-var loading = ref(false);
+const passkeyAccepted = ref(null);
+const connectError = ref("");
+const loading = ref(false);
  
 function onKeyDown(event) {
     originalTarget = event.target;
@@ -240,20 +246,34 @@ function allInputsFilled() {
 
 function makeServerConnection(){
     loading.value = true;
-    eventBus.emit('pinEntered', constructPasskey());
-    return;
+    return pinEntered(constructPasskey());
 }
 
-eventBus.on('pinEntered-callback', (callback) => {
-    passkeyAccepted.value = callback.success;
-    connectError.value = callback.reason;
+// Only use an eventlistener once and mount it when the page mounts 
+// and unmount it when the page unmounts
+function mountListeners(){
+  eventBus.on('to-pincode-from-remotesocket-connect-error', (status) => {
+    processPinEntered(status);
+  });
+  eventBus.on('to-pincode-from-remotesocket-connect-success', (status) => {
+    processPinEntered(status);
+  });
+}
+
+function unMountListeners(){
+  eventBus.off('to-pincode-from-remotesocket-connect-success');
+  eventBus.off('to-pincode-from-remotesocket-connect-error');
+}
+
+function processPinEntered(status){
+    passkeyAccepted.value = status.success;
+    connectError.value = status.reason;
     loading.value = false;
-    //resetPinCode();
-    if(!callback.success){
+    if(!status.success){
         resetPinCode();
         focusOnFirstInput();
     }
-});
+}
  
 function resetPinCode(){
     digitsFromInput[0] = null;

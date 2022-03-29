@@ -11,18 +11,34 @@
 <script setup>
 import Toast from '@/components/Toast.vue'
 import { eventBus } from '@/js/eventbus'
-import { ref } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 
 const statusUpdates = ref([]);
 
-eventBus.on('addVideoToQueue-callback', response => {
-    statusUpdates.value.push(response);
-    setTimeout(() => {
-        for( var i = 0; i < statusUpdates.value.length; i++){ 
-            if ( statusUpdates.value[i].videoId === response.videoId) statusUpdates.value.splice(i, 1); 
-        }
-    }, 2500);
+onMounted(() => {
+  mountListeners();
 });
+
+onUnmounted(() => {
+  unMountListeners();
+})
+
+// Only use an eventlistener once and mount it when the page mounts 
+// and unmount it when the page unmounts
+function mountListeners(){
+  eventBus.on('to-toastsmodal-from-result-add-toast', response => {
+      statusUpdates.value.push(response);
+      setTimeout(() => {
+          for( var i = 0; i < statusUpdates.value.length; i++){ 
+              if ( statusUpdates.value[i].videoId === response.videoId) statusUpdates.value.splice(i, 1); 
+          }
+      }, 2500);
+  });
+}
+
+function unMountListeners(){
+  eventBus.off('to-toastsmodal-from-result-add-toast');
+}
 </script>
 
 <style>

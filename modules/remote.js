@@ -7,7 +7,6 @@ const authenticator = require('./authenticator.js');
 
 // A new screencode was generated
 communicator.on('newScreenCode', (code) => {
-  authenticator.flushAllSessions();
   //disconnect all sockets
   client.disconnectSockets(false);
 });

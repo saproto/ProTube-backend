@@ -21,8 +21,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { eventBus } from '@/js/eventbus.js'
+import { ref, onMounted, defineEmits } from 'vue';
 import HeaderField from '@/layout/HeaderField.vue'
 import HeaderFieldButtons from '@/components/HeaderFieldButtons.vue'
 import { getUserData } from '@/js/user_socket.js'
@@ -33,6 +32,8 @@ const userData = ref({
   isAdmin: false
 });
 
+const emit = defineEmits(['fetch-videos']);
+
 onMounted(async () => {
   var userdata = await getUserData();
   console.log(userdata);
@@ -42,7 +43,7 @@ onMounted(async () => {
 
 function fetchVideos() {
   if(search_string.value != ''){
-    eventBus.emit('fetchVideos', search_string.value);
+    emit('fetch-videos', search_string.value);
   }
 }
 

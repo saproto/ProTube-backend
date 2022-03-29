@@ -5,6 +5,7 @@ import ProtubeScreen from '@/views/ProtubeScreen.vue'
 import AdminProtubeScreen from '@/views/AdminProtubeScreen.vue'
 import ErrorPage from '@/views/ErrorPage.vue'
 import LoginPage from '@/views/LoginPage.vue'
+// import ExpiredSession from '@/views/ExpiredSession.vue'
 import { socketDetails } from '@/js/authenticator'
 
 const routes = [
@@ -15,11 +16,11 @@ const routes = [
   {
     path: '/login',
     name: 'Login',
+    component: LoginPage,
     props: true,
     meta: {
       transition: 'fade'
-    },
-    component: LoginPage
+    }
   },
   {
     path: '/remote',
@@ -55,10 +56,17 @@ const routes = [
       'adminAuth': true
     }
   },
+  {
+    path: '/error',
+    name: "Error",
+    component: ErrorPage,
+    props: true
+  },
   { 
     path: '/:pathMatch(.*)*', 
-    name: "Page not found!",
-    component: ErrorPage 
+    redirect: {
+      name: 'Error'
+    }
   }
 
 ]
@@ -69,9 +77,11 @@ const router = createRouter({
 
 // authentication middleware
 router.beforeEach((to, from, next) => {
+  console.log("Router: coming from: "+from.name+" to: "+to.name);
+
   let socketdetails = socketDetails();
   // prevent login route looping
-  if(to.name == 'Login' || to.name == 'Page not found!') return next();
+  if(to.name == 'Login' || to.name == 'Error') return next();
   // user is authenticated for the requested path
   if(   (to.meta.adminAuth && socketdetails.admin_socket.connected) 
     ||  (to.meta.auth && socketdetails.user_socket.connected)) return next();
@@ -82,8 +92,9 @@ router.beforeEach((to, from, next) => {
       targetPath: to.name,
       requests_admin: to.meta.adminAuth
     }});
-    //  authenticator
   }
+  // Default to 404 error
+  return next({ name: 'Error', params: { 'errorCode': 404 }});
 });
 
 export default router

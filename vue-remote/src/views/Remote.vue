@@ -1,10 +1,14 @@
 <template>
     <div>
         <transition name="search" mode="out-in" appear>
-            <SearchWrapper />
+            <SearchWrapper 
+                v-on:fetch-videos="fetchVideos" 
+            />
         </transition>
         <transition name="results" mode="out-in" appear>
-            <ResultsWrapper />
+            <ResultsWrapper 
+                :videos="found_videos"
+            />
         </transition>
         <ToastModal />
         <transition name="modal" appear >
@@ -22,49 +26,51 @@ import SearchWrapper from '@/components/SearchWrapper.vue'
 import ResultsWrapper from '@/components/ResultsWrapper.vue'
 import LoginModal from '@/components/modals/LoginModal.vue'
 import LoadModal from '@/components/modals/LoadModal.vue'
-// import Authenticator from '@/components/Authenticator.vue'
 import ToastModal from '@/components/modals/ToastsModal.vue'
-import { initializeSocket } from '@/js/remote_socket'
+import { initializeSocket, killSocket, fetchVideosSocket } from '@/js/remote_socket'
 import { eventBus } from '@/js/eventbus'
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { ref, onMounted, onBeforeUnmount, onUnmounted } from 'vue'
 
 const loginModalVisible = ref(true);
 const loadModalVisible = ref(false);
 const loadModalMessage = ref("");
+const found_videos = ref([]);
 
 onMounted(() => {
+    mountListeners();
     initializeSocket();
+});
+
+onUnmounted(() => {
+    unMountListeners();
 });
 
 // purposely kill socket on page leave to prevent duplicate sockets
 onBeforeUnmount(() =>{
-    eventBus.emit('remote-kill-sockets');
+    killSocket();
 });
 
-//intercept events for modal toggling
-eventBus.on('toggleLoginModalVisible', (visible) => {
-    loginModalVisible.value = visible;
-    loadModalVisible.value = false;
-});
+// Only use an eventlistener once and mount it when the page mounts 
+// and unmount it when the page unmounts
+function mountListeners(){
+    //intercept events for modal toggling
+    eventBus.on('to-remote-from-remotesocket-toggle-loginmodal-visibility', (visible) => {
+        loginModalVisible.value = visible;
+        loadModalVisible.value = false;
+    });
+}
 
-eventBus.on('addVideoToQueue', ()=> {
-    loadModalVisible.value = true;
-    loadModalMessage.value = `Adding video to queue...`;
-});
+function unMountListeners(){
+    eventBus.off('to-remote-from-remotesocket-toggle-loginmodal-visibility');
+}
 
-eventBus.on('displayVideos', ()=> {
-    loadModalVisible.value = false;
-});
-
-eventBus.on('fetchVideos', (search_string) => {
+async function fetchVideos(search_string){
     loadModalVisible.value = true;
     loadModalMessage.value = `Searching for ${search_string}...`;
-});
-
-eventBus.on('addVideoToQueue-callback', ()=> {
+    found_videos.value = await fetchVideosSocket(search_string);
     loadModalVisible.value = false;
-});
-
+}
+    
 </script>
 
 <style >

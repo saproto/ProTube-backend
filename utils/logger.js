@@ -9,6 +9,8 @@ let prefix = {
     user: '[USER] '.green,
     queue: '[QUEUE] '.brightYellow,
     localClient: '[LOCALCLIENT] '.cyan,
+    session: '[SESSIONSTORE] '.blue,
+
 }
 
 exports.serverInfo = message => {
@@ -45,4 +47,8 @@ exports.queueInfo = message => {
 
 exports.localClientInfo = message => {
     console.log(prefix.localClient + message);
+}
+
+exports.sessionStoreInfo = message => {
+    console.log(prefix.session + message);
 }

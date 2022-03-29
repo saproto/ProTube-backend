@@ -76,21 +76,18 @@
 <script setup>
 import { defineProps, computed, ref } from 'vue';
 import { eventBus } from '@/js/eventbus'
+import { addVideoToQueueSocket } from '@/js/remote_socket'
 import gsap from 'gsap'
 
-const _result = defineProps({
-  result: Object,
+const props = defineProps({
+  video: Object,
   index: Number
 });
 
 const videoStatusCode = ref(0); //0 = nothing, 1= success, 2=duplicate, 3= error
 const videoStatusMessage = ref("Add to playlist");
-const loading = ref(false);
 
 const generateClasses = computed(() => {
-  if(loading.value){
-    return "bg-proto_green text-custom_gray";
-  }
   switch (videoStatusCode.value) {
     case 0: //default
       return "text-gray-700 hover:bg-proto_green hover:text-custom_gray";
@@ -105,7 +102,7 @@ const generateClasses = computed(() => {
 });
 
 const viewsFormatted = computed(() => {
-  const views =  _result.result.views;
+  const views =  props.video.views;
   if(views > 999 && views < 1000000){
         return (views/1000).toFixed(1) + 'k';
     }else if(views > 1000000 && views < 1000000000){
@@ -116,18 +113,12 @@ const viewsFormatted = computed(() => {
   return views;
 });
 
-function addVideoToQueue(){
-  loading.value = true;
-  eventBus.emit('addVideoToQueue', _result.result);
+async function addVideoToQueue(){
+  const callback = await addVideoToQueueSocket(props.video);
+  videoStatusCode.value = callback.result ? 1 : 2;
+  videoStatusMessage.value = callback.message;
+  eventBus.emit('to-toastsmodal-from-result-add-toast', callback);
 }
-eventBus.on('addVideoToQueue-callback', response => {
-  loading.value = false;
-  if(response.videoId == _result.result.videoId){
-    videoStatusCode.value = response.result ? 1 : 2;
-    videoStatusMessage.value = response.message;
-  }
-});
-
 
 //animations
 const beforeEnter = ((el) => {
@@ -142,7 +133,7 @@ const enter = ((el, done) => {
     y: 0,
     duration: 0.5,
     onComplete: done,
-    delay: 0.1*_result.index
+    delay: 0.1*props.index
   });
 });
 

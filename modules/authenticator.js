@@ -2,10 +2,17 @@ const fetch = require('node-fetch');
 const cookie = require('cookie');
 const logger = require('../utils/logger');
 const { InMemorySessionStore } = require("./sessionStore");
+const { getCurrentUnix } = require('../utils/time-formatter');
 const sessionStore = new InMemorySessionStore();
 
 // Ignoring ssl errors on fetches
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+
+// time based session expiration, check every 30 seconds
+const maxSessionDuration = 3600;
+setInterval(async () => {
+    sessionStore.flushExpiredSessions();
+}, process.env.SESSION_FLUSHING_INTERVAL * 1000);
 
 // returns true as long as the cookie is present and valid
 exports.validateClient = async (_cookies, screencode_correct=false) => {
@@ -19,10 +26,12 @@ exports.validateClient = async (_cookies, screencode_correct=false) => {
             if(screencode_correct && !existingSession.screencode_correct){
                 sessionStore.deleteSession(proto_cookie);
                 sessionStore.saveSession(proto_cookie, {
+                    session_id: existingSession.session_id,
                     name: existingSession.name,
                     is_admin: existingSession.is_admin,
                     screencode_correct: screencode_correct,
-                    user_id: existingSession.user_id
+                    user_id: existingSession.user_id,
+                    unix: existingSession.unix
                 });
             }
             return true;
@@ -30,10 +39,12 @@ exports.validateClient = async (_cookies, screencode_correct=false) => {
         // secret validation for local client (electron app)
         if(proto_cookie == process.env.CLIENT_IDENTIFIER) {
             sessionStore.saveSession(proto_cookie, {
+                session_id: proto_cookie,
                 name: "Client-Screen",
                 is_admin: true,
                 screencode_correct: true,
-                user_id: -1
+                user_id: -1,
+                unix: Date.now() //intentionally high to omit session flushing
             });
             logger.localClientInfo("Succesfully connected!");
             return true;
@@ -48,10 +59,12 @@ exports.validateClient = async (_cookies, screencode_correct=false) => {
         if(userdata.authenticated){
             // Store the cookie in the session
             sessionStore.saveSession(proto_cookie, {
+                session_id: proto_cookie,
                 name: userdata.name,
                 is_admin: userdata.is_admin,
                 screencode_correct: screencode_correct,
-                user_id: userdata.user_id
+                user_id: userdata.user_id,
+                unix: (getCurrentUnix() + (parseInt(process.env.SESSION_DURATION) || 3600))
             });
             return true;
         }

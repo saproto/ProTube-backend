@@ -116,7 +116,7 @@ import Toast from '@/components/Toast.vue'
 import RadioStations from '@/components/RadioStations.vue'
 import { eventBus } from '@/js/eventbus'
 import { getUserData, getVideoQueue, regenScreenCode, skipNextInQueue, resumeProTube, volumeChange } from '@/js/admin_socket.js'
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 
 const name = ref("");
 const radiofilter = ref("");
@@ -146,11 +146,16 @@ function displayToast(message){
 }
 
 onMounted(async () => {
+    mountListeners();
     var userdata = await getUserData();
     var _videoqueue = await getVideoQueue();
     videoqueue.value = _videoqueue
     name.value = userdata.name;
 });
+
+onUnmounted(() => {
+    unMountListeners();
+})
 
 async function volumeSliderMoved(event){
     console.log(event.target.value);
@@ -168,27 +173,27 @@ async function resumeProtube(){
       playing.value = false;
     }
 }
+// Only use an eventlistener once and mount it when the page mounts 
+// and unmount it when the page unmounts
+function mountListeners(){
+    // a change in volume 
+    eventBus.on('to-adminremote-from-adminsocket-new-volume', (volume) => {
+        volumeCalculated.value = volume;
+    });
 
-// eventBus.on('admin-socket-connect-success', async () => {
-//     var userdata = await getUserData();
-//     var _videoqueue = await getVideoQueue();
-//     videoqueue.value = _videoqueue
-//     name.value = userdata.name;
-// });
+    eventBus.on('to-adminremote-from-adminsocket-queue-update', (queue) => {
+        videoqueue.value = queue;
+    });
 
-// a change in volume 
-eventBus.on('admin-new-volume', (volume) => {
-    volumeCalculated.value = volume;
-});
-
-eventBus.on('admin-socket-queue-update', (queue) => {
-    videoqueue.value = queue;
-});
-
-eventBus.on('admin-socket-screencode-update', (code) => {
-    displayToast('New screen code: '+code);
-});
-
+    eventBus.on('to-adminremote-from-adminsocket-screencode-update', (code) => {
+        displayToast('New screen code: '+code);
+    });
+}
+function unMountListeners(){
+    eventBus.off('to-adminremote-from-adminsocket-new-volume');
+    eventBus.off('to-adminremote-from-adminsocket-queue-update');
+    eventBus.off('to-adminremote-from-adminsocket-screencode-update');
+}
 
 async function skipToNext(){
     if(await skipNextInQueue()){

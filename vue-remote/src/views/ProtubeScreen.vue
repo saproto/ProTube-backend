@@ -16,11 +16,10 @@
 
   
 <script setup>
-import { defineProps, ref, onMounted, onBeforeUnmount } from 'vue'
-import '@/js/screen_socket.js'
+import { defineProps, ref, onMounted, onBeforeUnmount, onUnmounted } from 'vue'
 import { eventBus } from '@/js/eventbus.js';
 import RadioModal from '@/components/modals/RadioModal.vue'
-import { onYouTubeIframeAPIReady, resetYTplayer } from '@/js/screen_socket.js'
+import { onYouTubeIframeAPIReady, resetYTplayer, killSocket } from '@/js/screen_socket.js'
 
 const currentRadio = ref("");
 const screenCodeIsVisible = ref(true);
@@ -33,6 +32,7 @@ const props = defineProps({
 })
 
 onMounted(() => {
+  mountListeners();
   if(props.screenCode == -1) screenCodeIsVisible.value = false;
   mountScripts();
 })
@@ -44,19 +44,21 @@ const scripts = [
 
 // purposely kill socket on page leave to prevent duplicate sockets
 onBeforeUnmount(() =>{
-    eventBus.emit('screen-kill-sockets');
+    killSocket();
 });
+
+onUnmounted(() => {
+    unMountListeners();
+})
 
 function mountScripts(){
   for(let i = 0; i < scripts.length; i++){
     let script = document.getElementById(`script_${i}`);
     if(script){
-        console.log("Already scripts in there");
         window.YT.ready(() =>{
             resetYTplayer();
             onYouTubeIframeAPIReady();
         });
-        // onYouTubeIframeAPIReady();
         return;
     }
 
@@ -66,14 +68,22 @@ function mountScripts(){
     document.head.appendChild(externalScript);
   }
 }
+// Only use an eventlistener once and mount it when the page mounts 
+// and unmount it when the page unmounts
+function mountListeners(){
+  eventBus.on('to-protubescreen-from-screensocket-radio-playing', (radio) => {
+    currentRadio.value = radio;
+    screenCodeIsVisible.value = false;
+  });
 
-eventBus.on('radio_playing', (radio) => {
-  currentRadio.value = radio;
-  screenCodeIsVisible.value = false;
-});
+  eventBus.on('to-protubescreen-from-screensocket-show-screencode', () => {
+    if(props.screenCode == -1) return;
+    screenCodeIsVisible.value = true;
+  });
+}
 
-eventBus.on('show-screencode', () => {
-  if(props.screenCode == -1) return;
-   screenCodeIsVisible.value = true;
-});
+function unMountListeners(){
+    eventBus.off('to-protubescreen-from-screensocket-show-screencode')
+    eventBus.off('to-protubescreen-from-screensocket-radio-playing')
+}
 </script>

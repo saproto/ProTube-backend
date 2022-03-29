@@ -1,7 +1,7 @@
 const io = window.io = require('socket.io-client');
 var socket;
 import { eventBus } from '@/js/eventbus.js';
-
+// duplicated eventbus!
 export { connectUserSocket };
 
 function connectUserSocket(){
@@ -16,7 +16,11 @@ function connectUserSocket(){
 
     socket.on("disconnect", (reason) => {
         console.log("disconnected socket: " + reason);
-        eventBus.emit('user-socket-disconnect');
+        if(reason == 'io server disconnect') {
+            socket.disconnect();
+            return eventBus.emit('to-authenticator-from-usersocket-socket-disconnect', 'Session expired!');
+        }
+        eventBus.emit('to-authenticator-from-usersocket-socket-disconnect', 'Lost connection');
     });
 
     // connection errors
@@ -27,14 +31,13 @@ function connectUserSocket(){
         } else if(err == "Error: Unable to validate"){
             error = "Login error!";
         }
-        eventBus.emit('user-socket-connect-error', {
-            reason: error
-        });
+        eventBus.emit('to-authenticator-from-usersocket-socket-connect-error', {reason: error});
+        eventBus.emit('to-loginpage-from-usersocket-socket-connect-error', {reason: error});
     });
 
     socket.on('connect', () => {
-        console.log("success!");
-        eventBus.emit('user-socket-connect-success');
+        eventBus.emit('to-loginpage-from-usersocket-socket-connect-success');
+        eventBus.emit('to-authenticator-from-usersocket-socket-connect-success');
     });
 }
 
