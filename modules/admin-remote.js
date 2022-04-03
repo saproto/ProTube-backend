@@ -1,6 +1,6 @@
 const admin = io.of('/socket/admin');
 const logger = require('../utils/logger');
-const { getQueue, moveToNext } = require('./queue-manager');
+const queueManager = require('./queue-manager');
 const screenCode = require('./screencode');
 const playbackManager = require('./playback-manager')
 // const userDataFetcher = require('./user');
@@ -48,7 +48,7 @@ admin.use(async (socket, next) => {
 
   socket.on('get-video-queue', (callback) => {
     logger.adminInfo(`${socket.id} Requested video queue`)
-    callback(getQueue());
+    callback(queueManager.getQueue());
   });
 
   socket.on('create-new-screen-code', () => {
@@ -57,24 +57,23 @@ admin.use(async (socket, next) => {
     screenCode.adminResetScreenCode();
   });
 
-  socket.on('set-radio', async (radiostation, callback) => {
-    logger.adminInfo(`${socket.id} Setting the radio to: ${radiostation}`);
-    let station_to_play = await validateRadioStation(radiostation);
-    if(station_to_play){
-      playbackManager.switchRadio(station_to_play);
+  socket.on('set-radio', async (station, callback) => {
+    logger.adminInfo(`${socket.id} Setting the radio to: ${station}`);
+    if(await validateRadioStation(station)) {
+      playbackManager.setRadio(station);
       callback(true);
     }
     callback(false);
   });
 
-  socket.on('resume-protube', async (callback) => {
-    logger.adminInfo(`${socket.id} Requested to resume ProTube`);
-    callback(playbackManager.resumeProTube());
+  socket.on('play-pause', async (callback) => {
+    logger.adminInfo(`${socket.id} Requested to play/pause the content`);
+    callback(playbackManager.playPause());
   });
 
-  socket.on('skip-next-in-queue', (callback) => {
+  socket.on('skip', (callback) => {
     logger.adminInfo(`${socket.id} Requested to skip a video`);
-    callback(moveToNext());
+    callback(queueManager.moveToNext());
   });
 
   // change the screen's volume 
@@ -83,19 +82,18 @@ admin.use(async (socket, next) => {
     callback(1);
   });
 
-
   // change the screen's volume 
   socket.on('get-volume', (callback) => {
     // callback(playbackManager.getVolume());
   });
 });
 
-communicator.on('newScreenCode', (screenCode) => {
-  admin.emit('admin-newscreencode', screenCode);
+communicator.on('new-screen-code', (screenCode) => {
+  admin.emit('admin-new-screen-code', screenCode);
 });
 
 communicator.on('queue-update', () => {
-  admin.emit('admin-queue-update', getQueue());
+  admin.emit('admin-queue-update', queueManager.getQueue());
 });
 
 // broadcast new volume to all connected admins

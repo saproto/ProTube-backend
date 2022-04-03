@@ -18,26 +18,15 @@
                     <label class="text-gray-600 dark:text-white text-2xl absolute"> Master Controls</label>
                     <div class="w-full md:w-1/3">
                         <p class=" text-right md:text-center text-md text-gray-500 dark:text-white w-full "> Volume Slider</p>
-                        <input @change="volumeSliderMoved" class="bg-proto_blue hover:bg-opacity-80 rounded-xl h-2 w-full border outline-none border-gray-500 appearance-none" type="range" min="1" max="100" :value="volumeCalculated">
+                        <input @change="volumeChange" class="bg-proto_blue hover:bg-opacity-80 rounded-xl h-2 w-full border outline-none border-gray-500 appearance-none" type="range" min="1" max="100" :value="volumeCalculated">
                         <font-awesome-icon class="cursor-pointer text-2xl mx-2 text-gray-600 dark:text-white" icon="backward" />
-                        <font-awesome-icon v-if="playing" @click="resumeProtube" class="cursor-pointer text-2xl mx-2 text-gray-600 dark:text-white" icon="pause" />
-                        <font-awesome-icon v-else @click="resumeProtube" class="cursor-pointer text-2xl mx-2 text-gray-600 dark:text-white" icon="play" />
-                        <font-awesome-icon @click="skipToNext" class="cursor-pointer text-2xl mx-2 text-gray-600 dark:text-white" icon="forward" />
+                        <font-awesome-icon @click="playPause" class="cursor-pointer text-2xl mx-2 text-gray-600 dark:text-white" :icon="playing ? 'pause' : 'play'"/>
+                        <font-awesome-icon @click="skip" class="cursor-pointer text-2xl mx-2 text-gray-600 dark:text-white" icon="forward" />
                     </div>
                     <div class="flex">
-                        <button @click="skipToNext" class="shadow-md bg-proto_blue hover:bg-opacity-80 text-white py-1 px-2 ml-5 rounded-md my-auto flex">
-                            QuickSkip
-                            <svg xmlns="http://www.w3.org/2000/svg" class=" h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
-                            </svg>
-                        </button>
                         <button @click="regenScreenCode" class="shadow-md bg-proto_blue hover:bg-opacity-80 text-white py-1 px-2 ml-5 rounded-md my-auto flex">
                             New code
                         </button>
-                        <button @click="resumeProtube" class="shadow-md bg-proto_blue hover:bg-opacity-80 text-white py-1 px-2 ml-5 rounded-md my-auto flex">
-                            Resume ProTube
-                        </button>
-                        <router-link to="/screen/admin" class="text-center py-2 px-4 bg-proto_blue text-white hover:opacity-80 rounded-md">Admin screen</router-link>
                     </div>
                 </div>
             </ContentField>
@@ -70,7 +59,7 @@
                 <label class="text-gray-600 dark:text-white text-2xl absolute"> The current Queue - {{ total_queue_duration }}</label>
                     <div class="flex overflow-x-scroll pt-10 no-scrollbar">
                         <div class="flex flex-nowrap h-full">
-                            <div v-for="(result, index) in videoqueue" :result="result" :index="index" :key="result.videoId" class="inline-block px-3 w-96 h-full" >
+                            <div v-for="(result, index) in videoQueue" :result="result" :index="index" :key="result.videoId" class="inline-block px-3 w-96 h-full" >
                                 <div :style='{background: "url("+result.thumbnail+")"}' style="background-repeat: no-repeat; background-size: cover; background-position: center center;" class="col-span-1 flex group flex-col text-center  border-proto_blue border-l-4 rounded-sm shadow"> <!--divide-y dark:divide-proto_green divide-gray-500-->
                                     <div class="flex-1 rounded-m border-t border-b border-r dark:border-gray-800 border-gray-400 flex flex-col px-8 py-4 bg-white dark:bg-true_gray-800 bg-opacity-80">
                                         <h3 class="font-bold dark:text-true_gray-300 text-gray-800 text-left text-md">{{ result.title }}</h3>
@@ -91,7 +80,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div v-if="videoqueue.length < 1" class="text-gray-400 ml-8"> Empty queue </div>
+                            <div v-if="videoQueue.length < 1" class="text-gray-400 ml-8"> Empty queue </div>
                         </div>
                     </div>
             </ContentField>
@@ -104,7 +93,6 @@
                 </transition-group>
             </div>
         </div>
-
     </div>
 </template>
 
@@ -114,100 +102,83 @@ import HeaderFieldButtons from '@/components/HeaderFieldButtons.vue'
 import ContentField from '@/layout/ContentField.vue'
 import Toast from '@/components/Toast.vue'
 import RadioStations from '@/components/RadioStations.vue'
-import { eventBus } from '@/js/eventbus'
-import { getUserData, getVideoQueue, regenScreenCode, skipNextInQueue, resumeProTube, volumeChange } from '@/js/admin_socket.js'
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import {eventBus} from '@/js/eventbus'
+import {getUserData, getVideoQueue, playPauseSocket, skipSocket, volumeChangeSocket} from '@/js/admin_socket.js'
+import {computed, onMounted, ref} from 'vue'
 
 const name = ref("");
 const radiofilter = ref("");
-const videoqueue = ref([]);
+const videoQueue = ref([]);
 const toasts = ref([]);
 const volumeCalculated = ref(50);
 const playing = ref(false);
 
+onMounted(async () => {
+  videoQueue.value = await getVideoQueue();
+  name.value = await getUserData().name;
+});
+
 const total_queue_duration = computed(() => {
-    var totalseconds = 0;
-    videoqueue.value.forEach((video) => {
-        if(video.duration !== undefined){
-            totalseconds += video.duration.seconds;
-        }
+    let totalSeconds = 0;
+    videoQueue.value.forEach((video) => {
+        totalSeconds += video.duration.seconds;
     });
-    var date = new Date(null);
-    date.setSeconds(totalseconds);
+    let date = new Date();
+    date.setSeconds(totalSeconds);
     return date.toISOString().substr(11, 8);
 });
 
 function displayToast(message){
     toasts.value.push(message);
     setTimeout(() => {
-        var index = toasts.value.indexOf(message);
+        let index = toasts.value.indexOf(message);
         if (index !== -1) {
             toasts.value.splice(index, 1);
         }
     }, 2500);
 }
 
-onMounted(async () => {
-    mountListeners();
-    var userdata = await getUserData();
-    var _videoqueue = await getVideoQueue();
-    videoqueue.value = _videoqueue
-    name.value = userdata.name;
-});
-
-onUnmounted(() => {
-    unMountListeners();
-})
-
-async function volumeSliderMoved(event){
-    if(await volumeChange(event.target.value)) displayToast("Successfully changed the volume!");
-    else displayToast("Failed to change volume!");
+async function volumeChange(event){
+    if(await volumeChangeSocket(event.target.value)) {
+      displayToast("Successfully changed the volume!");
+      return;
+    }
+    displayToast("Failed to change volume!");
 }
 
-async function resumeProtube(){
-    if(await resumeProTube()) {
+async function playPause(){
+    if(await playPauseSocket()) {
       displayToast("Successfully resumed ProTube!");
       playing.value = true;
+      return;
     }
-    else {
-      displayToast("Failed to resume ProTube!");
-      playing.value = false;
-    }
-}
-// Only use an eventlistener once and mount it when the page mounts 
-// and unmount it when the page unmounts
-function mountListeners(){
-    // a change in volume 
-    eventBus.on('to-adminremote-from-adminsocket-new-volume', (volume) => {
-        volumeCalculated.value = volume;
-    });
-
-    eventBus.on('to-adminremote-from-adminsocket-queue-update', (queue) => {
-        videoqueue.value = queue;
-    });
-
-    eventBus.on('to-adminremote-from-adminsocket-screencode-update', (code) => {
-        displayToast('New screen code: '+code);
-    });
-}
-function unMountListeners(){
-    eventBus.off('to-adminremote-from-adminsocket-new-volume');
-    eventBus.off('to-adminremote-from-adminsocket-queue-update');
-    eventBus.off('to-adminremote-from-adminsocket-screencode-update');
+    displayToast("Failed to resume ProTube!");
+    playing.value = false;
 }
 
-async function skipToNext(){
-    if(await skipNextInQueue()){
-       displayToast('Skipped first video!'); 
-    } else {
-        displayToast('Failed to skip first video!');
-    }
+async function skip() {
+  if (await skipSocket()) {
+    displayToast('Skipped current video!');
+    return;
+  }
+  displayToast('Failed to skip current video!');
 }
 
+// a change in volume 
+eventBus.on('admin-new-volume', (volume) => {
+  volumeCalculated.value = volume;
+});
+
+eventBus.on('admin-socket-queue-update', (queue) => {
+  videoQueue.value = queue;
+});
+
+eventBus.on('admin-socket-screencode-update', (code) => {
+    displayToast('New screen code: ' + code);
+});
 </script>
 
-<style>
-
+<style scoped>
 .no-scrollbar::-webkit-scrollbar {
     display: none;
 }

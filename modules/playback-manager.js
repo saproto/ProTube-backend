@@ -1,13 +1,17 @@
 const timeFormatter = require('../utils/time-formatter');
 const queueManager = require('./queue-manager');
-const remote = require('./remote');
 
-let status = 'idle'; //playing, paused, idle, radio
+let status = 'idle'; //playing, paused, idle
+let type = 'video'; //video, radio
+let lastStation = '';
 let timestamp = 0;
 let playbackInterval;
 
 exports.playVideo = video => {
+    type = 'video';
     status = 'playing';
+
+    //create an interval to continuously emit the timestamp so the screen stays updated in case of e.g. buffering
     playbackInterval = setInterval(() => {
         if(timestamp < video.seconds) {
             timestamp++;
@@ -39,31 +43,55 @@ exports.pauseVideo = () => {
     status = 'paused';
 }
 
-exports.switchRadio = (station) => {
-    if(status != 'radio'){
+exports.toggleType = () => {
+    if(type === 'video'){
+        //add the current playing video back into the queue
+        let video = queueManager.getCurrent();
+        if(video) queueManager.addToTop(video);
         this.stopVideo();
-        status = 'radio';
-        queueManager.addToTop(queueManager.getCurrent());
+        type = 'radio';
+
+        //if previously a station was selected, automatically go to it
+        if(lastStation) this.setRadio(lastStation);
+        return;
     }
-    queueManager.setRadio(station);
+    queueManager.moveToNext();
+    type = 'video';
 }
 
-// resuming to protube, enabling the queue and start playing immediately if the queue is filled
-exports.resumeProTube = () => {
-    // only resume if we are not on radio
-    communicator.emit('show-screencode');
-    if(status == 'radio'){
-        // re-show the screencode
-        queueManager.enableQueue();
-        status = 'radio-ending';
-        return queueManager.moveToNext();
+exports.setRadio = (station) => {
+    if(type === 'video') this.toggleType();
+    lastStation = station;
+    communicator.emit('new-radio', station);
+}
+
+
+// play or pause the current video/radio stream
+exports.playPause = () => {
+    if(type === 'video'){
+        if(status === 'playing' || status === 'idle') {
+            this.pauseVideo();
+        }else{
+            if(queueManager.getCurrent()) {
+                this.playVideo(queueManager.getCurrent());
+            }else if(!queueManager.isQueueEmpty()) {
+                queueManager.moveToNext();
+                this.playVideoFromStart(queueManager.getCurrent());
+            }else{
+                status = 'idle';
+            }
+        }
+        return true;
     }
     return false;
 }
 
-exports.getStatus = () => { return status }
+exports.getType = () => type;
+exports.getStatus = () => status;
+exports.getLastStation = () => lastStation;
 
-communicator.on('new-video', video => {
-    clearInterval(playbackInterval);
-    this.playVideoFromStart(video);
+communicator.on('queue-update', () => {
+    if(status === 'idle' && queueManager.getCurrent()) {
+        this.playVideoFromStart(queueManager.getCurrent());
+    }
 });

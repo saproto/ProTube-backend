@@ -1,21 +1,23 @@
 const timeFormatter = require('../utils/time-formatter');
-const _ = require('lodash');
 const logger = require('../utils/logger');
 const playbackManager = require('./playback-manager');
 
 let queue = [];
 let current = {};
-let queue_is_blocked = false;
 
 //Add a video to the queue
-exports.add = video => {
+exports.addFair = video => {
     //Check if the video is already in the queue. If so, stop here.
     if(findDoppelganger(video)) return false;
 
     //Video is not already in the queue, so add it
-    queue.splice(queue.length/2, 0, video);
-    if(_.isEmpty(current) || playbackManager.getStatus() == 'radio-ending') {
+    //Get a random index in the bottom half of the queue
+    if(!this.getCurrent() && this.isQueueEmpty()) {
+        queue.push(video);
         this.moveToNext();
+    }else{
+        let insertIndex = Math.floor(queue.length / 2) + Math.round(((Math.ceil(queue.length / 2) - 1) * Math.random()))
+        queue.splice(insertIndex, 0, video);
     }
     communicator.emit('queue-update');
     logger.queueInfo(`Added "${video.title}" to queue`);
@@ -43,29 +45,19 @@ exports.moveToNext = () => {
     // Queue has an item, can be shifted
     if(queue.length > 0){
         // if we're on the radio do not set the next in line to current
-        if(playbackManager.getStatus() != 'radio') current = queue[0];
+        current = queue[0];
         queue.shift();
         communicator.emit('queue-update');
-        // if we're not on radio update the screens with the new video
-        if(playbackManager.getStatus() != 'radio') communicator.emit('new-video', current);
         return true;
     }
     return false;
-}
-
-exports.setRadio = (radio) => {
-    current = radio;
-    this.blockQueue();
-    communicator.emit('new-radio', radio);
 }
 
 exports.removeFirst = () => queue.shift();
 exports.getCurrent = () => current;
 exports.getNext = () => queue[0];
 exports.getQueue = () => queue;
-exports.blockQueue = () => queue_is_blocked = true;
-exports.enableQueue = () => queue_is_blocked = false;
-exports.queueIsEnabled = () => !queue_is_blocked;
+exports.isQueueEmpty = () => queue.length <= 0;
 
 //Calculate the total duration of the playlist and return it
 exports.getTotalDuration = () => {

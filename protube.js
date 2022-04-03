@@ -38,7 +38,7 @@ const {Server} = require('socket.io');
 global.io = new Server(server, {
     pingTimeout: 10000,
     cors: {
-        origin: "http://localhost:8080",
+        origin: "http://localhost:8083",
         credentials: true,
         // methods: ["GET", "POST"]
     }
@@ -60,14 +60,14 @@ const screencode = require('./modules/screencode');
 
 
 exports.getCurrentVideo = queue.getCurrent;
+exports.getType = playback.getType;
 exports.getStatus = playback.getStatus;
+exports.getRadioStation = playback.getLastStation;
 exports.getQueue = queue.getQueue;
 exports.getQueueDuration = queue.getTotalDuration;
 
-(async() => {
-    try{
-        let videos = await youtube.search('zLqU_hBTICY'); // proto logo
-        queue.add(videos[0]);
-    } catch {}
-});
+(async () => {
+    let videos = await youtube.search('zLqU_hBTICY'); // proto logo
+    queue.addFair(videos[0]);
+})();
 

@@ -8,10 +8,7 @@ screens.on('connection', socket => {
     logger.screenInfo(`Screen connected from ${socket.handshake.address} with socket id ${socket.id}`);
 
     socket.on('request-player-status', () => {
-        socket.emit('player-status', {
-            status: protube.getStatus(),
-            video: protube.getCurrentVideo()
-        });
+        updatePlayerStatus(socket)
     });
 });
 
@@ -19,25 +16,24 @@ communicator.on('new-timestamp', timestamp => {
     screens.emit('new-timestamp', timestamp);
 });
 
-communicator.on('show-screencode', () => {
-    screens.emit('show-screencode');
+communicator.on('show-screen-code', () => {
+    screens.emit('show-screen-code');
 });
 
-communicator.on('new-video', video => {
-    screens.emit('player-status', {
-        status: protube.getStatus(),
-        video: protube.getCurrentVideo()
-    });
-});
-
-communicator.on('new-radio', radiostation => {
-    screens.emit('new-radio', radiostation);
-});
-
-communicator.on('newScreenCode', screenCode => {
-    screens.emit('new-screencode', screenCode);
+communicator.on('new-screen-code', screenCode => {
+    screens.emit('new-screen-code', screenCode);
 });
 
 communicator.on('queue-update', () => {
-    
+    updatePlayerStatus(screens);
 });
+
+const updatePlayerStatus = endpoint => {
+    console.log('AAAAAAAAAA');
+    endpoint.emit('player-status', {
+        type: protube.getType(),
+        status: protube.getStatus(),
+        video: protube.getCurrentVideo(),
+        station: protube.getRadioStation()
+    });
+}

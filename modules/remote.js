@@ -12,7 +12,7 @@ communicator.on('newScreenCode', (code) => {
 });
 
 // A remote connection is attempted
-client.use( async (socket, next) => {
+client.use(async (socket, next) => {
   try{
     // if cookie is valid
     logger.clientInfo(`${socket.id} attempts to connect to the remote`);
@@ -46,11 +46,11 @@ client.use( async (socket, next) => {
   });
 
   socket.on('addVideoToQueue', (video, callback) => {
-    if(queue.queueIsEnabled()){
-      const added = queue.add(video);
-      if (added) callback({success: true, error: "Successfully added to the queue!"});
-      else callback({success: false, error: "Video already in the queue!"});
-    }
-    callback({success: false, error: "No videos are allowed!"});
+      const added = queue.addFair(video);
+      if (added) {
+        callback({success: true, error: "Successfully added to the queue!"});
+      } else {
+        callback({success: false, error: "Video already in the queue!"});
+      }
   });
 });

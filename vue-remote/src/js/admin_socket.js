@@ -2,9 +2,7 @@ const io = window.io = require('socket.io-client');
 var socket;
 import { eventBus } from '@/js/eventbus.js';
 
-export { connectAdminSocket };
-
-function connectAdminSocket(){
+export function connectAdminSocket(){
     const serverUrl = process.env.VUE_APP_ADMIN_SOCKET_ADDRESS;
     socket = new io(serverUrl, {
         timeout: 5*1000,
@@ -54,68 +52,61 @@ function connectAdminSocket(){
     });
 }
 
-export { getScreenCode }
-async function getScreenCode(){
-    return await new Promise( resolve => {
+export function getScreenCode(){
+    console.log("requested screencode");
+    return new Promise( resolve => {
         socket.emit('get_screen_code', code => {
             resolve(code);
         });
     });
 }
 
-export { getUserData }
-async function getUserData(){
-    return await new Promise( resolve => {
+export function getUserData(){
+    return new Promise( resolve => {
         socket.emit('get-user-data', (userdata) => {
             resolve(userdata);
         });
     });
 }
 
-export { getVideoQueue }
-async function getVideoQueue(){
-    return await new Promise( resolve => {
+export function getVideoQueue(){
+    return new Promise( resolve => {
         socket.emit('get-video-queue', (queue) => {
             resolve(queue);
         });
     });
 }
 
-export { regenScreenCode }
-function regenScreenCode(){
+export function regenScreenCode(){
     socket.emit('create-new-screen-code');
 }
 
-export { skipNextInQueue }
-async function skipNextInQueue(){
-    return await new Promise( resolve => {
-        socket.emit('skip-next-in-queue', (success) => {
+export function skipSocket() {
+    return new Promise(resolve => {
+        socket.emit('skip', (success) => {
             resolve(success);
         });
     });
 }
 
-export { setRadio }
-async function setRadio(radiostation){
-    return await new Promise( resolve => {
+export function setRadio(radiostation){
+    return new Promise( resolve => {
         socket.emit('set-radio', radiostation, callback => {
             resolve(callback);
         });
     });
 }
 
-export { resumeProTube }
-async function resumeProTube(){
-    return await new Promise( resolve => {
-        socket.emit('resume-protube', callback => {
+export function playPauseSocket(){
+    return new Promise( resolve => {
+        socket.emit('play-pause', callback => {
             resolve(callback);
         });
     });
 }
 
-export { volumeChange }
-async function volumeChange(volume){
-    return await new Promise( resolve => {
+export function volumeChangeSocket(volume){
+    return new Promise( resolve => {
         socket.emit('volume-change', volume, callback => {
             resolve(callback);
         });
