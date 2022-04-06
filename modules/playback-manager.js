@@ -13,7 +13,7 @@ exports.playVideo = video => {
 
     //create an interval to continuously emit the timestamp so the screen stays updated in case of e.g. buffering
     playbackInterval = setInterval(() => {
-        if(timestamp < video.seconds) {
+        if(timestamp < video.duration) {
             timestamp++;
             communicator.emit('new-timestamp', {
                 seconds: timestamp,
@@ -23,6 +23,7 @@ exports.playVideo = video => {
         else {
             this.stopVideo();
             communicator.emit('video-ended');
+            timestamp = 0;
         }
     }, 1000);
 };

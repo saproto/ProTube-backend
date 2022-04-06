@@ -29,7 +29,6 @@ communicator.on('queue-update', () => {
 });
 
 const updatePlayerStatus = endpoint => {
-    console.log('AAAAAAAAAA');
     endpoint.emit('player-status', {
         type: protube.getType(),
         status: protube.getStatus(),

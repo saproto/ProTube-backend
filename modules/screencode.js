@@ -7,7 +7,7 @@ var timerinterval = setInterval(regenerateAuthToken, process.env.SCREENCODE_DURA
 var screenCode;
 
 function regenerateAuthToken() {
-  screenCode = Math.floor(1000 + Math.random() * 9000);
+  screenCode = process.env.NODE_ENV === 'development' ? 0000 : Math.floor(1000 + Math.random() * 9000);
   logger.serverInfo(`New auth token: ${screenCode}`);
   communicator.emit('newScreenCode', screenCode);
 }

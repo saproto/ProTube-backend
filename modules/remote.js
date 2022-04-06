@@ -39,18 +39,32 @@ client.use(async (socket, next) => {
     logger.clientInfo(`Disconnected socket: ${socket.id}`)
   });
 
-  socket.on('retrieveVideos', async (search_string, callback) => {
-    const videos = await youtube.search(search_string);
+  socket.on('fetch-videos', async (query, callback) => {
+    const videos = await youtube.search(query);
     callback(videos);
     logger.youtubeInfo('Returned list of music to client (remote)');
   });
 
-  socket.on('addVideoToQueue', (video, callback) => {
-      const added = queue.addFair(video);
-      if (added) {
-        callback({success: true, error: "Successfully added to the queue!"});
-      } else {
-        callback({success: false, error: "Video already in the queue!"});
-      }
+  socket.on('fetch-then-add-playlist', async (playlistId, callback) => {
+    const videos = await youtube.getVideosInPlaylist(playlistId);
+    queue.addAllFair(videos);
+    callback({success: true, error: "Successfully added playlist to the queue!"});
   });
+
+  socket.on('fetch-then-add-video', async (videoId, callback) => {
+    const video = await youtube.getVideo(videoId);
+    callback(addFairWithResult(video));
+  });
+
+  socket.on('add-video-to-queue', (video, callback) => {
+    callback(addFairWithResult(video));
+  });
+
+  const addFairWithResult = video => {
+    const added = queue.addFair(video);
+    if (added) {
+      return {success: true, error: "Successfully added to the queue!"};
+    }
+    return {success: false, error: "Video already in the queue!"};
+  }
 });

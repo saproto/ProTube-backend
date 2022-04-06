@@ -1,6 +1,6 @@
 const admin = io.of('/socket/admin');
 const logger = require('../utils/logger');
-const queueManager = require('./queue-manager');
+const queue = require('./queue-manager');
 const screenCode = require('./screencode');
 const playbackManager = require('./playback-manager')
 // const userDataFetcher = require('./user');
@@ -48,7 +48,8 @@ admin.use(async (socket, next) => {
 
   socket.on('get-video-queue', (callback) => {
     logger.adminInfo(`${socket.id} Requested video queue`)
-    callback(queueManager.getQueue());
+    console.log(queue.getQueue()[0]);
+    callback(queue.getQueue());
   });
 
   socket.on('create-new-screen-code', () => {
@@ -73,7 +74,8 @@ admin.use(async (socket, next) => {
 
   socket.on('skip', (callback) => {
     logger.adminInfo(`${socket.id} Requested to skip a video`);
-    callback(queueManager.moveToNext());
+    playbackManager.timestamp = 0;
+    callback(queue.moveToNext());
   });
 
   // change the screen's volume 
@@ -93,7 +95,7 @@ communicator.on('new-screen-code', (screenCode) => {
 });
 
 communicator.on('queue-update', () => {
-  admin.emit('admin-queue-update', queueManager.getQueue());
+  admin.emit('admin-queue-update', queue.getQueue());
 });
 
 // broadcast new volume to all connected admins

@@ -4,7 +4,7 @@
     <div class="w-full flex flex-col items-center space-y-4">
       <div class="max-w-sm bg-white dark:bg-proto_secondary_gray-dark shadow-lg rounded-lg pointer-events-auto ring-1 ring-black ring-opacity-5 overflow-hidden">
         <div class="p-4">
-          <div class="flex text-2xl text-center">
+          <div class="flex text-2xl text-center dark:text-white">
             {{ screenCode }}
           </div>
         </div>
@@ -33,7 +33,7 @@ const props = defineProps({
 
 onMounted(() => {
   mountListeners();
-  if(props.screenCode == -1) screenCodeIsVisible.value = false;
+  if(props.screenCode === -1) screenCodeIsVisible.value = false;
   mountScripts();
 })
 

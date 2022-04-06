@@ -70,7 +70,7 @@ export function getUserData(){
 }
 
 export function getVideoQueue(){
-    return new Promise( resolve => {
+    return new Promise(resolve => {
         socket.emit('get-video-queue', (queue) => {
             resolve(queue);
         });

@@ -59,19 +59,33 @@ function connectSocket(){
 }
 
 // pincode entered, try to setup a connection
-export { pinEntered }
-function pinEntered(pincode){
+export function pinEntered(pincode){
     silentConnect = false;
     resetSocket(pincode);
 }
 
 
-// fetching videos
-export { fetchVideosSocket }
-async function fetchVideosSocket(search_string){
-    return await new Promise( resolve => {
-        socket.emit('retrieveVideos', search_string, callback => {
-            resolve(callback);
+// fetch YouTube videos from server
+export function fetchVideosSocket(query) {
+    return new Promise(resolve => {
+        socket.emit('fetch-then-add-videos', query, result => {
+            resolve(result);
+        });
+    });
+}
+
+export function fetchThenAddVideoSocket(videoId) {
+    return new Promise(resolve => {
+        socket.emit('fetch-then-add-video', videoId, result => {
+            resolve(result);
+        });
+    });
+}
+
+export function fetchThenAddPlaylistSocket(playlistId) {
+    return new Promise(resolve => {
+        socket.emit('fetch-then-add-playlist', playlistId, result => {
+            resolve(result);
         });
     });
 }
@@ -80,7 +94,7 @@ async function fetchVideosSocket(search_string){
 export { addVideoToQueueSocket }
 async function addVideoToQueueSocket(video){
     return await new Promise( resolve => {
-        socket.emit('addVideoToQueue', video, callback => {
+        socket.emit('add-video-to-queue', video, callback => {
             resolve({
                 result: callback.success,
                 message: callback.error,

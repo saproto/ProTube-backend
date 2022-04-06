@@ -2,12 +2,14 @@
     <div>
         <transition name="search" mode="out-in" appear>
             <SearchWrapper 
-                v-on:fetch-videos="fetchVideos" 
+                v-on:query-videos="fetchVideos"
+                v-on:query-single-video="fetchThenAddVideo"
+                v-on:query-playlist="fetchThenAddPlaylist"
             />
         </transition>
         <transition name="results" mode="out-in" appear>
             <ResultsWrapper 
-                :videos="found_videos"
+                :videos="foundVideos"
             />
         </transition>
         <ToastModal />
@@ -27,14 +29,14 @@ import ResultsWrapper from '@/components/ResultsWrapper.vue'
 import LoginModal from '@/components/modals/LoginModal.vue'
 import LoadModal from '@/components/modals/LoadModal.vue'
 import ToastModal from '@/components/modals/ToastsModal.vue'
-import { initializeSocket, killSocket, fetchVideosSocket } from '@/js/remote_socket'
+import { initializeSocket, killSocket, fetchVideosSocket, fetchThenAddVideoSocket, fetchThenAddPlaylistSocket} from '@/js/remote_socket'
 import { eventBus } from '@/js/eventbus'
 import { ref, onMounted, onBeforeUnmount, onUnmounted } from 'vue'
 
 const loginModalVisible = ref(true);
 const loadModalVisible = ref(false);
 const loadModalMessage = ref("");
-const found_videos = ref([]);
+const foundVideos = ref([]);
 
 onMounted(() => {
     mountListeners();
@@ -64,16 +66,30 @@ function unMountListeners(){
     eventBus.off('to-remote-from-remotesocket-toggle-loginmodal-visibility');
 }
 
-async function fetchVideos(search_string){
+async function fetchThenAddVideo(videoId) {
+  loadModalVisible.value = true;
+  loadModalMessage.value = 'Adding video...';
+  await fetchThenAddVideoSocket(videoId);
+  loadModalVisible.value = false;
+}
+
+async function fetchThenAddPlaylist(playlistId) {
+  loadModalVisible.value = true;
+  loadModalMessage.value = 'Adding videos from playlist...';
+  await fetchThenAddPlaylistSocket(playlistId);
+  loadModalVisible.value = false;
+}
+
+async function fetchVideos(query){
     loadModalVisible.value = true;
-    loadModalMessage.value = `Searching for ${search_string}...`;
-    found_videos.value = await fetchVideosSocket(search_string);
+    loadModalMessage.value = `Searching for ${query}...`;
+    foundVideos.value = await fetchVideosSocket(query);
     loadModalVisible.value = false;
 }
     
 </script>
 
-<style >
+<style>
 .search-enter-from {
     opacity: 0;
     transform: translateY(-100px);

@@ -10,18 +10,21 @@ exports.addFair = video => {
     //Check if the video is already in the queue. If so, stop here.
     if(findDoppelganger(video)) return false;
 
-    //Video is not already in the queue, so add it
-    //Get a random index in the bottom half of the queue
-    if(!this.getCurrent() && this.isQueueEmpty()) {
-        queue.push(video);
-        this.moveToNext();
-    }else{
-        let insertIndex = Math.floor(queue.length / 2) + Math.round(((Math.ceil(queue.length / 2) - 1) * Math.random()))
-        queue.splice(insertIndex, 0, video);
-    }
+    performFairAdd(video);
     communicator.emit('queue-update');
     logger.queueInfo(`Added "${video.title}" to queue`);
     return true;
+}
+
+exports.addAllFair = videos => {
+    for(video of videos) {
+        //Check if the video is already in the queue. If so, skip it.
+        if(findDoppelganger(video)) continue;
+
+        performFairAdd(video);
+    }
+    communicator.emit('queue-update');
+    logger.queueInfo(`Added ${videos.length} videos to queue`);
 }
 
 //Add a video to the first position of the queue
@@ -44,7 +47,6 @@ exports.addToTop = video => {
 exports.moveToNext = () => {
     // Queue has an item, can be shifted
     if(queue.length > 0){
-        // if we're on the radio do not set the next in line to current
         current = queue[0];
         queue.shift();
         communicator.emit('queue-update');
@@ -54,7 +56,7 @@ exports.moveToNext = () => {
 }
 
 exports.removeFirst = () => queue.shift();
-exports.getCurrent = () => current;
+exports.getCurrent = () => current || null;
 exports.getNext = () => queue[0];
 exports.getQueue = () => queue;
 exports.isQueueEmpty = () => queue.length <= 0;
@@ -68,7 +70,19 @@ exports.getTotalDuration = () => {
 
 //Check for an identical video in the queue
 const findDoppelganger = video => {
-    return queue.filter(spot => spot.videoId === video.videoId)[0];
+    return queue.filter(spot => spot.id === video.id)[0];
+}
+
+const performFairAdd = video => {
+    //If there is nothing in the queue, play the video.
+    if(!this.getCurrent() && this.isQueueEmpty()) {
+        queue.push(video);
+        this.moveToNext();
+    }else{
+        //Get a random index in the bottom half of the queue and insert the video there
+        let insertIndex = Math.floor(queue.length / 2) + Math.round(((Math.ceil(queue.length / 2) - 1) * Math.random()))
+        queue.splice(insertIndex, 0, video);
+    }
 }
 
 communicator.on('video-ended', () => {

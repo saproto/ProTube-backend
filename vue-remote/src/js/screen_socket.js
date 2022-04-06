@@ -43,8 +43,8 @@ export function youtubePlayerReady() {
     socket.on('player-status', data => {
         if (data.type === 'video') {
             nowPlaying = data.video;
-            if (player.videoId !== nowPlaying.videoId) {
-                player.loadVideoById(nowPlaying.videoId);
+            if (player.videoId !== nowPlaying.id) {
+                player.loadVideoById(nowPlaying.id);
                 player.setPlaybackQuality('hd1080');
                 setTimeout(() => {
                     player.playVideo();
