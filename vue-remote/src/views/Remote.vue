@@ -10,6 +10,7 @@
         <transition name="results" mode="out-in" appear>
             <ResultsWrapper 
                 :videos="foundVideos"
+                :skeletonLoading="resultsWrapperSkeletons"
             />
         </transition>
         <ToastModal />
@@ -35,6 +36,7 @@ import { ref } from 'vue'
 
 const loginModalVisible = ref(true);
 const loadModalVisible = ref(false);
+const resultsWrapperSkeletons = ref(false);
 const loadModalMessage = ref("");
 const foundVideos = ref([]);
 
@@ -66,9 +68,11 @@ async function fetchThenAddPlaylist(playlistId) {
 
 async function fetchVideos(query){
     loadModalVisible.value = true;
+    resultsWrapperSkeletons.value = true;
     loadModalMessage.value = `Searching for ${query}...`;
     foundVideos.value = await fetchVideosSocket(query);
     loadModalVisible.value = false;
+    resultsWrapperSkeletons.value = false;
 }
     
 </script>
