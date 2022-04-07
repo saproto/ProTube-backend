@@ -21,7 +21,7 @@
               <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"></path>
               <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"></path>
             </svg>
-          <span class="text-gray-900 dark:text-true_gray-300 text-sm font-medium truncate">{{ viewsFormatted }}</span>
+          <span class="text-gray-900 dark:text-true_gray-300 text-sm font-medium truncate">{{ video.viewsFormatted }}</span>
 
             <!-- Heroicon name: check/success -->
             <svg v-show="videoStatusCode === 1" class="w-5 h-5 ml-auto text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -101,18 +101,6 @@ const generateClasses = computed(() => {
   return "text-gray-700 hover:bg-proto_green hover:text-custom_gray";
 });
 
-const viewsFormatted = computed(() => {
-  const views =  props.video.viewCount;
-  if(views > 999 && views < 1000000){
-        return (views/1000).toFixed(1) + 'k';
-    }else if(views > 1000000 && views < 1000000000){
-        return (views/1000000).toFixed(1) + 'M';
-    } else if (views > 1000000000){
-        return (views/1000000000).toFixed(1) + 'B';
-    }
-  return views;
-});
-
 async function addVideoToQueue(){
   const callback = await addVideoToQueueSocket(props.video);
   videoStatusCode.value = callback.result ? 1 : 2;
@@ -133,7 +121,7 @@ const enter = ((el, done) => {
     y: 0,
     duration: 0.5,
     onComplete: done,
-    delay: 0.1*props.index
+    delay: 0.05*props.index
   });
 });
 

@@ -253,22 +253,6 @@ function makeServerConnection(){
     return pinEntered(constructPasskey());
 }
 
-// // Only use an eventlistener once and mount it when the page mounts 
-// // and unmount it when the page unmounts
-// function mountListeners(){
-//   eventBus.on('to-pincode-from-remotesocket-connect-error', (status) => {
-//     processPinEntered(status);
-//   });
-//   eventBus.on('to-pincode-from-remotesocket-connect-success', (status) => {
-//     processPinEntered(status);
-//   });
-// }
-
-// function unMountListeners(){
-//   eventBus.off('to-pincode-from-remotesocket-connect-success');
-//   eventBus.off('to-pincode-from-remotesocket-connect-error');
-// }
-
 function processPinEntered(success, reason=""){
     passkeyAccepted.value = success;
     connectError.value = reason;

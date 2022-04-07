@@ -41,6 +41,18 @@ const sanitizeVideo = video => {
     video.channel = video.channel.name;
     video.thumbnail = video.thumbnails[video.thumbnails.length - 1];
     video.durationFormatted = format_mm_ss(video.duration);
+    video.viewsFormatted = formatViews(video.viewCount);
     delete video.thumbnails;
     return video;
+}
+
+function formatViews(views){
+    if(views > 999 && views < 1000000){
+        return (views/1000).toFixed(1) + 'k';
+    } else if(views > 1000000 && views < 1000000000){
+        return (views/1000000).toFixed(1) + 'M';
+    } else if (views > 1000000000){
+        return (views/1000000000).toFixed(1) + 'B';
+    }
+  return views;
 }

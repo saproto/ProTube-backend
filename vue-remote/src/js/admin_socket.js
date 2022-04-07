@@ -30,28 +30,12 @@ export function connectAdminSocket(){
         } else if(err == "Error: Unable to validate"){
             reason = "Login error!";
         }
-        // eventBus.emit('to-authenticator-from-adminsocket-socket-connect-error', {reason: error});
         eventBus.emit('adminsocket-connect-error', reason);
     });
 
     socket.on('connect', () => {
-        // eventBus.emit('to-authenticator-from-adminsocket-socket-connect-success');
         eventBus.emit('adminsocket-connect-success', socket);
     });
-
-    // socket.on('admin-newscreencode', (screencode) => {
-    //     eventBus.emit('to-adminremote-from-adminsocket-screencode-update', screencode);
-    // });
-
-    // // there was a change in the queue, update this on the admin remote
-    // socket.on('admin-queue-update', (queue) => {
-    //     eventBus.emit('to-adminremote-from-adminsocket-queue-update', queue);
-    // });
-
-    // // the volume on the screens was changed
-    // socket.on('admin-new-volume', (volume) => {
-    //     eventBus.emit('to-adminremote-from-adminsocket-new-volume', volume);
-    // });
 }
 
 export function getScreenCode(){
@@ -70,7 +54,7 @@ export function getUserDataSocket(){
     });
 }
 
-export function getVideoQueue(){
+export function getVideoQueueSocket(){
     return new Promise(resolve => {
         socket.emit('get-video-queue', (queue) => {
             resolve(queue);
@@ -90,7 +74,7 @@ export function skipSocket() {
     });
 }
 
-export function setRadio(radiostation){
+export function setRadioSocket(radiostation){
     return new Promise( resolve => {
         socket.emit('set-radio', radiostation, callback => {
             resolve(callback);
@@ -110,6 +94,16 @@ export function volumeChangeSocket(volume){
     return new Promise( resolve => {
         socket.emit('volume-change', volume, callback => {
             resolve(callback);
+        });
+    });
+}
+
+export function getRadioStationsSocket(){
+    return new Promise( resolve => {
+        socket.emit('get-all-radiostations', callback => {
+            // setTimeout(async () => {
+                resolve(callback);
+            // }, 1000)
         });
     });
 }

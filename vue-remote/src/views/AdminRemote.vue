@@ -56,7 +56,7 @@
 
         <transition name="results" mode="out-in" appear>
             <ContentField>
-                <label class="text-gray-600 dark:text-white text-2xl absolute"> The current Queue - {{ total_queue_duration }}</label>
+                <label class="text-gray-600 dark:text-white text-2xl absolute"> The current Queue - {{ totalQueueDuration }}</label>
                     <div class="flex overflow-x-scroll pt-10 no-scrollbar">
                         <div class="flex flex-nowrap h-full">
                             <div v-for="(video, index) in videoQueue" :video="video" :index="index" :key="video.id" class="inline-block px-3 w-96 h-full" >
@@ -102,20 +102,24 @@ import HeaderFieldButtons from '@/components/HeaderFieldButtons.vue'
 import ContentField from '@/layout/ContentField.vue'
 import Toast from '@/components/Toast.vue'
 import RadioStations from '@/components/RadioStations.vue'
-import {getUserDataSocket, getVideoQueue, playPauseSocket, skipSocket, volumeChangeSocket, socket} from '@/js/admin_socket.js'
-import {computed, ref, onMounted} from 'vue'
+import { getUserDataSocket, getVideoQueueSocket, playPauseSocket, skipSocket, volumeChangeSocket, socket } from '@/js/admin_socket.js'
+import { ref, onMounted } from 'vue'
 
 const name = ref("");
 const radiofilter = ref("");
 const videoQueue = ref([]);
+const totalQueueDuration = ref("00:00:00");
 const toasts = ref([]);
 const volumeCalculated = ref(50);
 const playing = ref(false);
 
 // with keepalive this acts as an onCreated, so runs once
 onMounted(async () => {
-    videoQueue.value = await getVideoQueue();
-    let user = await getUserDataSocket();
+    let queueData = await getVideoQueueSocket();
+    videoQueue.value = queueData.queue;
+    totalQueueDuration.value = queueData.duration;
+    // smh doesnt work when directly assigned
+    let user =  await getUserDataSocket();
     name.value = user.name;
 });
 
@@ -125,23 +129,13 @@ socket.on('admin-newscreencode', (screencode) => {
 
 // there was a change in the queue, update this on the admin remote
 socket.on('admin-queue-update', (queue) => {
-    videoQueue.value = queue;
+    videoQueue.value = queue.queue;
+    totalQueueDuration.value = queue.duration;
 });
 
 // the volume on the screens was changed
 socket.on('admin-new-volume', (volume) => {
     volumeCalculated.value = volume;
-});
-
-
-const total_queue_duration = computed(() => {
-    let totalSeconds = 0;
-    videoQueue.value.forEach((video) => {
-        totalSeconds += video.duration;
-    });
-    let date = new Date(null);
-    date.setSeconds(totalSeconds);
-    return date.toISOString().substr(11, 8);
 });
 
 function displayToast(message){
@@ -179,19 +173,6 @@ async function skip() {
   }
   displayToast('Failed to skip current video!');
 }
-
-// // a change in volume 
-// eventBus.on('admin-new-volume', (volume) => {
-//   volumeCalculated.value = volume;
-// });
-
-// eventBus.on('admin-socket-queue-update', (queue) => {
-//   videoQueue.value = queue;
-// });
-
-// eventBus.on('admin-socket-screencode-update', (code) => {
-//     displayToast('New screen code: ' + code);
-// });
 </script>
 
 <style scoped>

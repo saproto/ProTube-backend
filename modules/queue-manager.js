@@ -64,7 +64,7 @@ exports.isQueueEmpty = () => queue.length <= 0;
 //Calculate the total duration of the playlist and return it
 exports.getTotalDuration = () => {
     let sum = 0;
-    queue.forEach(video => sum += video.seconds);
+    queue.forEach(video => sum += video.duration);
     return timeFormatter.format_hh_mm_ss(sum);
 }
 

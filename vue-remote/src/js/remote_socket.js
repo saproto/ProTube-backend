@@ -28,7 +28,6 @@ function connectSocket(){
         socket.disconnect();
         socket.removeAllListeners();
         eventBus.emit('remotesocket-disconnect');
-        // eventBus.emit('to-remote-from-remotesocket-toggle-loginmodal-visibility', true);
     });
 
     socket.on("connect_error", (err) => {
@@ -47,9 +46,6 @@ function connectSocket(){
 
     socket.on('connect', () => {
         eventBus.emit('remotesocket-connect-success', socket);
-        // setTimeout(function(){ 
-        //     eventBus.emit('to-remote-from-remotesocket-toggle-loginmodal-visibility', false); 
-        // }, 1000);
     });
 }
 

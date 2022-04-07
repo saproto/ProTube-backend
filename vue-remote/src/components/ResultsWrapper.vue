@@ -13,7 +13,7 @@
           </div>
         </div>
       </li>
-      <Result v-for="(video, index) in videos" :video="video" :index="index" :key="video.videoId" />
+      <Result v-for="(video, index) in videos" :video="video" :index="index" :key="video.id" />
     </ul>
   </ContentField>
 </template>

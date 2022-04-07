@@ -7,6 +7,14 @@ const playbackManager = require('./playback-manager')
 const authenticator = require('./authenticator.js');
 const fetch = require('node-fetch');
 
+let radioStations;
+updateRadioStations();
+
+// needs to be changed with randomness/sufficiently large interval to prevent ip ban
+setInterval(async () => {
+  await updateRadioStations
+}, 1800*1000);
+
 admin.use(async (socket, next) => {
   logger.adminInfo(`Admin from ${socket.handshake.address} with id ${socket.id} attempted to connect, validating...`);
   try{
@@ -48,7 +56,10 @@ admin.use(async (socket, next) => {
 
   socket.on('get-video-queue', (callback) => {
     logger.adminInfo(`${socket.id} Requested video queue`)
-    callback(queue.getQueue());
+    callback({
+      queue: queue.getQueue(),
+      duration: queue.getTotalDuration()
+    });
   });
 
   socket.on('create-new-screen-code', () => {
@@ -59,7 +70,7 @@ admin.use(async (socket, next) => {
 
   socket.on('set-radio', async (station, callback) => {
     logger.adminInfo(`${socket.id} Setting the radio to: ${station}`);
-    if(await validateRadioStation(station)) {
+    if(validateRadioStation(station)) {
       playbackManager.setRadio(station);
       callback(true);
     }
@@ -80,12 +91,16 @@ admin.use(async (socket, next) => {
   // change the screen's volume 
   socket.on('volume-change', (volume, callback) => {
     logger.adminInfo(`${socket.id} Requested to change the volume to: ${volume}`);
-    callback(1);
+    callback(true);
   });
 
   // change the screen's volume 
   socket.on('get-volume', (callback) => {
     // callback(playbackManager.getVolume());
+  });
+
+  socket.on('get-all-radiostations', (callback) => {
+    callback(radioStations);
   });
 });
 
@@ -94,7 +109,10 @@ communicator.on('new-screen-code', (screenCode) => {
 });
 
 communicator.on('queue-update', () => {
-  admin.emit('admin-queue-update', queue.getQueue());
+  admin.emit('admin-queue-update', {
+    queue: queue.getQueue(),
+    duration: queue.getTotalDuration()
+  });
 });
 
 // broadcast new volume to all connected admins
@@ -102,23 +120,24 @@ communicator.on('new-volume', (volume) => {
   admin.emit('admin-new-volume', volume);
 });
 
-// check if the given radiostation is valid
-async function validateRadioStation(radiostation){
-  return new Promise(async resolve => {
-    try {
-      response = await fetch('https://www.nederland.fm/common/radio/zenders/nederland.js');
-      const data = await response.text();
-      let stations = JSON.parse(await data.split(' = ')[1]).items;
-      stations.forEach((station) => {
-        if(radiostation === station.z){
-          //found our specified station in the available stations list, resolve the station
-          resolve(station);
-        }
-      });
-      //no station with this name found, resolve without a station
-      resolve(false);
-    } catch(e) {
-      resolve(false);
+async function updateRadioStations(){
+  try {
+    response = await fetch('https://www.nederland.fm/common/radio/zenders/nederland.js');
+    const data = await response.text();
+    radioStations = JSON.parse(await data.split(' = ')[1]).items;
+  } catch(e) {
+    logger.serverError("Error at updating radio stations!");
+  }
+}
+
+// check if the radio we're trying to set is really valid
+function validateRadioStation(radiostation){
+  let foundStation = false;
+  radioStations.forEach((station) => {
+    if(radiostation === station.z){
+      //found our specified station in the available stations list, resolve the station
+      foundStation = station;
     }
   });
+  return foundStation;
 }

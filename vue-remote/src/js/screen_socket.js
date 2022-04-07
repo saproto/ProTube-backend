@@ -70,22 +70,10 @@ export function youtubePlayerReady() {
         if (Math.abs(player.getCurrentTime() - timestamp.seconds) > 5)
             player.seekTo(timestamp.seconds, true);
     });
-
-    // socket.on('new-radio', new_radio => {
-    //     player.stopVideo();
-    //     radio = true;
-    //     eventBus.emit('radio_playing', new_radio);
-    // });
-
     // update the screencode on the screen 
     socket.on('new-screencode', new_code => {
         eventBus.emit('to-adminprotubescreen-from-screensocket-new-screencode', new_code);
     });
-
-    // // re-show screencode on radio -> protube switch
-    // socket.on('show-screencode', () => {
-    //     eventBus.emit('show-screencode');
-    // });
 }
 // exiting the page, kill the socket
 export function killSocket() {
