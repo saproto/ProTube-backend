@@ -48,7 +48,6 @@ admin.use(async (socket, next) => {
 
   socket.on('get-video-queue', (callback) => {
     logger.adminInfo(`${socket.id} Requested video queue`)
-    console.log(queue.getQueue()[0]);
     callback(queue.getQueue());
   });
 

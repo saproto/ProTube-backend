@@ -17,7 +17,10 @@ const routes = [
     path: '/login',
     name: 'Login',
     component: LoginPage,
-    props: true,
+    props: route => ({
+      targetPath: String(route.params.targetPath),
+      requests_admin: Boolean(route.params.requests_admin)
+    }),
     meta: {
       transition: 'fade'
     }
@@ -36,6 +39,7 @@ const routes = [
     name: 'Admin Remote',
     component: AdminRemote,
     meta: {
+      'auth': false,
       'adminAuth': true
     }
   },
@@ -60,7 +64,9 @@ const routes = [
     path: '/error',
     name: "Error",
     component: ErrorPage,
-    props: true
+    props: {
+      type: Number
+    },
   },
   { 
     path: '/:pathMatch(.*)*', 
@@ -87,6 +93,7 @@ router.beforeEach((to, from, next) => {
  
   // requested path is admin and the user had no admin socket
   else if(to.meta.adminAuth || to.meta.auth){
+    console.log(`to ${to.name} requesting admin: ${to.meta.adminAuth}`)
     return next({ name: 'Login' , params: {
       targetPath: to.name,
       requests_admin: to.meta.adminAuth

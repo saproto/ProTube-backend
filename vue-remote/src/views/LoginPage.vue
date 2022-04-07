@@ -19,8 +19,8 @@
 import LoadModal from '@/components/modals/LoadModal.vue'
 import NoCookieModal from '@/components/modals/NoCookieModal.vue'
 import ErrorModal from '@/components/modals/ErrorModal.vue'
-import { logInUser, logInAdmin } from '@/js/authenticator'
-import { defineProps, onMounted, onUnmounted, ref } from 'vue'
+import { logInUser, logInAdmin, socketDetails } from '@/js/authenticator'
+import { defineProps, ref, onActivated } from 'vue'
 import { useRouter } from 'vue-router'
 import { eventBus } from '@/js/eventbus'
 
@@ -28,56 +28,48 @@ const noCookieModal = ref(false);
 const errormessage = ref(false);
 
 const props = defineProps({
-    targetPath: String,
-    requests_admin: Boolean
+    'targetPath': String,
+    'requests_admin': Boolean
 });
 const router = useRouter();
 
-onMounted(() => {
-    console.log("onmounted");
-    logInUser();
-    mountListeners();
+// bug: op /remote/login krijgt ie smh nog een redirect naar undefined
+
+// executed each time the screen is shown again
+onActivated(() => {
+    //if usersocket is already present we can still upgrade to admin sockets
+    let socketData = socketDetails();
+    if(!socketData.user_socket.connected) return logInUser();
+    else if(props.requests_admin) logInAdmin();
+})
+
+
+eventBus.on('adminsocket-connect-error', (reason) => {
+    logInError(reason);
 });
 
-onUnmounted(() => {
-    unMountListeners();
-})
-// Only use an eventlistener once and mount it when the page mounts 
-// and unmount it when the page unmounts
-function mountListeners(){
-    eventBus.on('to-loginpage-from-adminsocket-socket-connect-error', (reason) => {
-        if(reason.reason == "Login error!"){
-            noCookieModal.value = true;
-            errormessage.value = "";
-        } else {
-            errormessage.value = reason.reason;
-        }
-    });
+eventBus.on('usersocket-connect-error', (reason) => {
+    logInError(reason);
+});
 
-    eventBus.on('to-loginpage-from-adminsocket-socket-connect-success', () => {
-        router.push({ name: props.targetPath } )
+eventBus.on('adminsocket-connect-success', () => {
+    router.push({ name: props.targetPath } )
+    errormessage.value = "";
+});
+
+eventBus.on('usersocket-connect-success', () => {
+    if(props.requests_admin) logInAdmin();
+    else router.push({ name: props.targetPath || "Remote"} );
+    errormessage.value = "";
+});
+
+
+function logInError(reason){
+    if(reason == "Login error!"){
+        noCookieModal.value = true;
         errormessage.value = "";
-    });
-
-    eventBus.on('to-loginpage-from-usersocket-socket-connect-success', () => {
-        if(props.requests_admin) logInAdmin();
-        else router.push({ name: props.targetPath || "Remote"} );
-        errormessage.value = "";
-    });
-
-    eventBus.on('to-loginpage-from-usersocket-socket-connect-error', (reason) => {
-        if(reason.reason == "Login error!"){
-            noCookieModal.value = true;
-        } else {
-            errormessage.value = reason.reason;
-        }
-    });
-}
-
-function unMountListeners(){
-    eventBus.off('to-loginpage-from-adminsocket-socket-connect-error');
-    eventBus.off('to-loginpage-from-adminsocket-socket-connect-success');
-    eventBus.off('to-loginpage-from-usersocket-socket-connect-success');
-    eventBus.off('to-loginpage-from-usersocket-socket-connect-error');
+    } else {
+        errormessage.value = reason;
+    }
 }
 </script>

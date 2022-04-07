@@ -9,7 +9,7 @@
                     </div>
                     <h2 class="mt-4 leading-6 font-medium text-white md:text-6xl text-3xl">Welcome {{ name }}</h2>
                 </div>
-                <HeaderFieldButtons screen adminscreen remote/>
+                <HeaderFieldButtons screen adminScreen remote/>
             </HeaderField>
         </transition>
         <transition name="results" mode="out-in" appear>
@@ -102,9 +102,8 @@ import HeaderFieldButtons from '@/components/HeaderFieldButtons.vue'
 import ContentField from '@/layout/ContentField.vue'
 import Toast from '@/components/Toast.vue'
 import RadioStations from '@/components/RadioStations.vue'
-import {eventBus} from '@/js/eventbus'
-import {getUserData, getVideoQueue, playPauseSocket, skipSocket, volumeChangeSocket} from '@/js/admin_socket.js'
-import {computed, onMounted, ref} from 'vue'
+import {getUserDataSocket, getVideoQueue, playPauseSocket, skipSocket, volumeChangeSocket, socket} from '@/js/admin_socket.js'
+import {computed, ref, onMounted} from 'vue'
 
 const name = ref("");
 const radiofilter = ref("");
@@ -113,17 +112,34 @@ const toasts = ref([]);
 const volumeCalculated = ref(50);
 const playing = ref(false);
 
+// with keepalive this acts as an onCreated, so runs once
 onMounted(async () => {
-  videoQueue.value = await getVideoQueue();
-  name.value = await getUserData().name;
+    videoQueue.value = await getVideoQueue();
+    let user = await getUserDataSocket();
+    name.value = user.name;
 });
+
+socket.on('admin-newscreencode', (screencode) => {
+    displayToast('New screen code: ' + screencode);
+});
+
+// there was a change in the queue, update this on the admin remote
+socket.on('admin-queue-update', (queue) => {
+    videoQueue.value = queue;
+});
+
+// the volume on the screens was changed
+socket.on('admin-new-volume', (volume) => {
+    volumeCalculated.value = volume;
+});
+
 
 const total_queue_duration = computed(() => {
     let totalSeconds = 0;
     videoQueue.value.forEach((video) => {
         totalSeconds += video.duration;
     });
-    let date = new Date();
+    let date = new Date(null);
     date.setSeconds(totalSeconds);
     return date.toISOString().substr(11, 8);
 });
@@ -164,18 +180,18 @@ async function skip() {
   displayToast('Failed to skip current video!');
 }
 
-// a change in volume 
-eventBus.on('admin-new-volume', (volume) => {
-  volumeCalculated.value = volume;
-});
+// // a change in volume 
+// eventBus.on('admin-new-volume', (volume) => {
+//   volumeCalculated.value = volume;
+// });
 
-eventBus.on('admin-socket-queue-update', (queue) => {
-  videoQueue.value = queue;
-});
+// eventBus.on('admin-socket-queue-update', (queue) => {
+//   videoQueue.value = queue;
+// });
 
-eventBus.on('admin-socket-screencode-update', (code) => {
-    displayToast('New screen code: ' + code);
-});
+// eventBus.on('admin-socket-screencode-update', (code) => {
+//     displayToast('New screen code: ' + code);
+// });
 </script>
 
 <style scoped>

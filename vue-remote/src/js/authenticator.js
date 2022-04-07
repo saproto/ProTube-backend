@@ -17,12 +17,12 @@ export function socketDetails(){
 }
 
 export function logInAdmin(){
-    connectAdminSocket();
+    if(!socketdetails.admin_socket.connected) connectAdminSocket();
     return;
 }
 
 export function logInUser(){
-    connectUserSocket();
+    if(!socketdetails.user_socket.connected) connectUserSocket();
     return;
 }
 
@@ -31,7 +31,7 @@ export function setCurrentRoute(route){
 }
 
 // on disconnect redirect to login page to reauthenticate
-eventBus.on('to-authenticator-from-adminsocket-socket-disconnect', (reason) => {
+eventBus.on('adminsocket-disconnect', (reason) => {
     socketdetails.admin_socket.connected = false;
     if(reason == 'Session expired!') return redirectToSessionExpired(currentRoute);
     
@@ -45,7 +45,7 @@ eventBus.on('to-authenticator-from-adminsocket-socket-disconnect', (reason) => {
 });
 
 // on disconnect redirect to login page to reauthenticate
-eventBus.on('to-authenticator-from-usersocket-socket-disconnect', (reason) => {
+eventBus.on('usersocket-disconnect', (reason) => {
     socketdetails.user_socket.connected = false;
     if(reason == 'Session expired!') return redirectToSessionExpired(currentRoute);
     
@@ -72,18 +72,18 @@ function redirectToSessionExpired(path){
     });
 }
 
-    eventBus.on('to-authenticator-from-adminsocket-socket-connect-error', () => {
-        socketdetails.admin_socket.connected = false;
-    });
+eventBus.on('adminsocket-connect-error', () => {
+    socketdetails.admin_socket.connected = false;
+});
 
-    eventBus.on('to-authenticator-from-adminsocket-socket-connect-success', () => {
-        socketdetails.admin_socket.connected = true;
-    });
+eventBus.on('adminsocket-connect-success', () => {
+    socketdetails.admin_socket.connected = true;
+});
 
-    eventBus.on('to-authenticator-from-usersocket-socket-connect-success', () => {
-        socketdetails.user_socket.connected = true;
-    });
+eventBus.on('usersocket-connect-success', () => {
+    socketdetails.user_socket.connected = true;
+});
 
-    eventBus.on('to-authenticator-from-usersocket-socket-connect-error', () => {
-        socketdetails.user_socket.connected = false;
-    });
+eventBus.on('usersocket-connect-error', () => {
+    socketdetails.user_socket.connected = false;
+});

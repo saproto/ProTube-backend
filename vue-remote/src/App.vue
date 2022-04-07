@@ -16,8 +16,6 @@
 </template>
 
 <script setup>
-// import { connectAdminSocket } from "@/js/admin_socket";
-// import { connectUserSocket } from "@/js/user_socket";
 import { useRoute, useRouter } from 'vue-router'
 import { computed } from 'vue'
 import { setCurrentRoute } from '@/js/authenticator'

@@ -29,42 +29,26 @@ import ResultsWrapper from '@/components/ResultsWrapper.vue'
 import LoginModal from '@/components/modals/LoginModal.vue'
 import LoadModal from '@/components/modals/LoadModal.vue'
 import ToastModal from '@/components/modals/ToastsModal.vue'
-import { initializeSocket, killSocket, fetchVideosSocket, fetchThenAddVideoSocket, fetchThenAddPlaylistSocket} from '@/js/remote_socket'
+import { initializeSocket, fetchVideosSocket, fetchThenAddVideoSocket, fetchThenAddPlaylistSocket} from '@/js/remote_socket'
 import { eventBus } from '@/js/eventbus'
-import { ref, onMounted, onBeforeUnmount, onUnmounted } from 'vue'
+import { ref } from 'vue'
 
 const loginModalVisible = ref(true);
 const loadModalVisible = ref(false);
 const loadModalMessage = ref("");
 const foundVideos = ref([]);
 
-onMounted(() => {
-    mountListeners();
-    initializeSocket();
-});
 
-onUnmounted(() => {
-    unMountListeners();
-});
+initializeSocket();
 
-// purposely kill socket on page leave to prevent duplicate sockets
-onBeforeUnmount(() =>{
-    killSocket();
-});
 
-// Only use an eventlistener once and mount it when the page mounts 
-// and unmount it when the page unmounts
-function mountListeners(){
-    //intercept events for modal toggling
-    eventBus.on('to-remote-from-remotesocket-toggle-loginmodal-visibility', (visible) => {
-        loginModalVisible.value = visible;
+// On connect sucess you can create socket listeners here
+eventBus.on('remotesocket-connect-success', () => {
+    setTimeout( () => {
+        loginModalVisible.value = false;
         loadModalVisible.value = false;
-    });
-}
-
-function unMountListeners(){
-    eventBus.off('to-remote-from-remotesocket-toggle-loginmodal-visibility');
-}
+    }, 1000);
+});
 
 async function fetchThenAddVideo(videoId) {
   loadModalVisible.value = true;

@@ -91,19 +91,9 @@
 </template>
  
 <script setup>
-import { computed, reactive, ref, onMounted, onUnmounted  } from 'vue';
+import { computed, reactive, ref, onMounted } from 'vue';
 import { pinEntered } from '@/js/remote_socket'
 import { eventBus } from '@/js/eventbus'
- 
-onMounted(() => {
-  mountListeners();
-  code_0.value = document.getElementById('code_0');
-  focusOnFirstInput();
-});
-
-onUnmounted(() => {
-  unMountListeners();
-});
  
 const digitsFromInput = reactive({
   0: null,
@@ -130,11 +120,25 @@ const codeStatusIndicatorStyle = computed (() => {
 const passkey = computed(() => {
   return allInputsFilled() ? constructPasskey() : null;
 });
+
+onMounted(() => {
+  code_0.value = document.getElementById('code_0');
+  focusOnFirstInput();
+});
  
 const passkeyAccepted = ref(null);
 const connectError = ref("");
 const loading = ref(false);
  
+
+eventBus.on('remotesocket-connect-error', (reason) => {
+    processPinEntered(false, reason);
+});
+eventBus.on('remotesocket-connect-success', () => {
+    processPinEntered(true)
+});
+
+
 function onKeyDown(event) {
     originalTarget = event.target;
     if((event.keyCode == 9 || event.keyCode == 39) && event.target.id != 'code_3'){ //arrow right
@@ -249,27 +253,27 @@ function makeServerConnection(){
     return pinEntered(constructPasskey());
 }
 
-// Only use an eventlistener once and mount it when the page mounts 
-// and unmount it when the page unmounts
-function mountListeners(){
-  eventBus.on('to-pincode-from-remotesocket-connect-error', (status) => {
-    processPinEntered(status);
-  });
-  eventBus.on('to-pincode-from-remotesocket-connect-success', (status) => {
-    processPinEntered(status);
-  });
-}
+// // Only use an eventlistener once and mount it when the page mounts 
+// // and unmount it when the page unmounts
+// function mountListeners(){
+//   eventBus.on('to-pincode-from-remotesocket-connect-error', (status) => {
+//     processPinEntered(status);
+//   });
+//   eventBus.on('to-pincode-from-remotesocket-connect-success', (status) => {
+//     processPinEntered(status);
+//   });
+// }
 
-function unMountListeners(){
-  eventBus.off('to-pincode-from-remotesocket-connect-success');
-  eventBus.off('to-pincode-from-remotesocket-connect-error');
-}
+// function unMountListeners(){
+//   eventBus.off('to-pincode-from-remotesocket-connect-success');
+//   eventBus.off('to-pincode-from-remotesocket-connect-error');
+// }
 
-function processPinEntered(status){
-    passkeyAccepted.value = status.success;
-    connectError.value = status.reason;
+function processPinEntered(success, reason=""){
+    passkeyAccepted.value = success;
+    connectError.value = reason;
     loading.value = false;
-    if(!status.success){
+    if(!success){
         resetPinCode();
         focusOnFirstInput();
     }

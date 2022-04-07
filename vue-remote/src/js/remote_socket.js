@@ -47,9 +47,9 @@ function connectSocket(){
 
     socket.on('connect', () => {
         eventBus.emit('remotesocket-connect-success', socket);
-        setTimeout(function(){ 
-            eventBus.emit('to-remote-from-remotesocket-toggle-loginmodal-visibility', false); 
-        }, 1000);
+        // setTimeout(function(){ 
+        //     eventBus.emit('to-remote-from-remotesocket-toggle-loginmodal-visibility', false); 
+        // }, 1000);
     });
 }
 
@@ -63,7 +63,7 @@ export function pinEntered(pincode){
 // fetch YouTube videos from server
 export function fetchVideosSocket(query) {
     return new Promise(resolve => {
-        socket.emit('fetch-then-add-videos', query, result => {
+        socket.emit('fetch-videos', query, result => {
             resolve(result);
         });
     });
@@ -99,10 +99,10 @@ async function addVideoToQueueSocket(video){
     });
 }
 
-// exiting the page, kill the socket
-export function killSocket(){
-    socket.disconnect();
-}
+// // exiting the page, kill the socket
+// export function killSocket(){
+//     socket.disconnect();
+// }
 
 // Executed once on mounted of remote
 export function initializeSocket(){
