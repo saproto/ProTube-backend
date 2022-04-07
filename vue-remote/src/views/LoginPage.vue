@@ -34,9 +34,10 @@ const props = defineProps({
 const router = useRouter();
 
 onMounted(() => {
+    console.log("onmounted");
     logInUser();
     mountListeners();
-})
+});
 
 onUnmounted(() => {
     unMountListeners();

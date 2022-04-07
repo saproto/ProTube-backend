@@ -1,10 +1,8 @@
 const io = window.io = require('socket.io-client');
 var socket;
 import { eventBus } from '@/js/eventbus.js';
-// duplicated eventbus!
-export { connectUserSocket };
 
-function connectUserSocket(){
+export function connectUserSocket(){
     const serverUrl = process.env.VUE_APP_USER_SOCKET_ADDRESS;
     socket = new io(serverUrl, {
         timeout: 5*1000,
@@ -40,8 +38,7 @@ function connectUserSocket(){
     });
 }
 
-export { getUserData }
-async function getUserData(){
+export function getUserData(){
     return new Promise( resolve => {
         socket.emit('get-user-data', (userdata) => {
             resolve(userdata);

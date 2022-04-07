@@ -1,11 +1,11 @@
-const io = window.io = require('socket.io-client');
-var socket;
-let silentConnect = false;
 import { eventBus } from '@/js/eventbus';
+const io = window.io = require('socket.io-client');
 
-export { initializeSocket };
+let socket;
+let silentConnect = false;
 
-function resetSocket(pincode){
+
+export function resetSocket(pincode){
     const serverUrl = process.env.VUE_APP_SOCKET_ADDRESS;
     socket = new io(serverUrl, {
         auth: {
@@ -17,7 +17,7 @@ function resetSocket(pincode){
         reconnection: false,
         autoConnect: false,
     });
-    connectSocket(socket);
+    connectSocket();
     return;
 }
 
@@ -27,7 +27,8 @@ function connectSocket(){
     socket.on("disconnect", () => {
         socket.disconnect();
         socket.removeAllListeners();
-        eventBus.emit('to-remote-from-remotesocket-toggle-loginmodal-visibility', true);
+        eventBus.emit('remotesocket-disconnect');
+        // eventBus.emit('to-remote-from-remotesocket-toggle-loginmodal-visibility', true);
     });
 
     socket.on("connect_error", (err) => {
@@ -38,20 +39,14 @@ function connectSocket(){
             } else if (err == "Error: Invalid screencode") {
                 reason = "PIN invalid";
             }
-            eventBus.emit('to-pincode-from-remotesocket-connect-error', {
-                success: false,
-                reason: reason
-            });
+            eventBus.emit('remotesocket-connect-error', reason);
         } else{
             silentConnect = false;
         }
     });
 
     socket.on('connect', () => {
-        eventBus.emit('to-pincode-from-remotesocket-connect-success', {
-            success: true,
-            reason: ""
-        });
+        eventBus.emit('remotesocket-connect-success', socket);
         setTimeout(function(){ 
             eventBus.emit('to-remote-from-remotesocket-toggle-loginmodal-visibility', false); 
         }, 1000);
@@ -105,13 +100,12 @@ async function addVideoToQueueSocket(video){
 }
 
 // exiting the page, kill the socket
-export { killSocket }
-function killSocket(){
+export function killSocket(){
     socket.disconnect();
 }
 
 // Executed once on mounted of remote
-function initializeSocket(){
+export function initializeSocket(){
     resetSocket();
     silentConnect = true;
 }

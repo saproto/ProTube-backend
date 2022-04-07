@@ -12,24 +12,21 @@ let socketdetails = {
 }
 let currentRoute = null;
 
-export { socketDetails }
-function socketDetails(){
+export function socketDetails(){
     return socketdetails;
 }
-export { logInAdmin }
-function logInAdmin(){
+
+export function logInAdmin(){
     connectAdminSocket();
     return;
 }
 
-export { logInUser }
-function logInUser(){
+export function logInUser(){
     connectUserSocket();
     return;
 }
 
-export { setCurrentRoute }
-function setCurrentRoute(route){
+export function setCurrentRoute(route){
     currentRoute = route;
 }
 

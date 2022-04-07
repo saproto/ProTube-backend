@@ -7,7 +7,11 @@
         </router-view>
     </div>
     <div v-else class="xl:max-w-screen-2xl mx-auto md:pt-8 sm:pt-0">
-        <router-view />
+        <router-view v-slot="{ Component }">
+            <keep-alive>
+                <component :is="Component" />
+            </keep-alive>
+        </router-view>
     </div>
 </template>
 

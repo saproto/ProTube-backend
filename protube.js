@@ -38,7 +38,7 @@ const {Server} = require('socket.io');
 global.io = new Server(server, {
     pingTimeout: 10000,
     cors: {
-        origin: "http://localhost:8083",
+        origin: "http://localhost:8080",
         credentials: true,
         // methods: ["GET", "POST"]
     }
