@@ -17,7 +17,7 @@ app.use(history({
 }));
 
 const port = process.env.PORT || 3000;
-const https = process.env.HTTPS || false;
+const https = process.env.HTTPS === 'true' || false;
 
 app.use('/', express.static(path.join(__dirname, 'public')));
 // app.use('/api/', apiRouter);
@@ -38,7 +38,7 @@ const {Server} = require('socket.io');
 global.io = new Server(server, {
     pingTimeout: 10000,
     cors: {
-        origin: "http://localhost:8080",
+        origin: process.env.CORS_ORIGIN,
         credentials: true,
         // methods: ["GET", "POST"]
     }

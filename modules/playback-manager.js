@@ -44,6 +44,11 @@ exports.pauseVideo = () => {
     status = 'paused';
 }
 
+exports.skipVideo = () => {
+    timestamp = 0;
+    queueManager.moveToNext();
+}
+
 exports.toggleType = () => {
     if(type === 'video'){
         //add the current playing video back into the queue
@@ -56,8 +61,8 @@ exports.toggleType = () => {
         if(lastStation) this.setRadio(lastStation);
         return;
     }
-    queueManager.moveToNext();
     type = 'video';
+    this.skipVideo();
 }
 
 exports.setRadio = (station) => {

@@ -46,7 +46,7 @@
 </template>
 
 <script setup>
-import { defineProps, computed, ref } from 'vue';
+import { defineProps, ref } from 'vue';
 import { eventBus } from '@/js/eventbus'
 import { addVideoToQueueSocket } from '@/js/remote_socket'
 import gsap from 'gsap'
@@ -59,19 +59,19 @@ const props = defineProps({
 const videoStatusCode = ref(0); //0 = nothing, 1= success, 2=duplicate, 3= error
 const videoStatusMessage = ref("Add to playlist");
 
-const generateClasses = computed(() => {
-  switch (videoStatusCode.value) {
-    case 0: //default
-      return "text-gray-700 hover:bg-proto_green hover:text-custom_gray";
-    case 1: //success
-      return "bg-green-700 text-green-500";
-    case 2: //duplicate
-      return "bg-yellow-400 text-yellow-700";
-    case 3: //error
-      return "bg-red-500 text-red-900";
-  }
-  return "text-gray-700 hover:bg-proto_green hover:text-custom_gray";
-});
+// const generateClasses = computed(() => {
+//   switch (videoStatusCode.value) {
+//     case 0: //default
+//       return "text-gray-700 hover:bg-proto_green hover:text-custom_gray";
+//     case 1: //success
+//       return "bg-green-700 text-green-500";
+//     case 2: //duplicate
+//       return "bg-yellow-400 text-yellow-700";
+//     case 3: //error
+//       return "bg-red-500 text-red-900";
+//   }
+//   return "text-gray-700 hover:bg-proto_green hover:text-custom_gray";
+// });
 
 async function addVideoToQueue(){
   const callback = await addVideoToQueueSocket(props.video);

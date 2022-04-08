@@ -51,6 +51,9 @@ exports.moveToNext = () => {
         queue.shift();
         communicator.emit('queue-update');
         return true;
+    }else if(current && queue.length === 0) {
+        current = {};
+        communicator.emit('queue-update');
     }
     return false;
 }

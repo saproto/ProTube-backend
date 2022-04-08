@@ -50,11 +50,23 @@ exports.validateClient = async (_cookies, screencode_correct=false) => {
             return true;
         }
         // Cookie is new, validate it at the webserver
-        let userdata = await fetch(`${process.env.API_ENDPOINT}/userdetails`, {
-        headers: {
-            cookie: `proto_session=${proto_cookie}`
-        }});
-        userdata = await userdata.json();
+        // Check if we want real authentication or emulated
+        if(process.env.EMULATE_AUTHENTICATION === 'false') {
+            //get user data from the Proto API endpoint
+            let response = await fetch(`${process.env.API_ENDPOINT}/userdetails`, {
+                headers: {
+                    cookie: `proto_session=${proto_cookie}`
+                }});
+            var userdata = await response.json();
+        }else{
+            //emulated authentication, construct a dummy user with admin rights
+            var userdata = {
+                authenticated: true,
+                name: 'John Doe',
+                is_admin: true,
+                user_id: 0
+            }
+        }
         // The cookie sent is valid
         if(userdata.authenticated){
             // Store the cookie in the session

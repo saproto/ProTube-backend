@@ -12,6 +12,7 @@ export function onYouTubeIframeAPIReady() {
         width: '100%',
         videoId: '',
         playerVars: {
+            rel: 0,
             autoplay: 1,
             mute: 0,
             enablejsapi: 1,
@@ -42,8 +43,8 @@ export function youtubePlayerReady() {
     socket.emit('request-player-status');
     socket.on('player-status', data => {
         if (data.type === 'video') {
-            nowPlaying = data.video;
-            if (player.videoId !== nowPlaying.id) {
+            if (!nowPlaying || nowPlaying.id !== data.video.id) {
+                nowPlaying = data.video;
                 player.loadVideoById(nowPlaying.id);
                 player.setPlaybackQuality('hd1080');
                 setTimeout(() => {
