@@ -38,18 +38,26 @@ export function connectAdminSocket(){
     });
 }
 
-export function getScreenCode(){
-    return new Promise( resolve => {
+export function getScreenCode() {
+    return new Promise(resolve => {
         socket.emit('get_screen_code', code => {
             resolve(code);
         });
     });
 }
 
-export function getUserDataSocket(){
-    return new Promise( resolve => {
-        socket.emit('get-user-data', (userdata) => {
-            resolve(userdata);
+export function getPlayerStatusSocket() {
+    return new Promise(resolve => {
+        socket.emit('get-player-status', data => {
+            resolve(data);
+        });
+    });
+}
+
+export function getUserDataSocket() {
+    return new Promise(resolve => {
+        socket.emit('get-user-data', userData => {
+            resolve(userData);
         });
     });
 }

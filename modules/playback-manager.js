@@ -10,6 +10,7 @@ let playbackInterval;
 exports.playVideo = video => {
     type = 'video';
     status = 'playing';
+    communicator.emit('player-update');
 
     //create an interval to continuously emit the timestamp so the screen stays updated in case of e.g. buffering
     playbackInterval = setInterval(() => {
@@ -23,7 +24,6 @@ exports.playVideo = video => {
         else {
             this.stopVideo();
             communicator.emit('video-ended');
-            timestamp = 0;
         }
     }, 1000);
 };
@@ -42,11 +42,12 @@ exports.stopVideo = () => {
 exports.pauseVideo = () => {
     clearInterval(playbackInterval);
     status = 'paused';
+    communicator.emit('player-update');
 }
 
 exports.skipVideo = () => {
     timestamp = 0;
-    queueManager.moveToNext();
+    return queueManager.moveToNext();
 }
 
 exports.toggleType = () => {
@@ -95,6 +96,7 @@ exports.playPause = () => {
 exports.getType = () => type;
 exports.getStatus = () => status;
 exports.getLastStation = () => lastStation;
+exports.getTimestamp = () => timestamp;
 
 communicator.on('queue-update', () => {
     if(status === 'idle' && queueManager.getCurrent()) {

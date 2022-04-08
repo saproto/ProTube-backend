@@ -47,9 +47,7 @@ export function youtubePlayerReady() {
                 nowPlaying = data.video;
                 player.loadVideoById(nowPlaying.id);
                 player.setPlaybackQuality('hd1080');
-                setTimeout(() => {
-                    player.playVideo();
-                }, 100);
+                player.seekTo(data.timestamp);
             }
 
             switch (data.status) {

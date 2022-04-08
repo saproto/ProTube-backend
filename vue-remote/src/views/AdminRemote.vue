@@ -102,7 +102,7 @@ import HeaderFieldButtons from '@/components/HeaderFieldButtons.vue'
 import ContentField from '@/layout/ContentField.vue'
 import Toast from '@/components/Toast.vue'
 import RadioStations from '@/components/RadioStations.vue'
-import { getUserDataSocket, getVideoQueueSocket, playPauseSocket, skipSocket, volumeChangeSocket, socket } from '@/js/admin_socket.js'
+import { getPlayerStatusSocket, getUserDataSocket, getVideoQueueSocket, playPauseSocket, skipSocket, volumeChangeSocket, socket } from '@/js/admin_socket.js'
 import { ref, onMounted } from 'vue'
 
 const name = ref("");
@@ -111,7 +111,7 @@ const videoQueue = ref([]);
 const totalQueueDuration = ref("00:00:00");
 const toasts = ref([]);
 const volumeCalculated = ref(50);
-const playing = ref(false);
+const playing = ref(true);
 
 // with keepalive this acts as an onCreated, so runs once
 onMounted(async () => {
@@ -121,6 +121,8 @@ onMounted(async () => {
     // smh doesnt work when directly assigned
     let user =  await getUserDataSocket();
     name.value = user.name;
+
+    await updatePlayingStatus();
 });
 
 socket.on('admin-newscreencode', (screencode) => {
@@ -132,6 +134,11 @@ socket.on('admin-queue-update', (queue) => {
     videoQueue.value = queue.queue;
     totalQueueDuration.value = queue.duration;
 });
+
+//there was a change in the player status, update certain elements on the admin remote
+socket.on('admin-player-update', playerStatus => {
+    playing.value = playerStatus.status === 'playing';
+})
 
 // the volume on the screens was changed
 socket.on('admin-new-volume', (volume) => {
@@ -158,12 +165,11 @@ async function volumeChange(event){
 
 async function playPause(){
     if(await playPauseSocket()) {
-      displayToast("Successfully resumed ProTube!");
-      playing.value = true;
+      await updatePlayingStatus();
+      displayToast(`Successfully ${playing.value ? 'resumed' : 'paused'} ProTube!`);
       return;
     }
-    displayToast("Failed to resume ProTube!");
-    playing.value = false;
+    displayToast(`Something went wrong trying to ${!playing.value ? 'resume' : 'pause'} ProTube.`);
 }
 
 async function skip() {
@@ -172,6 +178,11 @@ async function skip() {
     return;
   }
   displayToast('Failed to skip current video!');
+}
+
+async function updatePlayingStatus() {
+  let playerStatus = await getPlayerStatusSocket();
+  playing.value = playerStatus.status === 'playing';
 }
 </script>
 

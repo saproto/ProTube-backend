@@ -59,10 +59,15 @@ const local_client = require('./modules/local-client');
 const screencode = require('./modules/screencode');
 
 
-exports.getCurrentVideo = queue.getCurrent;
-exports.getType = playback.getType;
-exports.getStatus = playback.getStatus;
-exports.getRadioStation = playback.getLastStation;
+exports.getPlayerStatus = () => {
+    return {
+        type: playback.getType(),
+        status: playback.getStatus(),
+        video: queue.getCurrent(),
+        station: playback.getLastStation(),
+        timestamp: playback.getTimestamp()
+    };
+}
 exports.getQueue = queue.getQueue;
 exports.getQueueDuration = queue.getTotalDuration;
 

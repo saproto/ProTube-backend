@@ -54,6 +54,7 @@ exports.moveToNext = () => {
     }else if(current && queue.length === 0) {
         current = {};
         communicator.emit('queue-update');
+        return true;
     }
     return false;
 }

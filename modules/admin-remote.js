@@ -1,3 +1,4 @@
+const protube = require('../protube');
 const admin = io.of('/socket/admin');
 const logger = require('../utils/logger');
 const queue = require('./queue-manager');
@@ -43,6 +44,10 @@ admin.use(async (socket, next) => {
   socket.on('get_screen_code', callback => {
     logger.adminInfo(`Requested the screen code: ${socket.id}`);
     callback(screenCode.getScreenCode());
+  });
+
+  socket.on('get-player-status', callback => {
+    callback(protube.getPlayerStatus());
   });
 
   socket.on('get-user-data', async (callback) => {
@@ -114,6 +119,10 @@ communicator.on('queue-update', () => {
     duration: queue.getTotalDuration()
   });
 });
+
+communicator.on('player-update', () => {
+  admin.emit('admin-player-update', protube.getPlayerStatus());
+})
 
 // broadcast new volume to all connected admins
 communicator.on('new-volume', (volume) => {

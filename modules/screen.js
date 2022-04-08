@@ -28,11 +28,10 @@ communicator.on('queue-update', () => {
     updatePlayerStatus(screens);
 });
 
+communicator.on('player-update', () => {
+    updatePlayerStatus(screens);
+})
+
 const updatePlayerStatus = endpoint => {
-    endpoint.emit('player-status', {
-        type: protube.getType(),
-        status: protube.getStatus(),
-        video: protube.getCurrentVideo(),
-        station: protube.getRadioStation()
-    });
+    endpoint.emit('player-status', protube.getPlayerStatus());
 }
