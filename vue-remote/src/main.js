@@ -14,7 +14,6 @@ import './assets/tailwind.css'
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 import router from './router/index.js'
-import './registerServiceWorker'
 
 const app = createApp(App);
 app.config.globalProperties.eventBus = eventBus;
