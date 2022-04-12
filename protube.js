@@ -23,8 +23,12 @@ app.use('/', express.static(path.join(__dirname, 'public')));
 // app.use('/api/', apiRouter);
 
 if(https) {
-    //TODO: HTTPS IMPLEMENTATION
-    var server = '';
+    const https = require('https');
+    const fs = require('fs');
+    const privateKey  = fs.readFileSync('./ssl/selfsigned.key', 'utf8');
+    const certificate = fs.readFileSync('./ssl/selfsigned.crt', 'utf8');
+    const ssl = {key: privateKey, cert: certificate};
+    var server = https.createServer(ssl, app);
 }else{
     const http = require('http');
     var server = http.createServer(app);
