@@ -25,8 +25,8 @@ app.use('/', express.static(path.join(__dirname, 'public')));
 if(https) {
     const https = require('https');
     const fs = require('fs');
-    const privateKey  = fs.readFileSync('./ssl/selfsigned.key', 'utf8');
-    const certificate = fs.readFileSync('./ssl/selfsigned.crt', 'utf8');
+    const privateKey  = fs.readFileSync('./ssl/server.key', 'utf8');
+    const certificate = fs.readFileSync('./ssl/server.crt', 'utf8');
     const ssl = {key: privateKey, cert: certificate};
     var server = https.createServer(ssl, app);
 }else{

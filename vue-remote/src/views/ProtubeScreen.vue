@@ -38,7 +38,7 @@ onMounted(() => {
 })
 
 const scripts = [
-    'http://localhost:3000/socket.io/socket.io.min.js',
+    'https://testproject.menkeveerman.com/socket.io/socket.io.min.js',
     'https://www.youtube.com/iframe_api',
 ];
 

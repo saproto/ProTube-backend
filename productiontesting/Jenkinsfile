@@ -1,0 +1,63 @@
+pipeline {
+  agent any
+  stages {
+    stage('Stopping current container') {
+          agent any
+          steps {
+            catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+              sh '''docker stop ${GROUP}.staging.${PROJECT}
+'''
+              echo 'Stopped current staging container'
+            }
+          }
+        }
+    stage('Removing current container') {
+          agent any
+          steps {
+            catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+              sh 'docker rm ${GROUP}.staging.${PROJECT}'
+              echo 'Removed current staging container'
+            }
+          }
+        }
+    
+    stage('Pruning all images') {
+      steps {
+          sh 'docker image prune -af'
+      }
+    }
+
+    stage('Loading docker-compose') {
+      steps {
+        configFileProvider([configFile(fileId: '2e0391a1-181f-4c5c-a7fd-42157a62f082', targetLocation: './productiontesting/staging/docker-compose.yml')]){
+          echo 'Loaded docker-compose!'
+        }
+      }
+    }
+
+    stage('Loading dockerfile') {
+      steps {
+        configFileProvider([configFile(fileId: '250fa8a4-7854-4d29-8c62-57b0e7f3349e', targetLocation: './productiontesting/staging/Dockerfile')]){
+          echo 'Loaded dockerfile!'
+        }
+      }
+    }
+
+    stage('Building and deploying') {
+      steps {
+        sh 'docker-compose --file ./productiontesting/staging/docker-compose.yml up -d --build'
+        echo 'Completed successfully!'
+      }
+    }
+
+    stage('Waiting for full container start') {
+      steps {
+        sleep 10
+      }
+    }
+  }
+  environment {
+    GROUP = 'menke'
+    PROJECT = 'protube'
+  }
+}
