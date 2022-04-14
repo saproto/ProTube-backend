@@ -38,7 +38,7 @@ onMounted(() => {
 })
 
 const scripts = [
-    'https://testproject.menkeveerman.com/socket.io/socket.io.min.js',
+    'https://protube.menkeveerman.com/socket.io/socket.io.min.js',
     'https://www.youtube.com/iframe_api',
 ];
 
