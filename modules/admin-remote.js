@@ -102,6 +102,7 @@ admin.use(async (socket, next) => {
   // change the screen's volume 
   socket.on('volume-change', (volume, callback) => {
     logger.adminInfo(`${socket.id} Requested to change the volume to: ${volume}`);
+    admin.emit('admin-new-volume', volume);
     callback(true);
   });
 

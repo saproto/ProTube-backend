@@ -43,7 +43,7 @@ onMounted(() => {
 
   eventBus.on('screensocket-video-playing', () => {
     currentRadio.value = "";
-    if(props.screenCode === -1) screenCodeIsVisible.value = false;
+    if(props.screenCode !== -1) screenCodeIsVisible.value = true;
   });
 });
 

@@ -2,7 +2,7 @@
     <div aria-live="assertive" class="fixed inset-0 flex px-4 py-6 pointer-events-none sm:p-6 items-start">
         <div class="w-full flex flex-col items-center space-y-4">
             <transition-group name="list">
-                <Toast v-for="videoUpdate in statusUpdates" :video="videoUpdate" :key="videoUpdate.videoId"/>
+                <Toast v-for="toast in toasts" :data="toast" :key="toast"/>
             </transition-group>
         </div>
     </div>
@@ -10,35 +10,37 @@
 
 <script setup>
 import Toast from '@/components/Toast.vue'
-import { eventBus } from '@/js/eventbus'
-import { ref, onMounted, onUnmounted } from 'vue'
+// import { eventBus } from '@/js/eventbus'
+import { defineProps } from 'vue'
 
-const statusUpdates = ref([]);
-
-onMounted(() => {
-  mountListeners();
-});
-
-onUnmounted(() => {
-  unMountListeners();
+defineProps({
+  toasts: Array
 })
 
-// Only use an eventlistener once and mount it when the page mounts 
-// and unmount it when the page unmounts
-function mountListeners(){
-  eventBus.on('to-toastsmodal-from-result-add-toast', response => {
-      statusUpdates.value.push(response);
-      setTimeout(() => {
-          for( var i = 0; i < statusUpdates.value.length; i++){ 
-              if ( statusUpdates.value[i].videoId === response.videoId) statusUpdates.value.splice(i, 1); 
-          }
-      }, 2500);
-  });
-}
+// onMounted(() => {
+//   mountListeners();
+// });
 
-function unMountListeners(){
-  eventBus.off('to-toastsmodal-from-result-add-toast');
-}
+// onUnmounted(() => {
+//   unMountListeners();
+// })
+
+// // Only use an eventlistener once and mount it when the page mounts 
+// // and unmount it when the page unmounts
+// function mountListeners(){
+//   eventBus.on('to-toastsmodal-from-result-add-toast', response => {
+//       statusUpdates.value.push(response);
+//       setTimeout(() => {
+//           for( var i = 0; i < statusUpdates.value.length; i++){ 
+//               if ( statusUpdates.value[i].videoId === response.videoId) statusUpdates.value.splice(i, 1); 
+//           }
+//       }, 2500);
+//   });
+// }
+
+// function unMountListeners(){
+//   eventBus.off('to-toastsmodal-from-result-add-toast');
+// }
 </script>
 
 <style>

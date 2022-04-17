@@ -98,13 +98,14 @@
             </ContentField>
         </transition>
         
-        <div aria-live="assertive" class="fixed inset-0 flex px-4 py-6 pointer-events-none sm:p-6 items-start">
+        <!--<div aria-live="assertive" class="fixed inset-0 flex px-4 py-6 pointer-events-none sm:p-6 items-start">
             <div class="w-full flex flex-col items-center space-y-4">
                 <transition-group name="list">
-                    <Toast v-for="item in toasts" :video="item" :message="item" :key="item"/>
+                    <Toast v-for="item in toasts" :data="item" :key="item+Math.random()"/>
                 </transition-group>
             </div>
-        </div>
+        </div>-->
+        <ToastsModal :toasts="toasts" />
     </div>
 </template>
 
@@ -112,7 +113,7 @@
 import HeaderField from '@/layout/HeaderField.vue'
 import HeaderFieldButtons from '@/components/HeaderFieldButtons.vue'
 import ContentField from '@/layout/ContentField.vue'
-import Toast from '@/components/Toast.vue'
+import ToastsModal from '@/components/modals/ToastsModal.vue'
 import RadioStations from '@/components/RadioStations.vue'
 import { getPlayerStatusSocket, getUserDataSocket, getVideoQueueSocket, playPauseSocket, skipSocket, volumeChangeSocket, regenScreenCodeSocket, toggleRadioProtubeSocket, socket } from '@/js/admin_socket.js'
 import { ref, onMounted } from 'vue'
@@ -150,18 +151,26 @@ socket.on('admin-queue-update', (queue) => {
 
 //there was a change in the player status, update certain elements on the admin remote
 socket.on('admin-player-update', playerStatus => {
+    console.log(playerStatus);
     playing.value = playerStatus.status === 'playing';
+    currentPlayerMode.value = playerStatus.type;
 })
 
 // the volume on the screens was changed
 socket.on('admin-new-volume', (volume) => {
+    console.log(volume);
     volumeCalculated.value = volume;
 });
 
 function displayToast(message){
-    toasts.value.push(message);
+    let toastMessage = {
+        message: message,
+        type: 'message',
+        id: Math.random()
+    };
+    toasts.value.push(toastMessage);
     setTimeout(() => {
-        let index = toasts.value.indexOf(message);
+        let index = toasts.value.indexOf(toastMessage);
         if (index !== -1) {
             toasts.value.splice(index, 1);
         }
@@ -170,8 +179,8 @@ function displayToast(message){
 
 async function toggleRadioProtube(){
     let newPlayStatus = await toggleRadioProtubeSocket();
-    if(newPlayStatus.type === currentPlayerMode.value) return displayToast(`Failed to switch!`);
-    displayToast(`Switched to ${newPlayStatus.type}`);
+    if(newPlayStatus.type === currentPlayerMode.value) displayToast(`Failed to switch!`);
+    else displayToast(`Switched to ${newPlayStatus.type}`);
     currentPlayerMode.value = newPlayStatus.type;
 }
 

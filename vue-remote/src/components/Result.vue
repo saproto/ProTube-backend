@@ -46,10 +46,12 @@
 </template>
 
 <script setup>
-import { defineProps, ref } from 'vue';
-import { eventBus } from '@/js/eventbus'
+import { defineProps, defineEmits, ref } from 'vue';
+// import { eventBus } from '@/js/eventbus'
 import { addVideoToQueueSocket } from '@/js/remote_socket'
 import gsap from 'gsap'
+
+const emit = defineEmits(['display-toast'])
 
 const props = defineProps({
   video: Object,
@@ -77,7 +79,8 @@ async function addVideoToQueue(){
   const callback = await addVideoToQueueSocket(props.video);
   videoStatusCode.value = callback.result ? 1 : 2;
   videoStatusMessage.value = callback.message;
-  eventBus.emit('to-toastsmodal-from-result-add-toast', callback);
+  emit('display-toast', callback);
+  // eventBus.emit('to-toastsmodal-from-result-add-toast', callback);
 }
 
 //animations

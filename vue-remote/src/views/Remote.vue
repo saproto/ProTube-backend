@@ -9,11 +9,12 @@
         </transition>
         <transition name="results" mode="out-in" appear>
             <ResultsWrapper 
+                v-on:display-toast="displayToast"
                 :videos="foundVideos"
                 :skeletonLoading="resultsWrapperSkeletons"
             />
         </transition>
-        <ToastModal />
+        <ToastsModal :toasts="toasts"/>
         <transition name="modal" appear >
             <LoginModal v-if="loginModalVisible" />
         </transition>
@@ -29,7 +30,7 @@ import SearchWrapper from '@/components/SearchWrapper.vue'
 import ResultsWrapper from '@/components/ResultsWrapper.vue'
 import LoginModal from '@/components/modals/LoginModal.vue'
 import LoadModal from '@/components/modals/LoadModal.vue'
-import ToastModal from '@/components/modals/ToastsModal.vue'
+import ToastsModal from '@/components/modals/ToastsModal.vue'
 import { initializeSocket, fetchVideosSocket, fetchThenAddVideoSocket, fetchThenAddPlaylistSocket} from '@/js/remote_socket'
 import { eventBus } from '@/js/eventbus'
 import { ref } from 'vue'
@@ -39,7 +40,7 @@ const loadModalVisible = ref(false);
 const resultsWrapperSkeletons = ref(false);
 const loadModalMessage = ref("");
 const foundVideos = ref([]);
-
+const toasts = ref([]);
 
 initializeSocket();
 
@@ -51,6 +52,21 @@ eventBus.on('remotesocket-connect-success', () => {
         loadModalVisible.value = false;
     }, 1000);
 });
+
+function displayToast(message){
+    let toastMessage = {
+        video: message,
+        type: 'video',
+        id: Math.random()
+    };
+    toasts.value.push(toastMessage);
+    setTimeout(() => {
+        let index = toasts.value.indexOf(toastMessage);
+        if (index !== -1) {
+            toasts.value.splice(index, 1);
+        }
+    }, 2500);
+}
 
 // On connect sucess you can create socket listeners here
 eventBus.on('remotesocket-disconnect', () => {
