@@ -106,6 +106,14 @@ export function volumeChangeSocket(volume){
     });
 }
 
+export function toggleRadioProtubeSocket() {
+    return new Promise(resolve => {
+        socket.emit('toggle-radio-protube', newStatus => {
+            resolve(newStatus);
+        });
+    });
+}
+
 export function getRadioStationsSocket(){
     return new Promise( resolve => {
         socket.emit('get-all-radiostations', callback => {

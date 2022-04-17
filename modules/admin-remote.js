@@ -8,7 +8,6 @@ const playbackManager = require('./playback-manager')
 const authenticator = require('./authenticator.js');
 const fetch = require('node-fetch');
 
-let radioStations;
 updateRadioStations();
 
 // needs to be changed with randomness/sufficiently large interval to prevent ip ban
@@ -67,6 +66,12 @@ admin.use(async (socket, next) => {
     });
   });
 
+  socket.on('toggle-radio-protube', async (callback) => {
+    logger.adminInfo(`${socket.id} Toggling protube or radio`);
+    playbackManager.toggleType();
+    callback(protube.getPlayerStatus());
+  });
+
   socket.on('create-new-screen-code', async () => {
     logger.adminInfo(`${socket.id} Requested new screencode`);
     // authenticator.flushAllSessions();
@@ -105,7 +110,7 @@ admin.use(async (socket, next) => {
   });
 
   socket.on('get-all-radiostations', (callback) => {
-    callback(radioStations);
+    callback(playbackManager.getStations());
   });
 });
 
@@ -133,7 +138,7 @@ async function updateRadioStations(){
   try {
     response = await fetch('https://www.nederland.fm/common/radio/zenders/nederland.js');
     const data = await response.text();
-    radioStations = JSON.parse(await data.split(' = ')[1]).items;
+    playbackManager.setStations(JSON.parse(await data.split(' = ')[1]).items);
   } catch(e) {
     logger.serverError("Error at updating radio stations!");
   }
@@ -142,7 +147,7 @@ async function updateRadioStations(){
 // check if the radio we're trying to set is really valid
 function validateRadioStation(radiostation){
   let foundStation = false;
-  radioStations.forEach((station) => {
+  playbackManager.getStations().forEach((station) => {
     if(radiostation === station.z){
       //found our specified station in the available stations list, resolve the station
       foundStation = station;

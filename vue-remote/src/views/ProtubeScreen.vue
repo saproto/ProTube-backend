@@ -17,7 +17,7 @@
   
 <script setup>
 import { defineProps, ref, onMounted, onBeforeUnmount } from 'vue'
-// import { eventBus } from '@/js/eventbus.js';
+import { eventBus } from '@/js/eventbus.js';
 import RadioModal from '@/components/modals/RadioModal.vue'
 import { onYouTubeIframeAPIReady, resetYTplayer, killSocket } from '@/js/screen_socket.js'
 
@@ -35,6 +35,16 @@ onMounted(() => {
   // mountListeners();
   if(props.screenCode === -1) screenCodeIsVisible.value = false;
   mountScripts();
+
+  eventBus.on('screensocket-radio-playing', (radio) => {
+    currentRadio.value = radio;
+    screenCodeIsVisible.value = false;
+  });
+
+  eventBus.on('screensocket-video-playing', () => {
+    currentRadio.value = "";
+    if(props.screenCode === -1) screenCodeIsVisible.value = false;
+  });
 });
 
 // eventBus.on('screensocket-connect-success', () => {

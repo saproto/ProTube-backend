@@ -3,6 +3,7 @@ export let socket = null;
 import { eventBus } from '@/js/eventbus.js';
 let player;
 let nowPlaying;
+let playMode = 'video'; // radio or video
 
 // called by the yt iframe api, this triggers the entire screen
 export function onYouTubeIframeAPIReady() {
@@ -45,12 +46,18 @@ export function resetYTplayer(){
 export function youtubePlayerReady() {
     socket.emit('request-player-status');
     socket.on('player-status', data => {
+        console.log(data);
         if (data.type === 'video') {
             if (!nowPlaying || nowPlaying.id !== data.video.id) {
                 nowPlaying = data.video;
                 player.loadVideoById(nowPlaying.id);
                 player.setPlaybackQuality('hd1080');
                 player.seekTo(data.timestamp);
+            }
+
+            if(playMode === 'radio') {
+                playMode = 'video';
+                eventBus.emit('screensocket-video-playing');
             }
 
             switch (data.status) {
@@ -64,6 +71,12 @@ export function youtubePlayerReady() {
                     player.stopVideo();
                     break;
             }
+        } else if (data.type === 'radio') {
+            if(playMode === 'video') {
+                playMode = 'radio';
+                player.stopVideo();
+            }
+            eventBus.emit('screensocket-radio-playing', data.station);
         }
     });
 

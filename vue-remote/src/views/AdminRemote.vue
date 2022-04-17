@@ -28,6 +28,18 @@
                             New code
                         </button>
                     </div>
+                    <div class="flex items-center">
+                        <span class="mr-3" id="annual-billing-label">
+                            <span class="text-sm font-medium text-gray-900">Protube</span>
+                        </span>
+                        <button @click="toggleRadioProtube" type="button" :class="currentPlayerMode === 'radio' ? 'bg-proto_blue' : 'bg-proto_green'" class="bg-gray-200 relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" role="switch" aria-checked="false" aria-labelledby="annual-billing-label">
+                            <!-- Enabled: "translate-x-5", Not Enabled: "translate-x-0" -->
+                            <span aria-hidden="true" :class="currentPlayerMode === 'radio' ? 'translate-x-5' : 'translate-x-0'" class="pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200"></span>
+                        </button>
+                        <span class="ml-3" id="annual-billing-label">
+                            <span class="text-sm font-medium text-gray-900">Radio</span>
+                        </span>
+                    </div>
                 </div>
             </ContentField>
         </transition>
@@ -102,9 +114,10 @@ import HeaderFieldButtons from '@/components/HeaderFieldButtons.vue'
 import ContentField from '@/layout/ContentField.vue'
 import Toast from '@/components/Toast.vue'
 import RadioStations from '@/components/RadioStations.vue'
-import { getPlayerStatusSocket, getUserDataSocket, getVideoQueueSocket, playPauseSocket, skipSocket, volumeChangeSocket, regenScreenCodeSocket, socket } from '@/js/admin_socket.js'
+import { getPlayerStatusSocket, getUserDataSocket, getVideoQueueSocket, playPauseSocket, skipSocket, volumeChangeSocket, regenScreenCodeSocket, toggleRadioProtubeSocket, socket } from '@/js/admin_socket.js'
 import { ref, onMounted } from 'vue'
 
+const currentPlayerMode = ref("video"); // radio or video
 const name = ref("");
 const radiofilter = ref("");
 const videoQueue = ref([]);
@@ -155,6 +168,13 @@ function displayToast(message){
     }, 2500);
 }
 
+async function toggleRadioProtube(){
+    let newPlayStatus = await toggleRadioProtubeSocket();
+    if(newPlayStatus.type === currentPlayerMode.value) return displayToast(`Failed to switch!`);
+    displayToast(`Switched to ${newPlayStatus.type}`);
+    currentPlayerMode.value = newPlayStatus.type;
+}
+
 async function volumeChange(event){
     if(await volumeChangeSocket(event.target.value)) {
       displayToast("Successfully changed the volume!");
@@ -187,6 +207,7 @@ async function skip() {
 
 async function updatePlayingStatus() {
   let playerStatus = await getPlayerStatusSocket();
+  currentPlayerMode.value = playerStatus.type;
   playing.value = playerStatus.status === 'playing';
 }
 </script>

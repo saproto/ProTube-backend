@@ -6,6 +6,7 @@ let type = 'video'; //video, radio
 let lastStation = '';
 let timestamp = 0;
 let playbackInterval;
+let radioStations = [];
 
 exports.playVideo = video => {
     type = 'video';
@@ -60,6 +61,9 @@ exports.toggleType = () => {
 
         //if previously a station was selected, automatically go to it
         if(lastStation) this.setRadio(lastStation);
+        else {
+            this.setRadio(radioStations[0]);
+        }
         return;
     }
     type = 'video';
@@ -69,7 +73,7 @@ exports.toggleType = () => {
 exports.setRadio = (station) => {
     if(type === 'video') this.toggleType();
     lastStation = station;
-    communicator.emit('new-radio', station);
+    communicator.emit('player-update');
 }
 
 
@@ -97,6 +101,9 @@ exports.getType = () => type;
 exports.getStatus = () => status;
 exports.getLastStation = () => lastStation;
 exports.getTimestamp = () => timestamp;
+exports.getStations = () => radioStations;
+
+exports.setStations = (stations) => radioStations = stations;
 
 communicator.on('queue-update', () => {
     if(status === 'idle' && queueManager.getCurrent()) {
