@@ -52,6 +52,11 @@ eventBus.on('remotesocket-connect-success', () => {
     }, 1000);
 });
 
+// On connect sucess you can create socket listeners here
+eventBus.on('remotesocket-disconnect', () => {
+    loginModalVisible.value = true;
+});
+
 async function fetchThenAddVideo(videoId) {
   loadModalVisible.value = true;
   loadModalMessage.value = 'Adding video...';

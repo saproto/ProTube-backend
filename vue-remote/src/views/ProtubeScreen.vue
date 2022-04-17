@@ -16,8 +16,8 @@
 
   
 <script setup>
-import { defineProps, ref, onMounted, onBeforeUnmount, onUnmounted } from 'vue'
-import { eventBus } from '@/js/eventbus.js';
+import { defineProps, ref, onMounted, onBeforeUnmount } from 'vue'
+// import { eventBus } from '@/js/eventbus.js';
 import RadioModal from '@/components/modals/RadioModal.vue'
 import { onYouTubeIframeAPIReady, resetYTplayer, killSocket } from '@/js/screen_socket.js'
 
@@ -32,13 +32,17 @@ const props = defineProps({
 })
 
 onMounted(() => {
-  mountListeners();
+  // mountListeners();
   if(props.screenCode === -1) screenCodeIsVisible.value = false;
   mountScripts();
-})
+});
+
+// eventBus.on('screensocket-connect-success', () => {
+//   console.log("screensocket-connect-success")
+// });
 
 const scripts = [
-    'http://localhost:3000/socket.io/socket.io.min.js',
+    `${process.env.VUE_APP_SOCKET_ADDRESS}/socket.io/socket.io.min.js`,
     'https://www.youtube.com/iframe_api',
 ];
 
@@ -47,9 +51,9 @@ onBeforeUnmount(() =>{
     killSocket();
 });
 
-onUnmounted(() => {
-    unMountListeners();
-})
+// onUnmounted(() => {
+//     unMountListeners();
+// })
 
 function mountScripts(){
   for(let i = 0; i < scripts.length; i++){
@@ -68,22 +72,22 @@ function mountScripts(){
     document.head.appendChild(externalScript);
   }
 }
-// Only use an eventlistener once and mount it when the page mounts 
-// and unmount it when the page unmounts
-function mountListeners(){
-  eventBus.on('to-protubescreen-from-screensocket-radio-playing', (radio) => {
-    currentRadio.value = radio;
-    screenCodeIsVisible.value = false;
-  });
+// // Only use an eventlistener once and mount it when the page mounts 
+// // and unmount it when the page unmounts
+// function mountListeners(){
+//   eventBus.on('to-protubescreen-from-screensocket-radio-playing', (radio) => {
+//     currentRadio.value = radio;
+//     screenCodeIsVisible.value = false;
+//   });
 
-  eventBus.on('to-protubescreen-from-screensocket-show-screencode', () => {
-    if(props.screenCode == -1) return;
-    screenCodeIsVisible.value = true;
-  });
-}
+//   eventBus.on('to-protubescreen-from-screensocket-show-screencode', () => {
+//     if(props.screenCode == -1) return;
+//     screenCodeIsVisible.value = true;
+//   });
+// }
 
-function unMountListeners(){
-    eventBus.off('to-protubescreen-from-screensocket-show-screencode')
-    eventBus.off('to-protubescreen-from-screensocket-radio-playing')
-}
+// function unMountListeners(){
+//     eventBus.off('to-protubescreen-from-screensocket-show-screencode')
+//     eventBus.off('to-protubescreen-from-screensocket-radio-playing')
+// }
 </script>

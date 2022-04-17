@@ -5,12 +5,6 @@ const queue = require('./queue-manager');
 const screencode = require('./screencode.js');
 const authenticator = require('./authenticator.js');
 
-// A new screencode was generated
-communicator.on('newScreenCode', (code) => {
-  //disconnect all sockets
-  client.disconnectSockets(false);
-});
-
 // A remote connection is attempted
 client.use(async (socket, next) => {
   try{

@@ -70,7 +70,7 @@ export function getVideoQueueSocket(){
     });
 }
 
-export function regenScreenCode(){
+export function regenScreenCodeSocket(){
     socket.emit('create-new-screen-code');
 }
 

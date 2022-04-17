@@ -1,6 +1,6 @@
 const socekt = io.of('/local-client');
 const logger = require('../utils/logger');
-let lastKnownCode;
+const screenCode = require('./screencode');
 
 socekt.use((socket, next) => {
     logger.localClientInfo(`Client from ${socket.handshake.address} with id ${socket.id} attempted to connect, validating...`);
@@ -12,13 +12,13 @@ socekt.use((socket, next) => {
     }
   }).on('connection', socket => {
     logger.localClientInfo(`Succesfully authorized client ${socket.id}`);
-    socket.emit('newScreenCode', (lastKnownCode));
+    socket.emit('newScreenCode', (screenCode.getScreenCode()));
 
     socket.on('disconnect', () => {
       logger.localClientInfo(`Lost connection with authorized client ${socket.id}`);
     });
 
-    communicator.on('newScreenCode', (code) => {
+    communicator.on('new-screencode', (code) => {
         socket.emit('newScreenCode', (code));
     });
 
@@ -29,10 +29,6 @@ socekt.use((socket, next) => {
     //   socket.emit('playsound', sound);
     // }, 3000);
   });
-  
-communicator.on('newScreenCode', (code) => {
-    lastKnownCode = code;
-});
 
   //function to authenticate incoming socket connections
   function validateClient(socketHandshakeToken){

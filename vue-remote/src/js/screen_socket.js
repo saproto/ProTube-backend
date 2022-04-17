@@ -1,5 +1,5 @@
 const io = window.io = require('socket.io-client');
-let socket = null;
+export let socket = null;
 import { eventBus } from '@/js/eventbus.js';
 let player;
 let nowPlaying;
@@ -32,6 +32,9 @@ function createSocket(){
         reconnection: true,
         autoConnect: true
     });
+    socket.on('connect', () => {
+        eventBus.emit('screensocket-connect-success');
+    })
 }
 
 // on going back to the screen reset it so onytiframeapiready can be triggered successfully
@@ -69,10 +72,10 @@ export function youtubePlayerReady() {
         if (Math.abs(player.getCurrentTime() - timestamp.seconds) > 5)
             player.seekTo(timestamp.seconds, true);
     });
-    // update the screencode on the screen 
-    socket.on('new-screencode', new_code => {
-        eventBus.emit('to-adminprotubescreen-from-screensocket-new-screencode', new_code);
-    });
+    // // update the screencode on the screen 
+    // socket.on('new-screencode', new_code => {
+    //     eventBus.emit('to-adminprotubescreen-from-screensocket-new-screencode', new_code);
+    // });
 }
 // exiting the page, kill the socket
 export function killSocket() {

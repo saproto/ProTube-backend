@@ -98,6 +98,10 @@ exports.validateAdmin = async (_cookies) => {
     throw new Error('Unauthorized admin');
 }
 
+exports.flushAllRemotes = async () => {
+    await sessionStore.flushAllRemotes();
+}
+
 exports.getSessionData = async (_cookies) => {
     try{
         await this.validateClient(_cookies);

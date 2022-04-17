@@ -67,10 +67,10 @@ admin.use(async (socket, next) => {
     });
   });
 
-  socket.on('create-new-screen-code', () => {
+  socket.on('create-new-screen-code', async () => {
     logger.adminInfo(`${socket.id} Requested new screencode`);
-    authenticator.flushAllSessions();
-    screenCode.adminResetScreenCode();
+    // authenticator.flushAllSessions();
+    await screenCode.adminResetScreenCode();
   });
 
   socket.on('set-radio', async (station, callback) => {

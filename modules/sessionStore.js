@@ -7,6 +7,7 @@ const logger = require('../utils/logger');
     saveSession(id, sessiondata) {}
     findAllSessions() {}
     flushAllSessions() {}
+    async flushAllRemotes() {}
     deleteSession(id) {}
     async flushExpiredSessions() {}
   }
@@ -27,6 +28,22 @@ const logger = require('../utils/logger');
   
     findAllSessions() {
       return [...this.sessions.values()];
+    }
+
+    async flushAllRemotes(){
+      logger.sessionStoreInfo("Flushing all remotes");
+      const remotesockets = await io.of('/socket/remote').fetchSockets();
+
+      this.findAllSessions().forEach((session) => {
+        session.screencode_correct = false;
+        return session;
+      })
+
+      // disconnecting all remotes
+      remotesockets.forEach((socket) => {
+        socket.disconnect();
+      });
+
     }
 
     flushAllSessions(){

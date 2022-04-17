@@ -102,7 +102,7 @@ import HeaderFieldButtons from '@/components/HeaderFieldButtons.vue'
 import ContentField from '@/layout/ContentField.vue'
 import Toast from '@/components/Toast.vue'
 import RadioStations from '@/components/RadioStations.vue'
-import { getPlayerStatusSocket, getUserDataSocket, getVideoQueueSocket, playPauseSocket, skipSocket, volumeChangeSocket, socket } from '@/js/admin_socket.js'
+import { getPlayerStatusSocket, getUserDataSocket, getVideoQueueSocket, playPauseSocket, skipSocket, volumeChangeSocket, regenScreenCodeSocket, socket } from '@/js/admin_socket.js'
 import { ref, onMounted } from 'vue'
 
 const name = ref("");
@@ -125,7 +125,7 @@ onMounted(async () => {
     await updatePlayingStatus();
 });
 
-socket.on('admin-newscreencode', (screencode) => {
+socket.on('admin-new-screen-code', (screencode) => {
     displayToast('New screen code: ' + screencode);
 });
 
@@ -161,6 +161,11 @@ async function volumeChange(event){
       return;
     }
     displayToast("Failed to change volume!");
+}
+
+async function regenScreenCode(){
+    displayToast(`Setting new screencode`);
+    await regenScreenCodeSocket();
 }
 
 async function playPause(){
