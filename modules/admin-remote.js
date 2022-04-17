@@ -80,8 +80,9 @@ admin.use(async (socket, next) => {
 
   socket.on('set-radio', async (station, callback) => {
     logger.adminInfo(`${socket.id} Setting the radio to: ${station}`);
-    if(validateRadioStation(station)) {
-      playbackManager.setRadio(station);
+    let newStation = validateRadioStation(station);
+    if(newStation) {
+      playbackManager.setRadio(newStation);
       callback(true);
     }
     callback(false);
