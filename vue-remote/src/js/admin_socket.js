@@ -3,7 +3,7 @@ export let socket;
 import { eventBus } from '@/js/eventbus.js';
 
 export function connectAdminSocket(){
-    const serverUrl = process.env.VUE_APP_ADMIN_SOCKET_ADDRESS;
+    const serverUrl = `${process.env.VUE_APP_SOCKET_ADDRESS}/socket/admin`;
     socket = new io(serverUrl, {
         timeout: 5*1000,
         forceNew: true,

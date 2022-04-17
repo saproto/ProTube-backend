@@ -2,7 +2,7 @@ const protube = require('../protube');
 
 const logger = require('../utils/logger');
 
-const screens = io.of('/screen');
+const screens = io.of('/socket/screen');
 
 screens.on('connection', socket => {
     logger.screenInfo(`Screen connected from ${socket.handshake.address} with socket id ${socket.id}`);

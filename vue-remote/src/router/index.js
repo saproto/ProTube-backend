@@ -18,8 +18,8 @@ const routes = [
     name: 'Login',
     component: LoginPage,
     props: route => ({
-      targetPath: String(route.params.targetPath),
-      requests_admin: Boolean(route.params.requests_admin)
+      targetPath: String(route.params.targetPath || "Remote"),
+      requests_admin: Boolean(route.params.requests_admin || false)
     }),
     meta: {
       transition: 'fade'
@@ -85,6 +85,8 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
 
   let socketdetails = socketDetails();
+  console.log(to.name);
+  console.log(from.name);
   // prevent login route looping
   if(to.name == 'Login' || to.name == 'Error') return next();
   // user is authenticated for the requested path

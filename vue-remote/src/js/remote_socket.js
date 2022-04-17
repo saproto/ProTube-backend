@@ -6,7 +6,7 @@ let silentConnect = false;
 
 
 export function resetSocket(pincode){
-    const serverUrl = process.env.VUE_APP_SOCKET_ADDRESS;
+    const serverUrl = `${process.env.VUE_APP_SOCKET_ADDRESS}/socket/remote`;
     socket = new io(serverUrl, {
         auth: {
             token: pincode //socket handshake token

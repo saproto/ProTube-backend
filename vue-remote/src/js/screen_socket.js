@@ -25,7 +25,7 @@ export function onYouTubeIframeAPIReady() {
 }
 
 function createSocket(){
-    socket = new io('http://localhost:3000/screen', {
+    socket = new io(`${process.env.VUE_APP_SOCKET_ADDRESS}/socket/screen`, {
         timeout: 5*1000,
         forceNew: true,
         withCredentials: true,

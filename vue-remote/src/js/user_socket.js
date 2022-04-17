@@ -3,7 +3,7 @@ var socket;
 import { eventBus } from '@/js/eventbus.js';
 
 export function connectUserSocket(){
-    const serverUrl = process.env.VUE_APP_USER_SOCKET_ADDRESS;
+    const serverUrl = `${process.env.VUE_APP_SOCKET_ADDRESS}/socket/user`;
     socket = new io(serverUrl, {
         timeout: 5*1000,
         forceNew: true,
