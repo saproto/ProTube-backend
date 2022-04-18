@@ -1,5 +1,5 @@
 <template>
-    <div class="flex-shrink-0 mr-6 ml-2 justify-center mt-auto">
+    <div :class="classes" class="display-block flex-shrink-0 mr-6 ml-2 justify-center mt-auto">
         <div v-if="name" class="text-white text-2xl my-2"> Welcome {{ name }}!</div>
         <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-2 xl:grid-cols-4 gap-2">
             <router-link to="/remote/admin" v-if="adminRemote"  class="text-center py-2 px-4 bg-proto_blue text-white hover:opacity-80 rounded-md">Admin remote</router-link>
@@ -45,6 +45,7 @@ defineProps({
         type: Boolean,
         default: false
     },
-    name: String
+    name: String,
+    classes: String,
 })
 </script>

@@ -59,6 +59,23 @@ exports.moveToNext = () => {
     return false;
 }
 
+// Removing a specific video from the queue
+exports.removeVideo = (video) => {
+    let toDeleteIndex = null;
+    queue.forEach((item, index) => {
+        if(item.id === video.id){
+            toDeleteIndex = index;
+            return true;
+        } return false;
+    });
+    if(toDeleteIndex >= 0){
+        queue.splice(toDeleteIndex, 1);
+        communicator.emit('queue-update');
+        return true;
+    }
+    return false;
+}
+
 exports.removeFirst = () => queue.shift();
 exports.getCurrent = () => current || null;
 exports.getNext = () => queue[0];

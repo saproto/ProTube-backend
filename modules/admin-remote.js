@@ -66,6 +66,12 @@ admin.use(async (socket, next) => {
     });
   });
 
+  socket.on('remove-video', (video, callback) => {
+    logger.adminInfo(`${socket.id} Requested video removal of ${video.title}`)
+    const videoStatus = queue.removeVideo(video);
+    callback(videoStatus);
+  });
+
   socket.on('toggle-radio-protube', async (callback) => {
     logger.adminInfo(`${socket.id} Toggling protube or radio`);
     playbackManager.toggleType();

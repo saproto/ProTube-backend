@@ -10,9 +10,9 @@
                     <div class="mt-2 max-w-xl text-sm text-gray-200 ">
                         <p>With great power comes great responsibility</p>
                     </div>
-
+                    <h2 class="hidden md:block mt-4 leading-6 font-medium text-white md:text-6xl text-3xl">Welcome {{ name }}</h2>
                 </div>
-                <HeaderFieldButtons v-if="openMenu" :name="name" screen adminScreen remote/>
+                <HeaderFieldButtons :classes="openMenu ? '' : 'md:block hidden'" :name="name" screen adminScreen remote/>
             </HeaderField>
         </transition>
         <transition name="results" mode="out-in" appear>
@@ -75,8 +75,8 @@
                     <div class="flex overflow-x-scroll pt-10 no-scrollbar">
                         <div class="flex flex-nowrap h-full">
                             <div v-for="(video, index) in videoQueue" :video="video" :index="index" :key="video.id" class="inline-block px-3 w-96 h-full" >
-                                <div :style='{background: `url(${video.thumbnail.url})`}' style="background-repeat: no-repeat; background-size: cover; background-position: center center;" class="col-span-1 flex group flex-col text-center  border-proto_blue border-l-4 rounded-sm shadow"> <!--divide-y dark:divide-proto_green divide-gray-500-->
-                                    <div class="flex-1 rounded-m border-t border-b border-r dark:border-gray-800 border-gray-400 flex flex-col px-8 py-4 bg-white dark:bg-true_gray-800 bg-opacity-80">
+                                <div :style='{background: `url(${video.thumbnail.url})`}' style="background-repeat: no-repeat; background-size: cover; background-position: center center;" class="group cursor-pointer col-span-1 flex group flex-col text-center  border-proto_blue border-l-4 rounded-sm shadow"> <!--divide-y dark:divide-proto_green divide-gray-500-->
+                                    <div @click="removeVideo(video)" class="flex-1 rounded-m border-t border-b border-r dark:border-gray-800 border-gray-400 flex flex-col px-8 py-4 bg-white dark:bg-true_gray-800 bg-opacity-80">
                                         <h3 class="font-bold dark:text-true_gray-300 text-gray-800 text-left text-md">{{ video.title }}</h3>
                                         <div class="mt-auto w-full">
                                             <div class="flex-1 text-gray-900 justify-bottom align-bottom mt-auto flex text-right ">
@@ -90,6 +90,7 @@
                                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path>
                                             </svg>
                                             <span class="text-gray-900 dark:text-true_gray-300 text-sm font-medium truncate">{{ video.durationFormatted }}</span>
+                                            <span class="ml-auto group-hover:opacity-100 opacity-0 duration-300 text-red-400 dark:text-true_gray-300 text-sm font-medium truncate">Remove</span>
                                             </div>
                                         </div>
                                     </div>
@@ -118,7 +119,7 @@ import HeaderFieldButtons from '@/components/HeaderFieldButtons.vue'
 import ContentField from '@/layout/ContentField.vue'
 import ToastsModal from '@/components/modals/ToastsModal.vue'
 import RadioStations from '@/components/RadioStations.vue'
-import { getPlayerStatusSocket, getUserDataSocket, getVideoQueueSocket, playPauseSocket, skipSocket, volumeChangeSocket, regenScreenCodeSocket, toggleRadioProtubeSocket, socket } from '@/js/admin_socket.js'
+import { getPlayerStatusSocket, getUserDataSocket, removeVideoSocket, getVideoQueueSocket, playPauseSocket, skipSocket, volumeChangeSocket, regenScreenCodeSocket, toggleRadioProtubeSocket, socket } from '@/js/admin_socket.js'
 import { ref, onMounted } from 'vue'
 
 const currentPlayerMode = ref("video"); // radio or video
@@ -186,6 +187,15 @@ async function toggleRadioProtube(){
     if(newPlayStatus.type === currentPlayerMode.value) displayToast(`Failed to switch!`);
     else displayToast(`Switched to ${newPlayStatus.type}`);
     currentPlayerMode.value = newPlayStatus.type;
+}
+
+async function removeVideo(video){
+    console.log(video);
+    if(await removeVideoSocket(video)) {
+      displayToast(`Successfully removed video!`);
+      return;
+    }
+    displayToast("Failed to remove video!");
 }
 
 async function volumeChange(event){

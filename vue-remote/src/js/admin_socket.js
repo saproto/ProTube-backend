@@ -62,6 +62,14 @@ export function getUserDataSocket() {
     });
 }
 
+export function removeVideoSocket(video) {
+    return new Promise(resolve => {
+        socket.emit('remove-video', video, success => {
+            resolve(success);
+        });
+    });
+}
+
 export function getVideoQueueSocket(){
     return new Promise(resolve => {
         socket.emit('get-video-queue', (queue) => {

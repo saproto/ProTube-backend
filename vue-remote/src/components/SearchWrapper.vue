@@ -20,7 +20,7 @@
         </div>
       </form>      
     </div>
-    <HeaderFieldButtons v-if="openMenu" :admin-remote="userData.isAdmin" :admin-screen="userData.isAdmin" screen :name="userData.name"/>
+    <HeaderFieldButtons :classes="openMenu ? '' : 'md:block hidden'" :admin-remote="userData.isAdmin" :admin-screen="userData.isAdmin" screen :name="userData.name"/>
   </HeaderField>
 </template>
 
