@@ -1,6 +1,6 @@
 <template>
     <div class="fixed z-10 inset-0 overflow-y-auto sm:-to" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="flex items-end justify-center h-5/6 pt-4 px-4 pb-20 text-center sm:block sm:p-0">
             <div class="fixed inset-0 bg-proto_background_gray-dark transition-opacity" :class="background_opacity" aria-hidden="true"></div>
             <p class="bg-opacity-10 bg-opacity-20 bg-opacity-30 bg-opacity-40 bg-opacity-50 bg-opacity-60 bg-opacity-70 bg-opacity-80 bg-opacity-90 bg-opacity-100 bg-opacity-0" />
 

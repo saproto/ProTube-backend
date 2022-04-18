@@ -12,7 +12,7 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 const maxSessionDuration = 3600;
 setInterval(async () => {
     sessionStore.flushExpiredSessions();
-}, process.env.SESSION_FLUSHING_INTERVAL * 1000);
+}, parseInt(process.env.SESSION_FLUSHING_INTERVAL) * 1000);
 
 // returns true as long as the cookie is present and valid
 exports.validateClient = async (_cookies, screencode_correct=false) => {

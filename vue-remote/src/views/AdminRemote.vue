@@ -3,13 +3,16 @@
         <transition name="search" mode="out-in">
             <HeaderField>
                 <div class="md:flex-1">
-                    <h3 class=" leading-6 font-medium text-white text-2xl">ProTube admin panel</h3>
+                    <h3 class=" leading-6 font-medium text-white text-2xl w-full flex md:block">
+                        <span class="w-full"> ProTube admin panel</span>
+                        <font-awesome-icon @click="openMenu = !openMenu" :class="openMenu ? 'fa-rotate-90' : 'fa-rotate-0'" class="md:hidden block duration-500 cursor-pointer" icon="bars" />
+                    </h3>
                     <div class="mt-2 max-w-xl text-sm text-gray-200 ">
                         <p>With great power comes great responsibility</p>
                     </div>
-                    <h2 class="mt-4 leading-6 font-medium text-white md:text-6xl text-3xl">Welcome {{ name }}</h2>
+
                 </div>
-                <HeaderFieldButtons screen adminScreen remote/>
+                <HeaderFieldButtons v-if="openMenu" :name="name" screen adminScreen remote/>
             </HeaderField>
         </transition>
         <transition name="results" mode="out-in" appear>
@@ -126,6 +129,7 @@ const totalQueueDuration = ref("00:00:00");
 const toasts = ref([]);
 const volumeCalculated = ref(50);
 const playing = ref(true);
+const openMenu = ref(false);
 
 // with keepalive this acts as an onCreated, so runs once
 onMounted(async () => {

@@ -2,7 +2,10 @@
 <template>
   <HeaderField>
     <div class="flex-1">
-      <h3 class=" leading-6 font-medium text-white text-2xl">ProTube playlist panel</h3>
+      <h3 class=" leading-6 font-medium text-white text-2xl w-full flex md:block">
+        <span class="w-full"> ProTube playlist panel</span>
+        <font-awesome-icon @click="openMenu = !openMenu" :class="openMenu ? 'fa-rotate-90' : 'fa-rotate-0'" class="md:hidden block duration-500 cursor-pointer" icon="bars" />
+      </h3>
       <div class="mt-2 max-w-xl text-sm text-gray-200 ">
         <p>Search for any song on YouTube and add it to the ProTube playlist</p>
       </div>
@@ -17,7 +20,7 @@
         </div>
       </form>      
     </div>
-    <HeaderFieldButtons :admin-remote="userData.isAdmin" statistics soundboard :admin-screen="userData.isAdmin" screen :name="userData.name"/>
+    <HeaderFieldButtons v-if="openMenu" :admin-remote="userData.isAdmin" :admin-screen="userData.isAdmin" screen :name="userData.name"/>
   </HeaderField>
 </template>
 
@@ -34,6 +37,7 @@ const userData = ref({
 });
 
 const emit = defineEmits(['query-videos', 'query-single-video', 'query-playlist']);
+const openMenu = ref(false);
 
 onMounted(async () => {
   let data = await getUserData();

@@ -1,5 +1,5 @@
 <template>
-    <ErrorModal opacity>
+    <ErrorModal >
         <span class="my-auto">
             No active session found! Please try logging in on and after refresh this page
         </span>

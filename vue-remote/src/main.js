@@ -5,9 +5,9 @@ import App from './App.vue'
 import { eventBus } from '@/js/eventbus'
 import { onYouTubeIframeAPIReady, youtubePlayerReady } from '@/js/screen_socket'
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { faPlay, faPause, faBackward, faForward } from "@fortawesome/free-solid-svg-icons";
+import { faPlay, faPause, faBackward, faForward, faBars } from "@fortawesome/free-solid-svg-icons";
 
-library.add([faPlay, faPause, faBackward, faForward]);
+library.add([faPlay, faPause, faBackward, faForward, faBars]);
 
 import './assets/tailwind.css'
 
