@@ -188,8 +188,9 @@ function displayToast(message){
 }
 
 async function toggleRadioProtube(){
+    const previousPlayMode = currentPlayerMode.value;
     let newPlayStatus = await toggleRadioProtubeSocket();
-    if(newPlayStatus.type === currentPlayerMode.value) displayToast(`Failed to switch!`);
+    if(newPlayStatus.type === previousPlayMode) displayToast(`Failed to switch!`);
     else displayToast(`Switched to ${newPlayStatus.type}`);
     currentPlayerMode.value = newPlayStatus.type;
 }
