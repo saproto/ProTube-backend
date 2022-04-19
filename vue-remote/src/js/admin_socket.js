@@ -16,7 +16,7 @@ export function connectAdminSocket(){
         let disconnectReason = 'Lost connection';
         if(reason == 'io server disconnect') {
             socket.disconnect();
-            socket.removeAllListener();
+            socket.removeAllListeners();
             disconnectReason = 'Session expired!';
         }
         eventBus.emit('adminsocket-disconnect', disconnectReason);
