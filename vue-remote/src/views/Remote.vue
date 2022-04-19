@@ -21,6 +21,12 @@
         <transition name="modal" appear >
             <LoadModal :message="loadModalMessage" :opacity="70" v-if="loadModalVisible && !loginModalVisible" />
         </transition>
+        <transition name="results" mode="out-in" appear>
+            <CurrentQueue 
+                :queueData="queueData"
+                :skeletonLoading="queueSkeletonLoading"
+            />
+        </transition>
     </div>
 </template>
 
@@ -30,10 +36,12 @@ import SearchWrapper from '@/components/SearchWrapper.vue'
 import ResultsWrapper from '@/components/ResultsWrapper.vue'
 import LoginModal from '@/components/modals/LoginModal.vue'
 import LoadModal from '@/components/modals/LoadModal.vue'
+import CurrentQueue from '@/components/CurrentQueue.vue'
 import ToastsModal from '@/components/modals/ToastsModal.vue'
 import { initializeSocket, fetchVideosSocket, fetchThenAddVideoSocket, fetchThenAddPlaylistSocket } from '@/js/remote_socket'
+import { getUserVideoQueueSocket, socket } from '@/js/user_socket'
 import { eventBus } from '@/js/eventbus'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 
 const loginModalVisible = ref(true);
 const loadModalVisible = ref(false);
@@ -41,8 +49,15 @@ const resultsWrapperSkeletons = ref(false);
 const loadModalMessage = ref("");
 const foundVideos = ref([]);
 const toasts = ref([]);
+const queueData = ref({});
+const queueSkeletonLoading = ref(true);
 
-initializeSocket();
+onMounted(async () => {
+    initializeSocket();
+    const queue = await getUserVideoQueueSocket();
+    queueData.value = queue;
+    queueSkeletonLoading.value = false;
+});
 
 
 // On connect sucess you can create socket listeners here
@@ -51,6 +66,11 @@ eventBus.on('remotesocket-connect-success', () => {
         loginModalVisible.value = false;
         loadModalVisible.value = false;
     }, 1000);
+});
+
+// there was a change in the queue, update this on the remote
+socket.on('user-queue-update', (queue) => {
+    queueData.value = queue;
 });
 
 function displayToast(message){

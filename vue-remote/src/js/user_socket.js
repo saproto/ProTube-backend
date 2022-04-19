@@ -1,5 +1,5 @@
 const io = window.io = require('socket.io-client');
-var socket;
+export let socket;
 import { eventBus } from '@/js/eventbus.js';
 
 export function connectUserSocket(){
@@ -48,8 +48,9 @@ export function getUserData(){
 }
 
 export function getUserVideoQueueSocket(){
+    console.log("getting queue");
     return new Promise( resolve => {
-        socket.emit('get-user-queue', (queue) => {
+        socket.emit('get-user-video-queue', (queue) => {
             resolve(queue);
         });
     });

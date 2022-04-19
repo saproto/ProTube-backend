@@ -1,4 +1,5 @@
 const user = io.of('/socket/user');
+const queue = require('./queue-manager');
 const logger = require('../utils/logger');
 const authenticator = require('./authenticator.js');
 
@@ -32,6 +33,21 @@ user.use(async (socket, next) => {
         callback(await getUserData(socket.handshake.headers.cookie));
   });
 
+  socket.on('get-user-video-queue', (callback) => {
+    logger.userInfo(`${socket.id} Requested video queue`)
+    callback({
+      queue: queue.getQueue(),
+      duration: queue.getTotalDuration()
+    });
+  });
+
+});
+
+communicator.on('queue-update', () => {
+  user.emit('user-queue-update', {
+    queue: queue.getQueue(),
+    duration: queue.getTotalDuration()
+  });
 });
 
 // get user account information such as if he/she is an admin and the name
