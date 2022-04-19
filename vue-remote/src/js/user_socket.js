@@ -46,3 +46,11 @@ export function getUserData(){
         });
     });
 }
+
+export function getUserVideoQueueSocket(){
+    return new Promise( resolve => {
+        socket.emit('get-user-queue', (queue) => {
+            resolve(queue);
+        });
+    });
+}

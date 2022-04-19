@@ -70,13 +70,19 @@
         </transition>
 
         <transition name="results" mode="out-in" appear>
-            <ContentField>
+                <CurrentQueue 
+                    admin
+                    v-on:remove-from-queue="removeVideo"
+                    :queueData="queueData"
+                    :skeletonLoading="queueSkeletonLoading"
+                />
+            <!--<ContentField>
                 <label class="text-gray-600 dark:text-white text-2xl absolute"> The current Queue - {{ totalQueueDuration }}</label>
                     <div class="flex overflow-x-scroll pt-10 no-scrollbar">
                         <div class="flex flex-nowrap h-full">
                             <ul v-for="(video, index) in videoQueue" :video="video" :index="index" :key="video.id" class="grid inline-block px-3 w-96 min-h-full" >
-                                <li :style='{background: `url(${video.thumbnail.url})`}' style="background-repeat: no-repeat; background-size: cover; background-position: center center;" class="group cursor-pointer col-span-1 flex group flex-col text-center  border-proto_blue border-l-4 rounded-sm shadow"> <!--divide-y dark:divide-proto_green divide-gray-500-->
-                                    <div @click="removeVideo(video)" class="flex-1 rounded-m border-t border-b border-r dark:border-gray-800 border-gray-400 flex flex-col px-8 py-4 bg-white dark:bg-true_gray-800 bg-opacity-80">
+                                <li :style='{background: `url(${video.thumbnail.url})`}' style="background-repeat: no-repeat; background-size: cover; background-position: center center;" class="group cursor-pointer col-span-1 flex group flex-col text-center  border-proto_blue border-l-4 rounded-sm shadow"> !--divide-y dark:divide-proto_green divide-gray-500--
+                                    <div @click="removeVideo(video)" class="group-hover:bg-opacity-60 flex-1 rounded-m border-t border-b border-r dark:border-gray-800 border-gray-400 flex flex-col px-8 py-4 bg-white dark:bg-true_gray-800 bg-opacity-80">
                                         <h3 class="font-bold dark:text-true_gray-300 text-gray-800 text-left text-md">{{ video.title }}</h3>
                                         <div class="mt-auto w-full">
                                             <div class="flex-1 text-gray-900 justify-bottom align-bottom mt-auto flex text-right ">
@@ -99,7 +105,7 @@
                             <div v-if="videoQueue.length < 1" class="text-gray-400 ml-8"> Empty queue </div>
                         </div>
                     </div>
-            </ContentField>
+            </ContentField>-->
         </transition>
         
         <!--<div aria-live="assertive" class="fixed inset-0 flex px-4 py-6 pointer-events-none sm:p-6 items-start">
@@ -119,14 +125,16 @@ import HeaderFieldButtons from '@/components/HeaderFieldButtons.vue'
 import ContentField from '@/layout/ContentField.vue'
 import ToastsModal from '@/components/modals/ToastsModal.vue'
 import RadioStations from '@/components/RadioStations.vue'
-import { getPlayerStatusSocket, getUserDataSocket, removeVideoSocket, getVideoQueueSocket, playPauseSocket, skipSocket, regenScreenCodeSocket, toggleRadioProtubeSocket, socket } from '@/js/admin_socket.js'
+import CurrentQueue from '@/components/CurrentQueue.vue'
+import { getPlayerStatusSocket, getUserDataSocket, removeVideoSocket, playPauseSocket, getVideoQueueSocket, skipSocket, regenScreenCodeSocket, toggleRadioProtubeSocket, socket } from '@/js/admin_socket.js'
 import { ref, onMounted } from 'vue'
 
 const currentPlayerMode = ref("video"); // radio or video
 const name = ref("");
 const radiofilter = ref("");
-const videoQueue = ref([]);
-const totalQueueDuration = ref("00:00:00");
+const queueData = ref({});
+const queueSkeletonLoading = ref(true);
+
 const toasts = ref([]);
 const volumeCalculated = ref(50);
 const playing = ref(true);
@@ -134,9 +142,9 @@ const openMenu = ref(false);
 
 // with keepalive this acts as an onCreated, so runs once
 onMounted(async () => {
-    let queueData = await getVideoQueueSocket();
-    videoQueue.value = queueData.queue;
-    totalQueueDuration.value = queueData.duration;
+    const queue = await getVideoQueueSocket();
+    queueData.value = queue;
+    queueSkeletonLoading.value = false;
     // smh doesnt work when directly assigned
     let user =  await getUserDataSocket();
     name.value = user.name;
@@ -150,8 +158,7 @@ socket.on('admin-new-screen-code', (screencode) => {
 
 // there was a change in the queue, update this on the admin remote
 socket.on('admin-queue-update', (queue) => {
-    videoQueue.value = queue.queue;
-    totalQueueDuration.value = queue.duration;
+    queueData.value = queue;
 });
 
 //there was a change in the player status, update certain elements on the admin remote
@@ -197,7 +204,7 @@ async function removeVideo(video){
     }
     displayToast("Failed to remove video!");
 }
-
+// currently disabled, backend needs functionality for this
 // async function volumeChange(event){
 //     if(await volumeChangeSocket(event.target.value)) {
 //       displayToast("Successfully changed the volume!");

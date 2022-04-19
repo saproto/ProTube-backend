@@ -31,7 +31,7 @@ import ResultsWrapper from '@/components/ResultsWrapper.vue'
 import LoginModal from '@/components/modals/LoginModal.vue'
 import LoadModal from '@/components/modals/LoadModal.vue'
 import ToastsModal from '@/components/modals/ToastsModal.vue'
-import { initializeSocket, fetchVideosSocket, fetchThenAddVideoSocket, fetchThenAddPlaylistSocket} from '@/js/remote_socket'
+import { initializeSocket, fetchVideosSocket, fetchThenAddVideoSocket, fetchThenAddPlaylistSocket } from '@/js/remote_socket'
 import { eventBus } from '@/js/eventbus'
 import { ref } from 'vue'
 
