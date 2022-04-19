@@ -29,7 +29,7 @@ client.use(async (socket, next) => {
   logger.clientInfo(`Successfully connected - ${socket.id}`);
 
   socket.on('disconnect', (error) => {
-    console.log(error);
+    // console.log(error);
     logger.clientInfo(`Disconnected socket: ${socket.id}`)
   });
 

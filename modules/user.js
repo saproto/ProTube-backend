@@ -59,7 +59,7 @@ async function getUserData(proto_session_cookie){
       isAdmin: userdata.is_admin
   }
   } catch (e){
-    console.log(e.toString());
+    // console.log(e.toString());
     return false;
   }
 }

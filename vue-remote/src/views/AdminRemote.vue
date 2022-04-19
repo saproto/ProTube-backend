@@ -163,14 +163,12 @@ socket.on('admin-queue-update', (queue) => {
 
 //there was a change in the player status, update certain elements on the admin remote
 socket.on('admin-player-update', playerStatus => {
-    console.log(playerStatus);
     playing.value = playerStatus.status === 'playing';
     currentPlayerMode.value = playerStatus.type;
 })
 
 // the volume on the screens was changed
 socket.on('admin-new-volume', (volume) => {
-    console.log(volume);
     volumeCalculated.value = volume;
 });
 
@@ -197,7 +195,6 @@ async function toggleRadioProtube(){
 }
 
 async function removeVideo(video){
-    console.log(video);
     if(await removeVideoSocket(video)) {
       displayToast(`Successfully removed video!`);
       return;

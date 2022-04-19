@@ -46,7 +46,6 @@ export function resetYTplayer(){
 export function youtubePlayerReady() {
     socket.emit('request-player-status');
     socket.on('player-status', data => {
-        console.log(data);
         if (data.type === 'video') {
             if (!nowPlaying || nowPlaying.id !== data.video.id) {
                 nowPlaying = data.video;

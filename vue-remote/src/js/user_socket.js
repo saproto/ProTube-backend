@@ -48,7 +48,6 @@ export function getUserData(){
 }
 
 export function getUserVideoQueueSocket(){
-    console.log("getting queue");
     return new Promise( resolve => {
         socket.emit('get-user-video-queue', (queue) => {
             resolve(queue);

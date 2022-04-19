@@ -85,8 +85,6 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
 
   let socketdetails = socketDetails();
-  console.log(to.name);
-  console.log(from.name);
   // prevent login route looping
   if(to.name == 'Login' || to.name == 'Error') return next();
   // user is authenticated for the requested path
@@ -95,7 +93,6 @@ router.beforeEach((to, from, next) => {
  
   // requested path is admin and the user had no admin socket
   else if(to.meta.adminAuth || to.meta.auth){
-    console.log(`to ${to.name} requesting admin: ${to.meta.adminAuth}`)
     return next({ name: 'Login' , params: {
       targetPath: to.name,
       requests_admin: to.meta.adminAuth
