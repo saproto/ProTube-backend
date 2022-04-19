@@ -19,19 +19,19 @@
             <ContentField>
                 <div class="md:flex">
                     <label class="text-gray-600 dark:text-white text-2xl absolute"> Master Controls</label>
-                    <div class="w-full md:w-1/3">
-                        <p class=" text-right md:text-center text-md text-gray-500 dark:text-white w-full "> Volume Slider</p>
-                        <input @change="volumeChange" class="bg-proto_blue hover:bg-opacity-80 rounded-xl h-2 w-full border outline-none border-gray-500 appearance-none" type="range" min="1" max="100" :value="volumeCalculated">
+                    <div class="w-full md:w-1/3 mt-12">
+                        <!--<p class=" text-right md:text-center text-md text-gray-500 dark:text-white w-full "> Volume Slider</p>
+                        <input @change="volumeChange" class="bg-proto_blue hover:bg-opacity-80 rounded-xl h-2 w-full border outline-none border-gray-500 appearance-none" type="range" min="1" max="100" :value="volumeCalculated">-->
                         <font-awesome-icon class="cursor-pointer text-2xl mx-2 text-gray-600 dark:text-white" icon="backward" />
                         <font-awesome-icon @click="playPause" class="cursor-pointer text-2xl mx-2 text-gray-600 dark:text-white" :icon="playing ? 'pause' : 'play'"/>
                         <font-awesome-icon @click="skip" class="cursor-pointer text-2xl mx-2 text-gray-600 dark:text-white" icon="forward" />
                     </div>
-                    <div class="flex">
+                    <div class="flex mt-12">
                         <button @click="regenScreenCode" class="shadow-md bg-proto_blue hover:bg-opacity-80 text-white py-1 px-2 ml-5 rounded-md my-auto flex">
                             New code
                         </button>
                     </div>
-                    <div class="flex items-center">
+                    <div class="flex items-center mx-auto mt-12">
                         <span class="mr-3" id="annual-billing-label">
                             <span class="text-sm font-medium text-gray-900">Protube</span>
                         </span>
@@ -74,8 +74,8 @@
                 <label class="text-gray-600 dark:text-white text-2xl absolute"> The current Queue - {{ totalQueueDuration }}</label>
                     <div class="flex overflow-x-scroll pt-10 no-scrollbar">
                         <div class="flex flex-nowrap h-full">
-                            <div v-for="(video, index) in videoQueue" :video="video" :index="index" :key="video.id" class="inline-block px-3 w-96 h-full" >
-                                <div :style='{background: `url(${video.thumbnail.url})`}' style="background-repeat: no-repeat; background-size: cover; background-position: center center;" class="group cursor-pointer col-span-1 flex group flex-col text-center  border-proto_blue border-l-4 rounded-sm shadow"> <!--divide-y dark:divide-proto_green divide-gray-500-->
+                            <ul v-for="(video, index) in videoQueue" :video="video" :index="index" :key="video.id" class="grid inline-block px-3 w-96 min-h-full" >
+                                <li :style='{background: `url(${video.thumbnail.url})`}' style="background-repeat: no-repeat; background-size: cover; background-position: center center;" class="group cursor-pointer col-span-1 flex group flex-col text-center  border-proto_blue border-l-4 rounded-sm shadow"> <!--divide-y dark:divide-proto_green divide-gray-500-->
                                     <div @click="removeVideo(video)" class="flex-1 rounded-m border-t border-b border-r dark:border-gray-800 border-gray-400 flex flex-col px-8 py-4 bg-white dark:bg-true_gray-800 bg-opacity-80">
                                         <h3 class="font-bold dark:text-true_gray-300 text-gray-800 text-left text-md">{{ video.title }}</h3>
                                         <div class="mt-auto w-full">
@@ -94,8 +94,8 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
+                                </li>
+                            </ul>
                             <div v-if="videoQueue.length < 1" class="text-gray-400 ml-8"> Empty queue </div>
                         </div>
                     </div>
@@ -119,7 +119,7 @@ import HeaderFieldButtons from '@/components/HeaderFieldButtons.vue'
 import ContentField from '@/layout/ContentField.vue'
 import ToastsModal from '@/components/modals/ToastsModal.vue'
 import RadioStations from '@/components/RadioStations.vue'
-import { getPlayerStatusSocket, getUserDataSocket, removeVideoSocket, getVideoQueueSocket, playPauseSocket, skipSocket, volumeChangeSocket, regenScreenCodeSocket, toggleRadioProtubeSocket, socket } from '@/js/admin_socket.js'
+import { getPlayerStatusSocket, getUserDataSocket, removeVideoSocket, getVideoQueueSocket, playPauseSocket, skipSocket, regenScreenCodeSocket, toggleRadioProtubeSocket, socket } from '@/js/admin_socket.js'
 import { ref, onMounted } from 'vue'
 
 const currentPlayerMode = ref("video"); // radio or video
@@ -198,13 +198,13 @@ async function removeVideo(video){
     displayToast("Failed to remove video!");
 }
 
-async function volumeChange(event){
-    if(await volumeChangeSocket(event.target.value)) {
-      displayToast("Successfully changed the volume!");
-      return;
-    }
-    displayToast("Failed to change volume!");
-}
+// async function volumeChange(event){
+//     if(await volumeChangeSocket(event.target.value)) {
+//       displayToast("Successfully changed the volume!");
+//       return;
+//     }
+//     displayToast("Failed to change volume!");
+// }
 
 async function regenScreenCode(){
     displayToast(`Setting new screencode`);
