@@ -1,3 +1,4 @@
+const fetch = require('node-fetch');
 const timeFormatter = require('../utils/time-formatter');
 const logger = require('../utils/logger');
 const playbackManager = require('./playback-manager');
@@ -44,11 +45,19 @@ exports.addToTop = video => {
 }
 
 //Update the current video with the video in queue position 0, and remove it from the queue
-exports.moveToNext = () => {
+exports.moveToNext = async () => {
     // Queue has an item, can be shifted
     if(queue.length > 0){
         current = queue[0];
         queue.shift();
+        if(current.user) {
+            await fetch(`${process.env.API_ENDPOINT}/played?` + new URLSearchParams({
+                secret: process.env.API_SECRET,
+                user_id: current.user.user_id,
+                video_id: current.id,
+                video_title: current.title
+            }));
+        }
         communicator.emit('queue-update');
         return true;
     }else if(current && queue.length === 0) {

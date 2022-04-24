@@ -1,3 +1,4 @@
+const fetch = require('node-fetch');
 const client = io.of('/socket/remote')
 const youtube = require('../utils/yt');
 const logger = require('../utils/logger');
@@ -40,21 +41,27 @@ client.use(async (socket, next) => {
   });
 
   socket.on('fetch-then-add-playlist', async (playlistId, callback) => {
+    const user = await authenticator.getSessionData(socket.handshake.headers.cookie);
     const videos = await youtube.getVideosInPlaylist(playlistId);
+    videos.forEach(video => video.user = user);
     queue.addAllFair(videos);
     callback({success: true, error: "Successfully added playlist to the queue!"});
   });
 
   socket.on('fetch-then-add-video', async (videoId, callback) => {
     const video = await youtube.getVideo(videoId);
-    callback(addFairWithResult(video));
+    video.user = await authenticator.getSessionData(socket.handshake.headers.cookie);
+    const result = await addFairWithResult(video);
+    callback(result);
   });
 
-  socket.on('add-video-to-queue', (video, callback) => {
-    callback(addFairWithResult(video));
+  socket.on('add-video-to-queue', async (video, callback) => {
+    video.user = await authenticator.getSessionData(socket.handshake.headers.cookie);
+    const result = await addFairWithResult(video);
+    callback(result);
   });
 
-  const addFairWithResult = video => {
+  const addFairWithResult = async video => {
     const added = queue.addFair(video);
     if (added) {
       return {success: true, error: "Successfully added to the queue!"};
@@ -62,3 +69,5 @@ client.use(async (socket, next) => {
     return {success: false, error: "Video already in the queue!"};
   }
 });
+
+
