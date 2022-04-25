@@ -54,6 +54,14 @@ export function getPlayerStatusSocket() {
     });
 }
 
+export function getVolumeSocket() {
+    return new Promise(resolve => {
+        socket.emit('get-volume', volume => {
+            resolve(volume);
+        });
+    });
+}
+
 export function getUserDataSocket() {
     return new Promise(resolve => {
         socket.emit('get-user-data', userData => {

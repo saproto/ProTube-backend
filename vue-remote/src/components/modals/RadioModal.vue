@@ -8,7 +8,7 @@
           <div class="inline-block text-center transform transition-all align-middle ">
               <label class="text-white text-8xl"> {{ radio.o }} </label>
               <br />
-              <audio id="radio" autoplay :src="radio.m" frameborder="0" width="400" height="200">hoi</audio>
+              <audio id="radio" autoplay :src="radio.m" frameborder="0" width="400" height="200"></audio>
               <!--<iframe allow="autoplay" :src="radio.m" id="radio" width="400" height="200"></iframe> -->
               <button v-if="playButton" class="shadow-md bg-proto_blue hover:bg-opacity-80 text-white py-1 px-2 ml-5 rounded-md my-auto flex" @click="playClick"> play audio </button>
           </div>
@@ -17,11 +17,15 @@
 </template>
 
 <script setup>
-import { defineProps, ref, onMounted } from 'vue';
+import { defineProps, ref, onMounted, watch } from 'vue';
 
 const playButton = ref(false);
-defineProps({
-    radio: Object
+const props = defineProps({
+    radio: Object,
+    volume: {
+        type: Number,
+        default: -1
+  }
 });
 
 if(navigator.userAgent.indexOf("Firefox")){
@@ -36,6 +40,19 @@ onMounted(() => {
             playButton.value = false;
         }
         }, 2000);
+    }
+
+    console.log(props.volume);
+    console.log(typeof(props.volume));
+    // enabling volume control via prop watcher
+    if(props.volume > -1){
+        console.log(props.volume/100);
+        document.getElementById('radio').volume = props.volume/100;
+        watch(() => props.volume, (to, from) => {
+            console.log(`volume change to ${to}, from ${from}`)
+            const newVolume = to/100; //Volume ranges 0-100, audio tag accepts 0-1
+            document.getElementById('radio').volume = newVolume;
+        });
     }
 });
 

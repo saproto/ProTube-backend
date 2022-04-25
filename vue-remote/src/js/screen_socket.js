@@ -3,6 +3,8 @@ export let socket = null;
 import { eventBus } from '@/js/eventbus.js';
 let player;
 let nowPlaying;
+// let volume = 100;
+let volumeControl = false;
 let playMode = 'video'; // radio or video
 
 // called by the yt iframe api, this triggers the entire screen
@@ -38,9 +40,23 @@ function createSocket(){
     })
 }
 
+// export function enableVolumeControl(){
+//     volumeControl = true;
+// }
+
+export function setVolume(){
+    console.log(volumeControl);
+    if(!volumeControl){
+        volumeControl = true;
+    }
+    // volume = newVolume;
+    // player.setVolume(newVolume);
+}
+
 // on going back to the screen reset it so onytiframeapiready can be triggered successfully
 export function resetYTplayer(){
     nowPlaying = null;
+    volumeControl = false;
 }
 
 export function youtubePlayerReady() {
@@ -52,6 +68,12 @@ export function youtubePlayerReady() {
                 player.loadVideoById(nowPlaying.id);
                 player.setPlaybackQuality('hd1080');
                 player.seekTo(data.timestamp);
+            }
+
+            if(volumeControl) { 
+                player.setVolume(parseInt(data.volume));
+            } else {
+                player.setVolume(100);
             }
 
             if(playMode === 'radio') {

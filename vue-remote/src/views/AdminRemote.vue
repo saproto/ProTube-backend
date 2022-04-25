@@ -20,8 +20,8 @@
                 <div class="md:flex">
                     <label class="text-gray-600 dark:text-white text-2xl absolute"> Master Controls</label>
                     <div class="w-full md:w-1/3 mt-12">
-                        <!--<p class=" text-right md:text-center text-md text-gray-500 dark:text-white w-full "> Volume Slider</p>
-                        <input @change="volumeChange" class="bg-proto_blue hover:bg-opacity-80 rounded-xl h-2 w-full border outline-none border-gray-500 appearance-none" type="range" min="1" max="100" :value="volumeCalculated">-->
+                        <p class=" text-right md:text-center text-md text-gray-500 dark:text-white w-full "> Volume Slider</p>
+                        <input @change="volumeChange" class="bg-proto_blue hover:bg-opacity-80 rounded-xl h-2 w-full border outline-none border-gray-500 appearance-none" type="range" min="1" max="100" :value="volume">
                         <font-awesome-icon class="cursor-pointer text-2xl mx-2 text-gray-600 dark:text-white" icon="backward" />
                         <font-awesome-icon @click="playPause" class="cursor-pointer text-2xl mx-2 text-gray-600 dark:text-white" :icon="playing ? 'pause' : 'play'"/>
                         <font-awesome-icon @click="skip" class="cursor-pointer text-2xl mx-2 text-gray-600 dark:text-white" icon="forward" />
@@ -126,19 +126,19 @@ import ContentField from '@/layout/ContentField.vue'
 import ToastsModal from '@/components/modals/ToastsModal.vue'
 import RadioStations from '@/components/RadioStations.vue'
 import CurrentQueue from '@/components/CurrentQueue.vue'
-import { getPlayerStatusSocket, getUserDataSocket, removeVideoSocket, playPauseSocket, getVideoQueueSocket, skipSocket, regenScreenCodeSocket, toggleRadioProtubeSocket, socket } from '@/js/admin_socket.js'
+import { getPlayerStatusSocket, getUserDataSocket, removeVideoSocket, playPauseSocket, getVideoQueueSocket, skipSocket, regenScreenCodeSocket, toggleRadioProtubeSocket, volumeChangeSocket, socket } from '@/js/admin_socket.js'
 import { ref, onMounted } from 'vue'
 
-const currentPlayerMode = ref("video"); // radio or video
+const currentPlayerMode = ref('video'); // radio or video
 const name = ref("");
 const radiofilter = ref("");
 const queueData = ref({});
 const queueSkeletonLoading = ref(true);
 
 const toasts = ref([]);
-const volumeCalculated = ref(50);
 const playing = ref(true);
 const openMenu = ref(false);
+const volume = ref(75);
 
 // with keepalive this acts as an onCreated, so runs once
 onMounted(async () => {
@@ -168,8 +168,8 @@ socket.on('admin-player-update', playerStatus => {
 })
 
 // the volume on the screens was changed
-socket.on('admin-new-volume', (volume) => {
-    volumeCalculated.value = volume;
+socket.on('admin-new-volume', (newVolume) => {
+    volume.value = newVolume;
 });
 
 function displayToast(message){
@@ -203,13 +203,13 @@ async function removeVideo(video){
     displayToast("Failed to remove video!");
 }
 // currently disabled, backend needs functionality for this
-// async function volumeChange(event){
-//     if(await volumeChangeSocket(event.target.value)) {
-//       displayToast("Successfully changed the volume!");
-//       return;
-//     }
-//     displayToast("Failed to change volume!");
-// }
+async function volumeChange(event){
+    if(await volumeChangeSocket(event.target.value)) {
+      displayToast("Successfully changed the volume!");
+      return;
+    }
+    displayToast("Failed to change volume!");
+}
 
 async function regenScreenCode(){
     displayToast(`Setting new screencode`);
@@ -237,6 +237,8 @@ async function updatePlayingStatus() {
   let playerStatus = await getPlayerStatusSocket();
   currentPlayerMode.value = playerStatus.type;
   playing.value = playerStatus.status === 'playing';
+  volume.value = playerStatus.volume;
+
 }
 </script>
 

@@ -5,6 +5,7 @@ let status = 'idle'; //playing, paused, idle
 let type = 'video'; //video, radio
 let lastStation = '';
 let timestamp = 0;
+let volume = 75;
 let playbackInterval;
 let radioStations = [];
 
@@ -102,8 +103,15 @@ exports.getStatus = () => status;
 exports.getLastStation = () => lastStation;
 exports.getTimestamp = () => timestamp;
 exports.getStations = () => radioStations;
+exports.getVolume = () => volume;
 
 exports.setStations = (stations) => radioStations = stations;
+exports.setVolume = (newVolume) => {
+    if(newVolume > 100 || newVolume < 0) return false;
+    volume = parseInt(newVolume);
+    communicator.emit('player-update');
+    return true;
+}
 
 communicator.on('queue-update', () => {
     if(status === 'idle' && queueManager.getCurrent()) {

@@ -108,13 +108,13 @@ admin.use(async (socket, next) => {
   // change the screen's volume 
   socket.on('volume-change', (volume, callback) => {
     logger.adminInfo(`${socket.id} Requested to change the volume to: ${volume}`);
+    callback(playbackManager.setVolume(volume));
     admin.emit('admin-new-volume', volume);
-    callback(true);
   });
 
   // change the screen's volume 
   socket.on('get-volume', (callback) => {
-    // callback(playbackManager.getVolume());
+    callback(playbackManager.getVolume());
   });
 
   socket.on('get-all-radiostations', (callback) => {
@@ -137,10 +137,10 @@ communicator.on('player-update', () => {
   admin.emit('admin-player-update', protube.getPlayerStatus());
 })
 
-// broadcast new volume to all connected admins
-communicator.on('new-volume', (volume) => {
-  admin.emit('admin-new-volume', volume);
-});
+// // broadcast new volume to all connected admins
+// communicator.on('new-volume', (volume) => {
+//   admin.emit('admin-new-volume', volume);
+// });
 
 async function updateRadioStations(){
   try {

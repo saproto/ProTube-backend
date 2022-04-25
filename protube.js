@@ -69,7 +69,8 @@ exports.getPlayerStatus = () => {
         status: playback.getStatus(),
         video: queue.getCurrent(),
         station: playback.getLastStation(),
-        timestamp: playback.getTimestamp()
+        timestamp: playback.getTimestamp(),
+        volume: playback.getVolume()
     };
 }
 exports.getQueue = queue.getQueue;
