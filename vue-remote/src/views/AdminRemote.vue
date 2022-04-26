@@ -19,29 +19,29 @@
             <ContentField>
                 <div class="md:flex">
                     <label class="text-gray-600 dark:text-white text-2xl absolute"> Master Controls</label>
-                    <div class="w-full md:w-1/3 mt-12">
+                    <div class="w-full md:w-2/3 md:mt-12">
                         <p class=" text-right md:text-center text-md text-gray-500 dark:text-white w-full "> Volume Slider</p>
                         <input @change="volumeChange" class="bg-proto_blue hover:bg-opacity-80 rounded-xl h-2 w-full border outline-none border-gray-500 appearance-none" type="range" min="1" max="100" :value="volume">
                         <font-awesome-icon class="cursor-pointer text-2xl mx-2 text-gray-600 dark:text-white" icon="backward" />
                         <font-awesome-icon @click="playPause" class="cursor-pointer text-2xl mx-2 text-gray-600 dark:text-white" :icon="playing ? 'pause' : 'play'"/>
                         <font-awesome-icon @click="skip" class="cursor-pointer text-2xl mx-2 text-gray-600 dark:text-white" icon="forward" />
                     </div>
-                    <div class="flex mt-12">
-                        <button @click="regenScreenCode" class="shadow-md bg-proto_blue hover:bg-opacity-80 text-white py-1 px-2 ml-5 rounded-md my-auto flex">
+                    <div class="flex md:mt-12 mt-4 md:w-1/3">
+                        <button @click="regenScreenCode" class="shadow-md bg-proto_blue hover:bg-opacity-80 text-white py-1 px-2 md:ml-5 rounded-md my-auto flex">
                             New code
                         </button>
-                    </div>
-                    <div class="flex items-center mx-auto mt-12">
-                        <span class="mr-3" id="annual-billing-label">
-                            <span class="text-sm font-medium text-gray-900">Protube</span>
-                        </span>
-                        <button @click="toggleRadioProtube" type="button" :class="currentPlayerMode === 'radio' ? 'bg-proto_blue' : 'bg-proto_green'" class="bg-gray-200 relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" role="switch" aria-checked="false" aria-labelledby="annual-billing-label">
-                            <!-- Enabled: "translate-x-5", Not Enabled: "translate-x-0" -->
-                            <span aria-hidden="true" :class="currentPlayerMode === 'radio' ? 'translate-x-5' : 'translate-x-0'" class="pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200"></span>
-                        </button>
-                        <span class="ml-3" id="annual-billing-label">
-                            <span class="text-sm font-medium text-gray-900">Radio</span>
-                        </span>
+                        <div class="flex items-center mx-auto ">
+                            <span class="mr-3" id="annual-billing-label">
+                                <span class="text-sm font-medium text-gray-900 dark:text-white">Protube</span>
+                            </span>
+                            <button @click="toggleRadioProtube" type="button" :class="currentPlayerMode === 'radio' ? 'bg-proto_blue' : 'bg-proto_green'" class="bg-gray-200 relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" role="switch" aria-checked="false" aria-labelledby="annual-billing-label">
+                                <!-- Enabled: "translate-x-5", Not Enabled: "translate-x-0" -->
+                                <span aria-hidden="true" :class="currentPlayerMode === 'radio' ? 'translate-x-5' : 'translate-x-0'" class="pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200"></span>
+                            </button>
+                            <span class="ml-3" id="annual-billing-label">
+                                <span class="text-sm font-medium text-gray-900 dark:text-white">Radio</span>
+                            </span>
+                        </div>
                     </div>
                 </div>
             </ContentField>
