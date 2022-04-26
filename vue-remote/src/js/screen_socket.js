@@ -45,7 +45,6 @@ function createSocket(){
 // }
 
 export function setVolume(){
-    console.log(volumeControl);
     if(!volumeControl){
         volumeControl = true;
     }
@@ -78,8 +77,8 @@ export function youtubePlayerReady() {
 
             if(playMode === 'radio') {
                 playMode = 'video';
-                eventBus.emit('screensocket-video-playing');
             }
+            eventBus.emit('screensocket-video-playing', nowPlaying);
 
             switch (data.status) {
                 case 'playing':
@@ -114,4 +113,9 @@ export function youtubePlayerReady() {
 // exiting the page, kill the socket
 export function killSocket() {
     socket.disconnect();
+}
+
+export function getNowPlaying() {
+    if(playMode === 'video') return nowPlaying;
+    return {};
 }

@@ -8,7 +8,22 @@
             {{ screenCode }}
           </div>
         </div>
-      </div>  
+      </div>
+      <div class="self-end max-w-sm bg-white dark:bg-proto_secondary_gray-dark shadow-lg rounded-lg pointer-events-auto ring-1 ring-black ring-opacity-5 overflow-hidden">
+        <div class="p-4">
+          <div class="flex flex-col text-2xl text-center dark:text-white" v-if="currentVideo.title">
+            <div>
+              Now playing: <br>{{ currentVideo.title }}
+            </div>
+            <div class="mt-3">
+              Added by: {{ addedBy }}
+            </div>
+          </div>
+          <div class="flex text-2xl text-center dark:text-white" v-else>
+            Nothing currently playing
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   <div class="min-w-screen min-h-screen" id='yt-player' />
@@ -19,9 +34,11 @@
 import { defineProps, ref, onMounted, onBeforeUnmount } from 'vue'
 import { eventBus } from '@/js/eventbus.js';
 import RadioModal from '@/components/modals/RadioModal.vue'
-import { onYouTubeIframeAPIReady, resetYTplayer, killSocket } from '@/js/screen_socket.js'
+import { onYouTubeIframeAPIReady, resetYTplayer, killSocket, getNowPlaying } from '@/js/screen_socket.js'
 
 const currentRadio = ref("");
+const currentVideo = ref({});
+const addedBy = ref("");
 const screenCodeIsVisible = ref(true);
 
 const props = defineProps({
@@ -38,21 +55,22 @@ onMounted(() => {
   // mountListeners();
   if(props.screenCode === -1) screenCodeIsVisible.value = false;
   mountScripts();
+  currentVideo.value = getNowPlaying();
 
   eventBus.on('screensocket-radio-playing', (radio) => {
     currentRadio.value = radio;
+    currentVideo.value = {};
     screenCodeIsVisible.value = false;
   });
 
-  eventBus.on('screensocket-video-playing', () => {
+  eventBus.on('screensocket-video-playing', (video) => {
     currentRadio.value = "";
+    currentVideo.value = video;
+    addedBy.value = video.user.name;
+    console.log(currentVideo.value);
     if(props.screenCode !== -1) screenCodeIsVisible.value = true;
   });
 });
-
-// eventBus.on('screensocket-connect-success', () => {
-//   console.log("screensocket-connect-success")
-// });
 
 const scripts = [
     `${process.env.VUE_APP_SOCKET_ADDRESS}/socket.io/socket.io.min.js`,
@@ -63,10 +81,6 @@ const scripts = [
 onBeforeUnmount(() =>{
     killSocket();
 });
-
-// onUnmounted(() => {
-//     unMountListeners();
-// })
 
 function mountScripts(){
   for(let i = 0; i < scripts.length; i++){
@@ -85,22 +99,4 @@ function mountScripts(){
     document.head.appendChild(externalScript);
   }
 }
-// // Only use an eventlistener once and mount it when the page mounts 
-// // and unmount it when the page unmounts
-// function mountListeners(){
-//   eventBus.on('to-protubescreen-from-screensocket-radio-playing', (radio) => {
-//     currentRadio.value = radio;
-//     screenCodeIsVisible.value = false;
-//   });
-
-//   eventBus.on('to-protubescreen-from-screensocket-show-screencode', () => {
-//     if(props.screenCode == -1) return;
-//     screenCodeIsVisible.value = true;
-//   });
-// }
-
-// function unMountListeners(){
-//     eventBus.off('to-protubescreen-from-screensocket-show-screencode')
-//     eventBus.off('to-protubescreen-from-screensocket-radio-playing')
-// }
 </script>
