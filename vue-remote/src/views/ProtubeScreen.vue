@@ -39,7 +39,7 @@ import { onYouTubeIframeAPIReady, resetYTplayer, killSocket, getNowPlaying } fro
 const currentRadio = ref("");
 const currentVideo = ref({});
 const addedBy = ref("");
-const screenCodeIsVisible = ref(true);
+const screenCodeIsVisible = ref(false);
 
 const props = defineProps({
   screenCode: {
@@ -67,7 +67,6 @@ onMounted(() => {
     currentRadio.value = "";
     currentVideo.value = video;
     addedBy.value = video.user.name;
-    console.log(currentVideo.value);
     if(props.screenCode !== -1) screenCodeIsVisible.value = true;
   });
 });
