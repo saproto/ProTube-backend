@@ -1,17 +1,17 @@
 <template>
-  <RadioModal :volume="volume" v-show="currentRadio" :radio="currentRadio" class="z-0"/>
-  <div v-show="screenCodeIsVisible" :class="screenCodeIsVisible ? 'z-10' : ''" aria-live="assertive" class="fixed inset-0 flex px-4 py-6 pointer-events-none sm:p-6 items-start">
+  <RadioModal :volume="volume" v-show="currentRadio" :radio="currentRadio" />
+  <div v-show="overlayModalIsVisible" :class="overlayModalIsVisible ? 'z-10' : ''" aria-live="assertive" class="fixed inset-0 flex px-4 py-6 pointer-events-none sm:p-6 items-start">
     <div class="w-full flex flex-col items-center space-y-4">
-      <div class="max-w-sm bg-white dark:bg-proto_secondary_gray-dark shadow-lg rounded-lg pointer-events-auto ring-1 ring-black ring-opacity-5 overflow-hidden">
+      <div v-show="screenCode != -1" class="flex max-w-sm bg-white dark:bg-proto_secondary_gray-dark shadow-lg rounded-lg pointer-events-auto ring-1 ring-black ring-opacity-5 overflow-hidden">
         <div class="p-4">
           <div class="flex text-2xl text-center dark:text-white">
             {{ screenCode }}
           </div>
         </div>
       </div>
-      <div class="self-end max-w-sm bg-white dark:bg-proto_secondary_gray-dark shadow-lg rounded-lg pointer-events-auto ring-1 ring-black ring-opacity-5 overflow-hidden">
+      <div class="absolute self-end max-w-sm bg-white dark:bg-proto_secondary_gray-dark shadow-lg rounded-lg pointer-events-auto ring-1 ring-black ring-opacity-5 overflow-hidden">
         <div class="p-4">
-          <div class="flex flex-col text-2xl text-center dark:text-white" v-if="currentVideo.title">
+          <div class="flex flex-col text-2xl text-center dark:text-white" v-if="currentVideo">
             <div>
               Now playing: <br>{{ currentVideo.title }}
             </div>
@@ -39,9 +39,9 @@ import { onYouTubeIframeAPIReady, resetYTplayer, killSocket, getNowPlaying } fro
 const currentRadio = ref("");
 const currentVideo = ref({});
 const addedBy = ref("");
-const screenCodeIsVisible = ref(false);
+const overlayModalIsVisible = ref(true);
 
-const props = defineProps({
+defineProps({
   screenCode: {
     type: Number,
     default: -1
@@ -52,22 +52,20 @@ const props = defineProps({
 })
 
 onMounted(() => {
-  // mountListeners();
-  if(props.screenCode === -1) screenCodeIsVisible.value = false;
   mountScripts();
   currentVideo.value = getNowPlaying();
 
   eventBus.on('screensocket-radio-playing', (radio) => {
     currentRadio.value = radio;
     currentVideo.value = {};
-    screenCodeIsVisible.value = false;
+    overlayModalIsVisible.value = false;
   });
 
   eventBus.on('screensocket-video-playing', (video) => {
     currentRadio.value = "";
     currentVideo.value = video;
     addedBy.value = video.user.name;
-    if(props.screenCode !== -1) screenCodeIsVisible.value = true;
+    overlayModalIsVisible.value = true;
   });
 });
 
