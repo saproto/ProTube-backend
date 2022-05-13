@@ -27,7 +27,8 @@ let errorFileRotationTransport = new winston.transports.DailyRotateFile({
 });
 
 let color = winston.format.uncolorize();
-if (process.env.NODE_ENV === "production") {
+// Dev mode: log with colors into console except for in files
+if (process.env.NODE_ENV !== "production") {
     fileRotationTransport = new winston.transports.Console();
     errorFileRotationTransport = new winston.transports.Console();
     color = winston.format.colorize();
