@@ -80,4 +80,3 @@ exports.getQueueDuration = queue.getTotalDuration;
     let videos = await youtube.search('working as a waitress in a cocktail bar'); // proto logo
     queue.addFair(videos[0]);
 })();
-
