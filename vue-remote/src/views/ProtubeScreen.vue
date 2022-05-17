@@ -1,4 +1,5 @@
 <template>
+  <NothingPlayingModal v-if="Object.keys(currentVideo).length === 0" />
   <RadioModal :volume="volume" v-show="currentRadio" :radio="currentRadio" />
   <div v-show="overlayModalIsVisible" :class="overlayModalIsVisible ? 'z-10' : ''" aria-live="assertive" class="fixed inset-0 flex px-4 py-6 pointer-events-none sm:p-6 items-start">
     <div class="w-full flex flex-col items-center space-y-4">
@@ -34,6 +35,7 @@
 import { defineProps, ref, onMounted, onBeforeUnmount } from 'vue'
 import { eventBus } from '@/js/eventbus.js';
 import RadioModal from '@/components/modals/RadioModal.vue'
+import NothingPlayingModal from '@/components/modals/NothingPlayingModal.vue'
 import { onYouTubeIframeAPIReady, resetYTplayer, killSocket, getNowPlaying } from '@/js/screen_socket.js'
 
 const currentRadio = ref("");
