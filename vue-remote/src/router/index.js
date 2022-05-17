@@ -19,7 +19,7 @@ const routes = [
     component: LoginPage,
     props: route => ({
       targetPath: String(route.params.targetPath || "Remote"),
-      requests_admin: Boolean(route.params.requests_admin || false)
+      requests_admin: route.params.requests_admin === 'true'
     }),
     meta: {
       transition: 'fade'
