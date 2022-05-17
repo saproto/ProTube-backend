@@ -19,7 +19,7 @@ const routes = [
     component: LoginPage,
     props: route => ({
       targetPath: String(route.params.targetPath || "Remote"),
-      requests_admin: Boolean(route.params.requests_admin || false)
+      requests_admin: route.params.requests_admin === 'true'
     }),
     meta: {
       transition: 'fade'
@@ -93,6 +93,8 @@ router.beforeEach((to, from, next) => {
  
   // requested path is admin and the user had no admin socket
   else if(to.meta.adminAuth || to.meta.auth){
+    console.log(to.name)
+    console.log(to.meta.adminAuth)
     return next({ name: 'Login' , params: {
       targetPath: to.name,
       requests_admin: to.meta.adminAuth
