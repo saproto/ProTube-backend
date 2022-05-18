@@ -61,6 +61,7 @@ exports.moveToNext = async () => {
         communicator.emit('queue-update');
         return true;
     }else if(current && queue.length === 0) {
+        console.log("move to next empty queue");
         current = {};
         communicator.emit('queue-update');
         return true;
@@ -86,10 +87,12 @@ exports.removeVideo = (video) => {
 }
 
 exports.removeFirst = () => queue.shift();
+exports.clearCurrent = () => current = {};
 exports.getCurrent = () => current || null;
 exports.getNext = () => queue[0];
 exports.getQueue = () => queue;
 exports.isQueueEmpty = () => queue.length <= 0;
+exports.isCurrentEmpty = () => Object.keys(current).length === 0;
 
 //Calculate the total duration of the playlist and return it
 exports.getTotalDuration = () => {
@@ -104,8 +107,9 @@ const findDoppelganger = video => {
 }
 
 const performFairAdd = video => {
-    //If there is nothing in the queue, play the video.
-    if(!this.getCurrent() && this.isQueueEmpty()) {
+    console.log(current);
+    //If there is nothing in the queue, play the video directly.
+    if(this.isCurrentEmpty() && this.isQueueEmpty()) {
         queue.push(video);
         this.moveToNext();
     }else{
@@ -116,6 +120,11 @@ const performFairAdd = video => {
 }
 
 communicator.on('video-ended', () => {
+    console.log("ended");
     if(queue.length > 0) this.moveToNext();
-    else current = {};
+    else {
+        this.clearCurrent();
+        playbackManager.setIdle();
+        communicator.emit('player-update');
+    }
 });

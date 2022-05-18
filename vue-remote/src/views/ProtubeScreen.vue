@@ -63,6 +63,11 @@ onMounted(() => {
     overlayModalIsVisible.value = false;
   });
 
+  eventBus.on('screensocket-video-idle', () => {
+    console.log("Video idling")
+    currentVideo.value = {};
+  });
+
   eventBus.on('screensocket-video-playing', (video) => {
     currentRadio.value = "";
     currentVideo.value = video;

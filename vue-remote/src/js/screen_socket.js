@@ -61,7 +61,13 @@ export function resetYTplayer(){
 export function youtubePlayerReady() {
     socket.emit('request-player-status');
     socket.on('player-status', data => {
-        if (data.type === 'video') {
+        console.log(data);
+        if (data.status === 'idle') {
+            console.log("stopping");
+            player.stopVideo();
+            eventBus.emit('screensocket-video-idle');
+        }
+        if (data.type === 'video' && data.status !== 'idle') {
             if (!nowPlaying || nowPlaying.id !== data.video.id) {
                 nowPlaying = data.video;
                 player.loadVideoById(nowPlaying.id);

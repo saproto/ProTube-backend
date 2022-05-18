@@ -36,8 +36,8 @@ exports.playVideoFromStart = video => {
 }
 
 exports.stopVideo = () => {
-    timestamp = 0;
     clearInterval(playbackInterval);
+    timestamp = 0;
     status = 'idle';
 }
 
@@ -48,7 +48,11 @@ exports.pauseVideo = () => {
 }
 
 exports.skipVideo = () => {
-    timestamp = 0;
+    this.stopVideo();
+    if(queueManager.getQueue().length === 0) {
+        queueManager.clearCurrent();
+        return communicator.emit('player-update');
+    }
     return queueManager.moveToNext();
 }
 
@@ -100,6 +104,7 @@ exports.playPause = () => {
 
 exports.getType = () => type;
 exports.getStatus = () => status;
+exports.setIdle = () => status = 'idle';
 exports.getLastStation = () => lastStation;
 exports.getTimestamp = () => timestamp;
 exports.getStations = () => radioStations;
@@ -114,7 +119,26 @@ exports.setVolume = (newVolume) => {
 }
 
 communicator.on('queue-update', () => {
-    if(status === 'idle' && queueManager.getCurrent()) {
+    console.log("Queue update called");
+    console.log(queueManager.isCurrentEmpty());
+    console.log(status);
+
+    console.log((status === 'idle' && queueManager.isCurrentEmpty()));
+
+    if(status === 'idle' && !queueManager.isCurrentEmpty()){
         this.playVideoFromStart(queueManager.getCurrent());
     }
+
+    // if(status === 'idle' && queueManager.getCurrent()) {
+    //     this.playVideoFromStart(queueManager.getCurrent());
+    // }
+    console.log("Queue update ended called");
+    // // if queue not empty and current empty, start playing
+    // // if idle and not empty current, start playing 
+    // // 
+    // if(( status === 'idle' && Object.keys(queueManager.getCurrent()).length !== 0) 
+    // || (!queueManager.isQueueEmpty() && Object.keys(queueManager.getCurrent()).length === 0)) {
+    //     console.log("moving to next");
+    //     this.playVideoFromStart(queueManager.moveToNext());
+    // }
 });
