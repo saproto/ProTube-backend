@@ -50,7 +50,7 @@ exports.moveToNext = async () => {
     if(queue.length > 0){
         current = queue[0];
         queue.shift();
-        if(current.user) {
+        if(current.user.user_id) {
             await fetch(`${process.env.API_ENDPOINT}/played?` + new URLSearchParams({
                 secret: process.env.API_SECRET,
                 user_id: current.user.user_id,
@@ -61,7 +61,6 @@ exports.moveToNext = async () => {
         communicator.emit('queue-update');
         return true;
     }else if(current && queue.length === 0) {
-        console.log("move to next empty queue");
         current = {};
         communicator.emit('queue-update');
         return true;
@@ -87,12 +86,12 @@ exports.removeVideo = (video) => {
 }
 
 exports.removeFirst = () => queue.shift();
-exports.clearCurrent = () => current = {};
+exports.clearCurrent = () => current = null;
 exports.getCurrent = () => current || null;
 exports.getNext = () => queue[0];
 exports.getQueue = () => queue;
 exports.isQueueEmpty = () => queue.length <= 0;
-exports.isCurrentEmpty = () => Object.keys(current).length === 0;
+exports.isCurrentEmpty = () => current === null;
 
 //Calculate the total duration of the playlist and return it
 exports.getTotalDuration = () => {
@@ -107,7 +106,6 @@ const findDoppelganger = video => {
 }
 
 const performFairAdd = video => {
-    console.log(current);
     //If there is nothing in the queue, play the video directly.
     if(this.isCurrentEmpty() && this.isQueueEmpty()) {
         queue.push(video);
@@ -120,7 +118,6 @@ const performFairAdd = video => {
 }
 
 communicator.on('video-ended', () => {
-    console.log("ended");
     if(queue.length > 0) this.moveToNext();
     else {
         this.clearCurrent();

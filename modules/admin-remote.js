@@ -101,7 +101,6 @@ admin.use(async (socket, next) => {
 
   socket.on('skip', (callback) => {
     logger.adminInfo(`${socket.id} Requested to skip a video`);
-    playbackManager.timestamp = 0;
     callback(playbackManager.skipVideo());
   });
 

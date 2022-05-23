@@ -77,6 +77,15 @@ exports.getQueue = queue.getQueue;
 exports.getQueueDuration = queue.getTotalDuration;
 
 (async () => {
-    let videos = await youtube.search('working as a waitress in a cocktail bar'); // proto logo
-    queue.addFair(videos[0]);
+    const startVideos = [
+        'working as a waitress in a cocktail bar',
+        'crab rave',
+        'rick roll'
+    ];
+    let videos = await youtube.search(startVideos[Math.floor(Math.random()*startVideos.length)]);
+    let video = videos[0];
+    video.user = {
+        name: "HYTTIOAOAc"
+    };
+    queue.addFair(video);
 })();

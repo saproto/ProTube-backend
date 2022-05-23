@@ -64,7 +64,7 @@ onMounted(() => {
   });
 
   eventBus.on('screensocket-video-idle', () => {
-    console.log("Video idling")
+    currentRadio.value = "";
     currentVideo.value = {};
   });
 

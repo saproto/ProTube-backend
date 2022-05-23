@@ -42,14 +42,10 @@ onMounted(() => {
         }, 2000);
     }
 
-    console.log(props.volume);
-    console.log(typeof(props.volume));
     // enabling volume control via prop watcher
     if(props.volume > -1){
-        console.log(props.volume/100);
         document.getElementById('radio').volume = props.volume/100;
         watch(() => props.volume, (to, from) => {
-            console.log(`volume change to ${to}, from ${from}`)
             const newVolume = to/100; //Volume ranges 0-100, audio tag accepts 0-1
             document.getElementById('radio').volume = newVolume;
         });

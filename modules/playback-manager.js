@@ -84,8 +84,8 @@ exports.setRadio = (station) => {
 
 // play or pause the current video/radio stream
 exports.playPause = () => {
-    if(type === 'video'){
-        if(status === 'playing' || status === 'idle') {
+    if(type === 'video' && status !== 'idle'){
+        if(status === 'playing') {
             this.pauseVideo();
         }else{
             if(queueManager.getCurrent()) {
@@ -119,26 +119,7 @@ exports.setVolume = (newVolume) => {
 }
 
 communicator.on('queue-update', () => {
-    console.log("Queue update called");
-    console.log(queueManager.isCurrentEmpty());
-    console.log(status);
-
-    console.log((status === 'idle' && queueManager.isCurrentEmpty()));
-
-    if(status === 'idle' && !queueManager.isCurrentEmpty()){
+    if(status === 'idle' && !queueManager.isCurrentEmpty() && type === 'video'){
         this.playVideoFromStart(queueManager.getCurrent());
     }
-
-    // if(status === 'idle' && queueManager.getCurrent()) {
-    //     this.playVideoFromStart(queueManager.getCurrent());
-    // }
-    console.log("Queue update ended called");
-    // // if queue not empty and current empty, start playing
-    // // if idle and not empty current, start playing 
-    // // 
-    // if(( status === 'idle' && Object.keys(queueManager.getCurrent()).length !== 0) 
-    // || (!queueManager.isQueueEmpty() && Object.keys(queueManager.getCurrent()).length === 0)) {
-    //     console.log("moving to next");
-    //     this.playVideoFromStart(queueManager.moveToNext());
-    // }
 });

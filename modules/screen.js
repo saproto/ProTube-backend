@@ -24,9 +24,9 @@ communicator.on('new-screen-code', screenCode => {
     screens.emit('new-screen-code', screenCode);
 });
 
-communicator.on('queue-update', () => {
-    updatePlayerStatus(screens);
-});
+// communicator.on('queue-update', () => {
+//     updatePlayerStatus(screens);
+// });
 
 communicator.on('player-update', () => {
     updatePlayerStatus(screens);

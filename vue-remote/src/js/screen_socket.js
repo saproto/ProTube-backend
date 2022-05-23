@@ -61,9 +61,7 @@ export function resetYTplayer(){
 export function youtubePlayerReady() {
     socket.emit('request-player-status');
     socket.on('player-status', data => {
-        console.log(data);
         if (data.status === 'idle') {
-            console.log("stopping");
             player.stopVideo();
             eventBus.emit('screensocket-video-idle');
         }
@@ -85,7 +83,6 @@ export function youtubePlayerReady() {
                 playMode = 'video';
             }
             eventBus.emit('screensocket-video-playing', nowPlaying);
-
             switch (data.status) {
                 case 'playing':
                     player.playVideo();
