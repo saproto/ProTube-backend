@@ -45,6 +45,7 @@ onMounted(() => {
     // enabling volume control via prop watcher
     if(props.volume > -1){
         document.getElementById('radio').volume = props.volume/100;
+        // eslint-disable-next-line
         watch(() => props.volume, (to, from) => {
             const newVolume = to/100; //Volume ranges 0-100, audio tag accepts 0-1
             document.getElementById('radio').volume = newVolume;
